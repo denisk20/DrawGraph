@@ -1,8 +1,10 @@
 package com.drawgraph.parser;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.parser.callbacks.Callback;
+import com.drawgraph.parser.callbacks.GraphMLCallback;
+import com.drawgraph.parser.callbacks.RootCallback;
 import org.xml.sax.Attributes;
-import org.xml.sax.HandlerBase;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -13,24 +15,22 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author denisk
  */
 public class GraphMLHandler extends DefaultHandler {
-	@Override
-	public void startDocument() throws SAXException {
-		super.startDocument();	//To change body of overridden methods use File | Settings | File Templates.
-	}
+	private Callback currentCallback;
 
-	@Override
-	public void endDocument() throws SAXException {
-		super.endDocument();	//To change body of overridden methods use File | Settings | File Templates.
+	public GraphMLHandler() {
+		currentCallback = new RootCallback();
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		super.startElement(uri, localName, qName, attributes);	//To change body of overridden methods use File | Settings | File Templates.
+		currentCallback.startElement(qName, attributes);
+		currentCallback = currentCallback.getChildCallback();
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		super.endElement(uri, localName, qName);	//To change body of overridden methods use File | Settings | File Templates.
+		currentCallback.endElement(qName);
+		currentCallback = currentCallback.getParentCallback();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ package com.drawgraph.model;
  * @author denisk
  */
 public interface Line {
+	String getId();
 	Node getSource();
 
 	Node getSink();

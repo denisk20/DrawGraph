@@ -9,6 +9,7 @@ import java.util.HashSet;
  * @author denisk
  */
 public interface Graph {
+	String getId();
 	HashSet<Node> getNodes();
 
 	HashSet<Line> getLines();
