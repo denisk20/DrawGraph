@@ -9,5 +9,8 @@ import java.util.Set;
  * @author denisk
  */
 public interface Node {
+	Set<Node> getSources();
+	Set<Node> getSinks();
+
 	Set<Node> getNeighbours();
 }
