@@ -58,8 +58,8 @@ public class GraphMLParserTest {
 
 	@Test
 	public void parseGraphMLDocument() throws IOException, SAXException, ParserConfigurationException {
+		System.out.println("Starting test");
 		final Graph graph = testable.buildGraph(FILE_NAME);
-
 
 		final HashSet<Node> nodes = graph.getNodes();
 		for (Node n : nodes) {

@@ -4,3 +4,5 @@ output
 .directory
 local.ignore
 out
+dist
+reports

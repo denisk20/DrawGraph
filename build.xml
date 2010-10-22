@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="commonProject" basedir=".">
+
+	<property name="dist.dir" value="dist"/>
+	<property name="src.dir" value="src"/>
+	<property name="test.src.dir" value="test"/>
+	<property name="test.dist.dir" value="disttest"/>
+	<property name="test.reports.dir" value="reports"/>
+	<property name="lib.dir" value="lib"/>
+
+	<path id="test.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${dist.dir}"/>
+		<delete dir="${test.dist.dir}"/>
+		<delete dir="${test.reports.dir}"/>
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${dist.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${dist.dir}"/>
+	</target>
+
+	<target name="compileTests">
+		<mkdir dir="${test.dist.dir}"/>
+		<javac srcdir="${test.src.dir}" destdir="${test.dist.dir}">
+			<classpath>
+				<path refid="test.classpath"/>
+				<pathelement location="${dist.dir}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="copyTestResources">
+		<copy todir="${test.dist.dir}">
+			<fileset dir="${test.src.dir}">
+				<include name="*.graphml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="runTests" depends="compile, compileTests, copyTestResources">
+		<mkdir dir="${test.reports.dir}"/>
+		<junit printsummary="yes" haltonfailure="yes">
+			<formatter type="plain"/>
+			<classpath>
+				<path refid="test.classpath"/>
+				<pathelement location="${test.dist.dir}"/>
+				<pathelement location="${dist.dir}"/>
+			</classpath>
+
+			<batchtest fork="yes" todir="${test.reports.dir}">
+				<fileset dir="${test.dist.dir}"/>
+			</batchtest>
+		</junit>
+	</target>
+	
+</project>
