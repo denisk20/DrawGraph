@@ -2,6 +2,7 @@ package com.drawgraph.parser.callbacks;
 
 import com.drawgraph.model.Node;
 import com.drawgraph.model.SimpleNode;
+import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
 import java.util.HashSet;
@@ -45,5 +46,9 @@ public class NodeCallback implements Callback {
 
 	public HashSet<Node> getNodes() {
 		return nodes;
+	}
+
+	public void postEndElement(GraphAware graphAware) {
+
 	}
 }

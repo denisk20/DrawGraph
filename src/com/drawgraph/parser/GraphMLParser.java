@@ -32,7 +32,7 @@ public class GraphMLParser implements DocumentParser {
 		SAXParser sp = spf.newSAXParser();
 
 		// Create a SAX input source for the file argument
-		InputSource input = new InputSource(new FileReader(inputFile));
+		InputSource input = new InputSource(getClass().getClassLoader().getResourceAsStream(inputFile));
 
 		// Give the InputSource an absolute URL for the file, so that
 		// it can resolve relative URLs in a <!DOCTYPE> declaration, e.g.

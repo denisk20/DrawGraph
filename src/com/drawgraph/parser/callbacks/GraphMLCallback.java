@@ -2,6 +2,7 @@ package com.drawgraph.parser.callbacks;
 
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.GraphImpl;
+import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
 /**
@@ -43,4 +44,9 @@ public class GraphMLCallback implements Callback {
 	public Graph getGraph() {
 		return graph;
 	}
+
+	public void postEndElement(GraphAware graphAware) {
+		graphAware.setGraph(graph);
+	}
+
 }

@@ -3,6 +3,7 @@ package com.drawgraph.parser.callbacks;
 import com.drawgraph.model.Line;
 import com.drawgraph.model.LineImpl;
 import com.drawgraph.model.Node;
+import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
 import java.util.HashSet;
@@ -73,6 +74,9 @@ public class LineCallback implements Callback {
 		return lines;
 	}
 
+	public void postEndElement(GraphAware graphAware) {
+
+	}
 
 	public static class LineSkeleton {
 		private String id;

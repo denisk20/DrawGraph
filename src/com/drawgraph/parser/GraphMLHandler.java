@@ -14,8 +14,9 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author denisk
  */
-public class GraphMLHandler extends DefaultHandler {
+public class GraphMLHandler extends DefaultHandler implements GraphAware {
 	private Callback currentCallback;
+	private Graph graph;
 
 	public GraphMLHandler() {
 		currentCallback = new RootCallback();
@@ -30,15 +31,21 @@ public class GraphMLHandler extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		currentCallback.endElement(qName);
+		currentCallback.postEndElement(this);
+		
 		currentCallback = currentCallback.getParentCallback();
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		super.characters(ch, start, length);	//To change body of overridden methods use File | Settings | File Templates.
+		super.characters(ch, start, length);	
 	}
 
 	public Graph getGraph() {
-		return null;
+		return graph;
+	}
+
+	public void setGraph(Graph graph) {
+		this.graph = graph;
 	}
 }

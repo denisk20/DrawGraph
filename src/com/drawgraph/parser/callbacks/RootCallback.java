@@ -1,5 +1,6 @@
 package com.drawgraph.parser.callbacks;
 
+import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
 /**
@@ -33,5 +34,8 @@ public class RootCallback implements Callback {
 
 	public Callback getParentCallback() {
 		return null;  //To change body of implemented methods use File | Settings | File Templates.
+	}
+	public void postEndElement(GraphAware graphAware) {
+
 	}
 }

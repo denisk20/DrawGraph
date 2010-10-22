@@ -1,5 +1,6 @@
 package com.drawgraph.parser.callbacks;
 
+import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
 /**
@@ -18,4 +19,6 @@ public interface Callback {
 	Callback getChildCallback();
 
 	Callback getParentCallback();
+
+	void postEndElement(GraphAware graphAware);
 }

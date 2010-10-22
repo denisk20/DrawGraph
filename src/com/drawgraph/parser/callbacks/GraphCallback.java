@@ -2,6 +2,7 @@ package com.drawgraph.parser.callbacks;
 
 import com.drawgraph.model.Line;
 import com.drawgraph.model.Node;
+import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
 import java.util.HashMap;
@@ -69,5 +70,9 @@ public class GraphCallback implements Callback{
 
 	public Callback getParentCallback() {
 		return parent;
+	}
+
+	public void postEndElement(GraphAware graphAware) {
+
 	}
 }
