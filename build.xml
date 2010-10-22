@@ -10,7 +10,7 @@
 
 	<path id="test.classpath">
 		<fileset dir="${lib.dir}">
-			<include name="*.jar" />
+			<include name="junit-4.7.jar" />
 		</fileset>
 	</path>
 
