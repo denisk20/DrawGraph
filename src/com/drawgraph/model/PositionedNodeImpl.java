@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * @author denisk
  */
-public class PositionedNodeImpl extends AbstractNode<PositionedNode> implements PositionedNode{
+public class PositionedNodeImpl extends AbstractNode<PositionedNode> implements PositionedNode {
 	private int x;
 	private int y;
 

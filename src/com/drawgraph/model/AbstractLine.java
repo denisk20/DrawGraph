@@ -6,12 +6,12 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public abstract class AbstractLine<T extends Node> implements Line<T>{
+public abstract class AbstractLine implements Line {
 		private String id;
-	private T source;
-	private T sink;
+	private Node source;
+	private Node sink;
 
-	public AbstractLine (T source, T sink, String id) {
+	public AbstractLine (Node source, Node sink, String id) {
 		this.source = source;
 		this.sink = sink;
 		this.id = id;
@@ -21,11 +21,11 @@ public abstract class AbstractLine<T extends Node> implements Line<T>{
 		return id;
 	}
 
-	public T getSource() {
+	public Node getSource() {
 		return source;
 	}
 
-	public T getSink() {
+	public Node getSink() {
 		return sink;
 	}
 

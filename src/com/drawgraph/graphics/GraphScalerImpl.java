@@ -3,7 +3,7 @@ package com.drawgraph.graphics;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedGraph;
-import com.drawgraph.model.PositionedLine;
+import com.drawgraph.model.PositionedGraphImpl;
 import com.drawgraph.model.PositionedNode;
 import com.drawgraph.model.PositionedNodeImpl;
 
@@ -24,10 +24,16 @@ public class GraphScalerImpl implements GraphScaler{
 	private int bottomOffset;
 	private int leftOffset;
 	private int rightOffset;
+	private int layerOffset;
 
 	@Override
 	public void setMinDistance(int dist) {
 		minDistance = dist;
+	}
+
+	@Override
+	public void setLayerOffset(int layerOffset) {
+		this.layerOffset = layerOffset;
 	}
 
 	@Override
@@ -60,13 +66,25 @@ public class GraphScalerImpl implements GraphScaler{
 		final List<List<Node>> layers = order.getLayers(g);
 
 		HashSet<PositionedNode> positionedNodes = new HashSet<PositionedNode>();
-		HashSet<PositionedLine> positionedLines = new HashSet<PositionedLine>();
 
+		PositionedGraph result = new PositionedGraphImpl(g.getId());
 		int curX = leftOffset;
 		int curY = topOffset;
 		for (List<Node> layer : layers) {
-//			PositionedNode positionedNode = new PositionedNodeImpl();
+			for (Node n : layer) {
+				int x = curX;
+				int y = curY;
+				PositionedNode positionedNode = new PositionedNodeImpl(n.getId(), x, y);
+				positionedNodes.add(positionedNode);
+				curX += minDistance;
+			}
+			curX = leftOffset;
+			curY+= layerOffset;
 		}
-		return null;
+
+		result.getNodes().addAll(positionedNodes);
+		result.getLines().addAll(g.getLines());
+
+		return result;
 	}
 }

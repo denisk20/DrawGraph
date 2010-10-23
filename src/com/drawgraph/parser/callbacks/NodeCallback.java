@@ -15,7 +15,7 @@ import java.util.HashSet;
  */
 public class NodeCallback implements Callback {
 	private GraphCallback parent;
-	private HashSet<Node> nodes = new HashSet<Node>();
+	private HashSet<Node<Node>> nodes = new HashSet<Node<Node>>();
 
 	private final static String ID = "id";
 
@@ -44,7 +44,7 @@ public class NodeCallback implements Callback {
 		return parent;
 	}
 
-	public HashSet<Node> getNodes() {
+	public HashSet<Node<Node>> getNodes() {
 		return nodes;
 	}
 

@@ -46,7 +46,7 @@ public class GraphMLCallback implements Callback {
 		return graph;
 	}
 
-	public void postEndElement(GraphAware graphAware) {
+	public void postEndElement(GraphAware<Node> graphAware) {
 		graphAware.setGraph(graph);
 	}
 

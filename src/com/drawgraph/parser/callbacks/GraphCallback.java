@@ -44,16 +44,16 @@ public class GraphCallback implements Callback{
 	}
 
 	public void endElement(String name) {
-		HashSet<Node> nodes = nodeCallback.getNodes();
+		HashSet<Node<Node>> nodes = nodeCallback.getNodes();
 		parent.getGraph().getNodes().addAll(nodes);
-		HashMap<String, Node> nodesMap = getMapForNodes(nodes);
-		HashSet<Line<Node>> lines = lineCallback.getLines(nodesMap);
+		HashMap<String, Node<Node>> nodesMap = getMapForNodes(nodes);
+		HashSet<Line> lines = lineCallback.getLines(nodesMap);
 		parent.getGraph().getLines().addAll(lines);
 	}
 
-	private HashMap<String, Node> getMapForNodes(HashSet<Node> nodes) {
-		HashMap<String, Node> result = new HashMap<String, Node>();
-		for (Node node : nodes) {
+	private HashMap<String, Node<Node>> getMapForNodes(HashSet<Node<Node>> nodes) {
+		HashMap<String, Node<Node>> result = new HashMap<String, Node<Node>>();
+		for (Node<Node> node : nodes) {
 			result.put(node.getId(), node);
 		}
 
@@ -61,7 +61,7 @@ public class GraphCallback implements Callback{
 	}
 
 	public void characters(String chars) {
-		//To change body of implemented methods use File | Settings | File Templates.
+
 	}
 
 	public Callback getChildCallback() {

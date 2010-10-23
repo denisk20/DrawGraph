@@ -6,7 +6,7 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public class LineImpl extends AbstractLine<Node>{
+public class LineImpl extends AbstractLine {
 	public LineImpl(Node source, Node sink, String id) {
 		super(source, sink, id);
 	}

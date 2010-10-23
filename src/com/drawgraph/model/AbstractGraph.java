@@ -11,7 +11,7 @@ import java.util.HashSet;
 public abstract class AbstractGraph<T extends Node> implements Graph<T>{
 	private String id;
 	private HashSet<T> nodes = new HashSet<T>();
-	private HashSet<Line<T>> lines = new HashSet<Line<T>>();
+	private HashSet<Line> lines = new HashSet<Line>();
 
 	public AbstractGraph(String id) {
 		this.id = id;
@@ -25,7 +25,7 @@ public abstract class AbstractGraph<T extends Node> implements Graph<T>{
 		return nodes;
 	}
 
-	public HashSet<Line<T>> getLines() {
+	public HashSet<Line> getLines() {
 		return lines;
 	}
 }

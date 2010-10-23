@@ -37,11 +37,11 @@ public class LineCallback implements Callback {
 	}
 
 	public void endElement(String name) {
-		//To change body of implemented methods use File | Settings | File Templates.
+
 	}
 
 	public void characters(String chars) {
-		//To change body of implemented methods use File | Settings | File Templates.
+		
 	}
 
 	public Callback getChildCallback() {
@@ -52,16 +52,16 @@ public class LineCallback implements Callback {
 		return parent;
 	}
 
-	public HashSet<Line<Node>> getLines(Map<String, Node> nodes) {
-		HashSet<Line<Node>> lines = new HashSet<Line<Node>>();
+	public HashSet<Line> getLines(Map<String, Node<Node>> nodes) {
+		HashSet<Line> lines = new HashSet<Line>();
 		for (LineSkeleton skeleton : skeletons) {
 			String sourceId = skeleton.getSource();
-			Node source = nodes.get(sourceId);
+			Node<Node> source = nodes.get(sourceId);
 			if (source == null) {
 				throw new IllegalStateException("can't create line - no node with id: " + sourceId);
 			}
 			String targetId = skeleton.getTarget();
-			Node target = nodes.get(targetId);
+			Node<Node> target = nodes.get(targetId);
 			if (target == null) {
 				throw new IllegalStateException("can't create line - no node with id: " + targetId);
 			}

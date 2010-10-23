@@ -26,4 +26,6 @@ public interface GraphScaler {
 
 
 	PositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order);
+
+	void setLayerOffset(int layerOffset);
 }
