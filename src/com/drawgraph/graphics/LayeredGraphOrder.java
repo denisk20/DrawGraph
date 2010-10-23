@@ -12,10 +12,10 @@ import java.util.List;
  *
  * @author denisk
  */
-public interface LayeredGraphOrder extends GraphOrder {
+public interface LayeredGraphOrder<T extends Node> extends GraphOrder {
 	int getLayerLength();
 
-	int getLayersCount();
+	List<List<T>> getLayers(Graph<T> g);
 
-	List<List<Node>> getLayers(Graph g);
+	void setLayerLength(int layerLength);
 }

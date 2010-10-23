@@ -2,6 +2,7 @@ package com.drawgraph.parser.callbacks;
 
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.GraphImpl;
+import com.drawgraph.model.Node;
 import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
@@ -15,7 +16,7 @@ public class GraphMLCallback implements Callback {
 	private GraphCallback graphCallback;
 	private RootCallback parent;
 
-	private Graph graph;
+	private Graph<Node> graph;
 	public GraphMLCallback(RootCallback parent) {
 		graphCallback = new GraphCallback(this);
 		this.parent = parent;
@@ -41,7 +42,7 @@ public class GraphMLCallback implements Callback {
 		return parent;
 	}
 
-	public Graph getGraph() {
+	public Graph<Node> getGraph() {
 		return graph;
 	}
 

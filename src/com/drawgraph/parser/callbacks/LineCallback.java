@@ -52,8 +52,8 @@ public class LineCallback implements Callback {
 		return parent;
 	}
 
-	public HashSet<Line> getLines(Map<String, Node> nodes) {
-		HashSet<Line> lines = new HashSet<Line>();
+	public HashSet<Line<Node>> getLines(Map<String, Node> nodes) {
+		HashSet<Line<Node>> lines = new HashSet<Line<Node>>();
 		for (LineSkeleton skeleton : skeletons) {
 			String sourceId = skeleton.getSource();
 			Node source = nodes.get(sourceId);

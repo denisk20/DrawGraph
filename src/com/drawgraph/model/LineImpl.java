@@ -6,7 +6,7 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public class LineImpl implements Line {
+public class LineImpl implements Line<Node> {
 	private String id;
 	private Node source;
 	private Node sink;

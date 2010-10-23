@@ -81,7 +81,7 @@ public class GraphMLTestUtils {
 		return result;
 	}
 
-	public static Graph parseGraph() throws IOException, SAXException, ParserConfigurationException {
+	public static Graph<Node> parseGraph() throws IOException, SAXException, ParserConfigurationException {
 		return parser.buildGraph(FILE_NAME);
 	}
 

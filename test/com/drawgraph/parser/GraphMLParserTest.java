@@ -4,18 +4,16 @@ import com.drawgraph.GraphMLTestUtils;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Line;
 import com.drawgraph.model.Node;
-import com.drawgraph.model.SimpleNode;
 import com.drawgraph.parser.callbacks.LineCallback;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
+import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 /**
  * Date: Oct 22, 2010
  * Time: 11:55:56 AM
@@ -30,7 +28,7 @@ public class GraphMLParserTest {
 	@Test
 	public void parseGraphMLDocument() throws IOException, SAXException, ParserConfigurationException {
 		System.out.println("Starting test");
-		final Graph graph = GraphMLTestUtils.parseGraph();
+		final Graph<Node> graph = GraphMLTestUtils.parseGraph();
 		assertEquals(GraphMLTestUtils.GRAPH_NAME, graph.getId());
 
 		final HashSet<Node> nodes = graph.getNodes();

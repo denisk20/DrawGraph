@@ -8,10 +8,10 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public class GraphImpl implements Graph {
+public class GraphImpl implements Graph<Node> {
 	private String id;
 	private HashSet<Node> nodes = new HashSet<Node>();
-	private HashSet<Line> lines = new HashSet<Line>();
+	private HashSet<Line<Node>> lines = new HashSet<Line<Node>>();
 
 	public GraphImpl(String id) {
 		this.id = id;
@@ -25,7 +25,7 @@ public class GraphImpl implements Graph {
 		return nodes;
 	}
 
-	public HashSet<Line> getLines() {
+	public HashSet<Line<Node>> getLines() {
 		return lines;
 	}
 }

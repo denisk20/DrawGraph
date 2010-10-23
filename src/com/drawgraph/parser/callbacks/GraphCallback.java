@@ -47,7 +47,7 @@ public class GraphCallback implements Callback{
 		HashSet<Node> nodes = nodeCallback.getNodes();
 		parent.getGraph().getNodes().addAll(nodes);
 		HashMap<String, Node> nodesMap = getMapForNodes(nodes);
-		HashSet<Line> lines = lineCallback.getLines(nodesMap);
+		HashSet<Line<Node>> lines = lineCallback.getLines(nodesMap);
 		parent.getGraph().getLines().addAll(lines);
 	}
 

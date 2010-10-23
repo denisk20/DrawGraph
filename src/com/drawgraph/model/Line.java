@@ -6,9 +6,9 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public interface Line {
+public interface Line<T extends Node> {
 	String getId();
-	Node getSource();
+	T getSource();
 
-	Node getSink();
+	T getSink();
 }

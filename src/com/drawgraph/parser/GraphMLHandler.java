@@ -1,6 +1,7 @@
 package com.drawgraph.parser;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.Node;
 import com.drawgraph.parser.callbacks.Callback;
 import com.drawgraph.parser.callbacks.GraphMLCallback;
 import com.drawgraph.parser.callbacks.RootCallback;
@@ -14,9 +15,9 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author denisk
  */
-public class GraphMLHandler extends DefaultHandler implements GraphAware {
+public class GraphMLHandler extends DefaultHandler implements GraphAware<Node> {
 	private Callback currentCallback;
-	private Graph graph;
+	private Graph<Node> graph;
 
 	public GraphMLHandler() {
 		currentCallback = new RootCallback();
@@ -41,11 +42,11 @@ public class GraphMLHandler extends DefaultHandler implements GraphAware {
 		super.characters(ch, start, length);	
 	}
 
-	public Graph getGraph() {
+	public Graph<Node> getGraph() {
 		return graph;
 	}
 
-	public void setGraph(Graph graph) {
+	public void setGraph(Graph<Node> graph) {
 		this.graph = graph;
 	}
 }

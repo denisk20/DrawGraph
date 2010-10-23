@@ -1,6 +1,7 @@
 package com.drawgraph.parser;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -17,7 +18,7 @@ import javax.xml.parsers.SAXParserFactory;
  * @author denisk
  */
 public class GraphMLParser implements DocumentParser {
-	public Graph buildGraph(String inputFile) throws IOException, SAXException, ParserConfigurationException {
+	public Graph<Node> buildGraph(String inputFile) throws IOException, SAXException, ParserConfigurationException {
 
 		// Create a JAXP "parser factory" for creating SAX parsers
 		SAXParserFactory spf = SAXParserFactory.newInstance();

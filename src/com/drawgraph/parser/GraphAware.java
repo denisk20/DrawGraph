@@ -1,6 +1,7 @@
 package com.drawgraph.parser;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.Node;
 
 /**
  * Date: Oct 22, 2010
@@ -8,8 +9,8 @@ import com.drawgraph.model.Graph;
  *
  * @author denisk
  */
-public interface GraphAware {
-	Graph getGraph();
+public interface GraphAware<T extends Node> {
+	Graph<T> getGraph();
 
-	void setGraph(Graph g);
+	void setGraph(Graph<T> g);
 }

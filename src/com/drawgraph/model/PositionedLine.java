@@ -6,10 +6,5 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public interface PositionedLine extends Line {
-	@Override
-	PositionedNode getSource();
-
-	@Override
-	PositionedNode getSink();
+public interface PositionedLine extends Line<PositionedNode> {
 }

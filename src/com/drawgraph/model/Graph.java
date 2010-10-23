@@ -8,9 +8,9 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public interface Graph {
+public interface Graph<T extends Node> {
 	String getId();
-	HashSet<Node> getNodes();
+	HashSet<T> getNodes();
 
-	HashSet<Line> getLines();
+	HashSet<Line<T>> getLines();
 }
