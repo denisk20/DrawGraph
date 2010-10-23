@@ -25,25 +25,42 @@ import static org.junit.Assert.*;
 public class GraphScalerTest {
 	private GraphScaler scaler = new GraphScalerImpl();
 	private static final int LAYER_LENGTH = 2;
+	private static final int DIST = 25;
+	private static final int TOP_OFF = 40;
+	private static final int LEFT_OFF = 30;
+	private static final int LAYER_OFFSET = 10;
+	private static final int RADIUS = 5;
 
 	@Test
 	public void scale() throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> g =GraphMLTestUtils.parseGraph();
 
-		scaler.setLayerOffset(10);
-		scaler.setLeftOffset(30);
-		scaler.setTopOffset(40);
-		scaler.setMinDistance(5);
+		scaler.setLayerOffset(LAYER_OFFSET);
+		scaler.setLeftOffset(LEFT_OFF);
+		scaler.setTopOffset(TOP_OFF);
+		scaler.setMinDistance(DIST);
 
-		PositionedGraph positionedGraph = scaler.scale(g, new SimpleLayeredGraphOrder(LAYER_LENGTH));
+		SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
+		PositionedGraph positionedGraph = scaler.scale(g, layeredGraphOrder);
+		positionedGraph.setRadius(RADIUS);
+
 		HashSet<PositionedNode> positionedNodes = positionedGraph.getNodes();
-		assertEquals(g.getNodes().size(), positionedNodes.size());
 		HashSet<Line> lines = positionedGraph.getLines();
+
+		assertEquals(g.getNodes().size(), positionedNodes.size());
 		assertEquals(g.getLines().size(), lines.size());
 
 		for (Line line : lines) {
 			assertTrue(positionedNodes.contains(line.getSource()));
 			assertTrue(positionedNodes.contains(line.getSink()));
 		}
+
+		int expectedWidth = scaler.getMinDistance() * (layeredGraphOrder.getLayerLength() - 1) + scaler
+				.getLeftOffset() + positionedGraph.getRadius() / 2;
+		assertEquals(expectedWidth, positionedGraph.getWidth());
+
+		int expectedHeight = scaler.getTopOffset() + scaler.getLayerOffset() * (layeredGraphOrder
+				.getLayersCount() - 1) + positionedGraph.getRadius() / 2;
+		assertEquals(expectedHeight, positionedGraph.getHeight());
 	}
 }

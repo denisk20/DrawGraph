@@ -69,4 +69,24 @@ public class GraphScalerImpl implements GraphScaler{
 
 		return result;
 	}
+
+	@Override
+	public int getMinDistance() {
+		return minDistance;
+	}
+
+	@Override
+	public int getLayerOffset() {
+		return layerOffset;
+	}
+
+	@Override
+	public int getTopOffset() {
+		return topOffset;
+	}
+
+	@Override
+	public int getLeftOffset() {
+		return leftOffset;
+	}
 }

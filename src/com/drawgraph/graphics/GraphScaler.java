@@ -17,8 +17,16 @@ public interface GraphScaler {
 
 	void setLeftOffset(int off);
 
+	void setLayerOffset(int layerOffset);
+
 
 	PositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order);
 
-	void setLayerOffset(int layerOffset);
+	int getMinDistance();
+
+	int getLayerOffset();
+
+	int getTopOffset();
+
+	int getLeftOffset();
 }
