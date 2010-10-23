@@ -5,8 +5,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -23,6 +21,7 @@ public class GraphMLParser implements DocumentParser {
 
 		// Create a JAXP "parser factory" for creating SAX parsers
 		SAXParserFactory spf = SAXParserFactory.newInstance();
+		spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
 		// Configure the parser factory for the type of parsers we require
 		spf.setValidating(false); // No validation required

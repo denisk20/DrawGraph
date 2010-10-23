@@ -10,8 +10,21 @@ import java.util.Set;
  */
 public interface Node {
 	String getId();
+
+	/**
+	 * This method returns immutable collection. For sources
+	 * manipulation please use addSource method
+	 */
 	Set<Node> getSources();
+	/**
+	 * This method returns immutable collection. For sinks
+	 * manipulation please use addSink method
+	 */
 	Set<Node> getSinks();
+
+	void addSource(Node source);
+
+	void addSink(Node sink);
 
 	Set<Node> getNeighbours();
 }

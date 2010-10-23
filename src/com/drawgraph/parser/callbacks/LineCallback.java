@@ -69,6 +69,9 @@ public class LineCallback implements Callback {
 			LineImpl line = new LineImpl(source, target, skeleton.getId());
 
 			lines.add(line);
+
+			source.addSink(target);
+			target.addSource(source);
 		}
 
 		return lines;

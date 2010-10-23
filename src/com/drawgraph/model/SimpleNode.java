@@ -1,5 +1,6 @@
 package com.drawgraph.model;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,13 +24,22 @@ public class SimpleNode implements Node {
 	}
 
 	public Set<Node> getSources() {
-		return sources;
+		return Collections.unmodifiableSet(sources);
 	}
 
 	public Set<Node> getSinks() {
-		return sinks;
+		return Collections.unmodifiableSet(sinks);
 	}
 
+	@Override
+	public void addSource(Node source) {
+		sources.add(source);
+	}
+
+	@Override
+	public void addSink(Node sink) {
+		sinks.add(sink);
+	}
 
 	public Set<Node> getNeighbours() {
 		Set<Node> result = new HashSet<Node>();
@@ -54,22 +64,13 @@ public class SimpleNode implements Node {
 		if (id != null ? !id.equals(that.id) : that.id != null) {
 			return false;
 		}
-		if (sinks != null ? !sinks.equals(that.sinks) : that.sinks != null) {
-			return false;
-		}
-		if (sources != null ? !sources.equals(that.sources) : that.sources != null) {
-			return false;
-		}
 
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = id != null ? id.hashCode() : 0;
-		result = 31 * result + (sources != null ? sources.hashCode() : 0);
-		result = 31 * result + (sinks != null ? sinks.hashCode() : 0);
-		return result;
+		return id != null ? id.hashCode() : 0;
 	}
 
 	@Override
