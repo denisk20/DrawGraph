@@ -43,7 +43,7 @@
 		</copy>
 	</target>
 
-	<target name="runTests" depends="compile, compileTests, copyTestResources">
+	<target name="test" depends="compile, compileTests, copyTestResources">
 		<mkdir dir="${test.reports.dir}"/>
 		<junit printsummary="yes" haltonfailure="yes">
 			<formatter type="plain"/>

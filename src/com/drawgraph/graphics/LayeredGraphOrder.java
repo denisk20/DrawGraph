@@ -16,5 +16,4 @@ public interface LayeredGraphOrder extends GraphOrder {
 
 	int getLayersCount();
 
-	List<List<Node>> getLayers();
 }

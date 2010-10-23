@@ -1,5 +1,8 @@
 package com.drawgraph.graphics;
 
+import com.drawgraph.model.Graph;
+import com.drawgraph.model.PositionedGraph;
+
 /**
  * Date: Oct 22, 2010
  * Time: 5:55:36 PM
@@ -7,9 +10,9 @@ package com.drawgraph.graphics;
  * @author denisk
  */
 public interface GraphScaler {
-	void setCanvasWidth(int width);
+	void setMinDistance(int dist);
 
-	void setCanvasHeight(int height);
+	void setNodeRadius(int r);
 
 
 	void setTopOffset(int off);
@@ -21,8 +24,5 @@ public interface GraphScaler {
 	void setRightOffset(int off);
 
 
-	void setNodeRadius(int r);
-
-
-	PositionedGraph scale();
+	PositionedGraph scale(Graph g, LayeredGraphOrder order);
 }
