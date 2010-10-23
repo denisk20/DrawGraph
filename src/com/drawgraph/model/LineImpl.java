@@ -59,6 +59,6 @@ public class LineImpl implements Line {
 
 	@Override
 	public String toString() {
-		return "LineImpl{" + "source=" + source + ", sink=" + sink + '}';
+		return "LineImpl{id=" +id + "source=" + source.getId() + ", sink=" + sink.getId() + '}';
 	}
 }

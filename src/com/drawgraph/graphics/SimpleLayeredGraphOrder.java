@@ -1,0 +1,57 @@
+package com.drawgraph.graphics;
+
+import com.drawgraph.model.Graph;
+import com.drawgraph.model.Node;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+/**
+ * Date: Oct 23, 2010
+ * Time: 12:44:35 PM
+ *
+ * @author denisk
+ */
+public class SimpleLayeredGraphOrder implements LayeredGraphOrder{
+	private int layerLength;
+
+	public SimpleLayeredGraphOrder() {
+	}
+
+	@Override
+	public int getLayerLength() {
+		return layerLength;
+	}
+
+	public void setLayerLength(int layerLength) {
+		this.layerLength = layerLength;
+	}
+
+	@Override
+	public int getLayersCount() {
+		return 0;
+	}
+	                                                                                                                                                                                                                                                               
+	@Override
+	 public List<List<Node>> getLayers(Graph g) {
+		ArrayList<List<Node>> layers = new ArrayList<List<Node>>();
+		boolean moreNodes = true;
+		Stack<Node> nodeStack = new Stack<Node>();
+		nodeStack.addAll(g.getNodes());
+
+		while(moreNodes) {
+			ArrayList<Node> layer = new ArrayList<Node>();
+			for (int j = 0; j < layerLength; j++) {
+				Node n = nodeStack.pop();
+				layer.add(n);
+			}
+			layers.add(layer);
+			if (nodeStack.isEmpty()) {
+				moreNodes = false;
+			}
+		}
+
+		return layers;
+	}
+}

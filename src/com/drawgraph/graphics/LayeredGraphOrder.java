@@ -1,5 +1,6 @@
 package com.drawgraph.graphics;
 
+import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 
 import java.util.ArrayList;
@@ -16,4 +17,5 @@ public interface LayeredGraphOrder extends GraphOrder {
 
 	int getLayersCount();
 
+	List<List<Node>> getLayers(Graph g);
 }

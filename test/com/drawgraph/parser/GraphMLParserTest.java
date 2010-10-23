@@ -1,5 +1,6 @@
 package com.drawgraph.parser;
 
+import com.drawgraph.GraphMLTestUtils;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Line;
 import com.drawgraph.model.Node;
@@ -22,56 +23,21 @@ import static org.junit.Assert.*;
  * @author denisk
  */
 public class GraphMLParserTest {
-	private final static String FILE_NAME = "test.graphml";
-	private final static String N_0 = "n0";
-	private final static String N_1 = "n1";
-	private final static String N_2 = "n2";
-	private final static String N_3 = "n3";
-
-	private final static String E_0 = "e0";
-	private final static String E_1 = "e1";
-	private final static String E_2 = "e2";
-	private final static String E_3 = "e3";
-	private final static String E_4 = "e4";
-	private final static String E_5 = "e5";
-
-
-	private final static String GRAPH_NAME = "Test Graph";
-
-
-	private final static String[] NODES = {"n0", "n1", "n2", "n3", "n4"};
-	private final static String[][] LINES = {
-			{"e0", "n3", "n0"},
-			{"e1", "n1", "n2"},
-			{"e2", "n3", "n1"},
-			{"e3", "n0", "n2"},
-			{"e4", "n1", "n0"},
-			{"e5", "n2", "n3"},
-	};
-
-	HashSet<String> NODES_SET = new HashSet<String>(Arrays.asList(NODES));
-	HashSet<LineCallback.LineSkeleton> LINES_SET = new HashSet<LineCallback.LineSkeleton>();
-	private GraphMLParser testable = new GraphMLParser();
-
 
 	public GraphMLParserTest() {
-		for (String[] line : LINES) {
-			LineCallback.LineSkeleton skeleton = new LineCallback.LineSkeleton(line[0], line[1], line[2]);
-			LINES_SET.add(skeleton);
-		}
 	}
 
 	@Test
 	public void parseGraphMLDocument() throws IOException, SAXException, ParserConfigurationException {
 		System.out.println("Starting test");
-		final Graph graph = testable.buildGraph(FILE_NAME);
-		assertEquals(GRAPH_NAME, graph.getId());
+		final Graph graph = GraphMLTestUtils.parseGraph();
+		assertEquals(GraphMLTestUtils.GRAPH_NAME, graph.getId());
 
 		final HashSet<Node> nodes = graph.getNodes();
 		for (Node n : nodes) {
-			assertTrue(NODES_SET.contains(n.getId()));
-			HashSet<Node> sources = getSourcesForNode(n);
-			HashSet<Node> sinks = getSinksForNode(n);
+			assertTrue(GraphMLTestUtils.NODES_SET.contains(n.getId()));
+			HashSet<Node> sources = GraphMLTestUtils.getSourcesForNode(n);
+			HashSet<Node> sinks = GraphMLTestUtils.getSinksForNode(n);
 
 			assertEquals(sources, n.getSources());
 			assertEquals((sinks), n.getSinks());
@@ -87,33 +53,7 @@ public class GraphMLParserTest {
 			LineCallback.LineSkeleton skeleton =
 					new LineCallback.LineSkeleton(id, source, sink);
 
-			assertTrue(LINES_SET.contains(skeleton));
+			assertTrue(GraphMLTestUtils.LINES_SET.contains(skeleton));
 		}
-
-
-	}
-
-	private HashSet<Node> getSourcesForNode(Node n) {
-		String id = n.getId();
-		HashSet<Node> result = new HashSet<Node>();
-		for (LineCallback.LineSkeleton skeleton : LINES_SET) {
-			if (skeleton.getTarget().equals(id)) {
-				result.add(new SimpleNode(skeleton.getSource()));
-			}
-		}
-
-		return result;
-	}
-
-	private HashSet<Node> getSinksForNode(Node n) {
-		String id = n.getId();
-		HashSet<Node> result = new HashSet<Node>();
-		for (LineCallback.LineSkeleton skeleton : LINES_SET) {
-			if (skeleton.getSource().equals(id)) {
-				result.add(new SimpleNode(skeleton.getTarget()));
-			}
-		}
-
-		return result;
 	}
 }

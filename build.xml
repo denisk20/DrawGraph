@@ -54,7 +54,9 @@
 			</classpath>
 
 			<batchtest fork="yes" todir="${test.reports.dir}">
-				<fileset dir="${test.dist.dir}"/>
+				<fileset dir="${test.dist.dir}">
+					<exclude name="**/*Util*"/>
+				</fileset>
 			</batchtest>
 		</junit>
 	</target>
