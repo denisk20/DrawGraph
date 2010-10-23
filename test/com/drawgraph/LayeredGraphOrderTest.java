@@ -22,10 +22,12 @@ import static org.junit.Assert.assertEquals;
  * @author denisk
  */
 public class LayeredGraphOrderTest {
-	private SimpleLayeredGraphOrder testable = new SimpleLayeredGraphOrder();
 	private static final int NODES_COUNT = 10;
+	private static final int REAL_GRAPH_EXPECTED_LAYERS_COUNT = 2;
 	private static final int LAYER_LENGTH = 2;
 	private static final int EXPECTED_LAYERS_COUNT = 5;
+
+	private SimpleLayeredGraphOrder testable = new SimpleLayeredGraphOrder(LAYER_LENGTH);
 
 	@Test
 	public void testSimpleLayeredGraphOrder() throws IOException, SAXException, ParserConfigurationException {
@@ -36,6 +38,14 @@ public class LayeredGraphOrderTest {
 
 		List<List<Node>> layers = testable.getLayers(g);
 		assertEquals(EXPECTED_LAYERS_COUNT, layers.size());
+	}
+
+	@Test
+	public void realGraph() throws IOException, SAXException, ParserConfigurationException {
+		Graph<Node> g = GraphMLTestUtils.parseGraph();
+		testable.setLayerLength(LAYER_LENGTH);
+		List<List<Node>> layers = testable.getLayers(g);
+		assertEquals(REAL_GRAPH_EXPECTED_LAYERS_COUNT, layers.size());
 	}
 
 	private ArrayList<Node> createNodes(int count) {

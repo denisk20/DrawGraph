@@ -13,16 +13,9 @@ import com.drawgraph.model.PositionedGraph;
 public interface GraphScaler {
 	void setMinDistance(int dist);
 
-	void setNodeRadius(int r);
-
-
 	void setTopOffset(int off);
 
-	void setBottomOffset(int off);
-
 	void setLeftOffset(int off);
-
-	void setRightOffset(int off);
 
 
 	PositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order);

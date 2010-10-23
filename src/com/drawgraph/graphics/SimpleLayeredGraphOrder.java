@@ -16,7 +16,8 @@ import java.util.Stack;
 public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node>{
 	private int layerLength;
 
-	public SimpleLayeredGraphOrder() {
+	public SimpleLayeredGraphOrder(int layerLength) {
+		this.layerLength = layerLength;
 	}
 
 	@Override
@@ -31,6 +32,7 @@ public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node>{
 
 	@Override
 	 public List<List<Node>> getLayers(Graph<Node> g) {
+
 		ArrayList<List<Node>> layers = new ArrayList<List<Node>>();
 		boolean moreNodes = true;
 		Stack<Node> nodeStack = new Stack<Node>();

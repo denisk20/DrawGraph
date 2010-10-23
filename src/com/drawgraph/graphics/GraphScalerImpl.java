@@ -18,13 +18,10 @@ import java.util.List;
  */
 public class GraphScalerImpl implements GraphScaler{
 	private int minDistance;
-	private int nodeRadius;
+	private int layerOffset;
 
 	private int topOffset;
-	private int bottomOffset;
 	private int leftOffset;
-	private int rightOffset;
-	private int layerOffset;
 
 	@Override
 	public void setMinDistance(int dist) {
@@ -37,28 +34,13 @@ public class GraphScalerImpl implements GraphScaler{
 	}
 
 	@Override
-	public void setNodeRadius(int r) {
-		nodeRadius = r;
-	}
-
-	@Override
 	public void setTopOffset(int off) {
 		topOffset = off;
 	}
 
 	@Override
-	public void setBottomOffset(int off) {
-		bottomOffset = off;
-	}
-
-	@Override
 	public void setLeftOffset(int off) {
 		leftOffset = off;
-	}
-
-	@Override
-	public void setRightOffset(int off) {
-		rightOffset = off;
 	}
 
 	@Override
