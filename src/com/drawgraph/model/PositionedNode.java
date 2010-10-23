@@ -6,7 +6,7 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public interface PositionedNode extends Node {
+public interface PositionedNode extends Node<PositionedNode> {
 	int getX();
 
 	int getY();

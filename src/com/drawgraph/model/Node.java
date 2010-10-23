@@ -8,23 +8,23 @@ import java.util.Set;
  *
  * @author denisk
  */
-public interface Node {
+public interface Node<T extends Node> {
 	String getId();
 
 	/**
 	 * This method returns immutable collection. For sources
 	 * manipulation please use addSource method
 	 */
-	Set<Node> getSources();
+	Set<T> getSources();
 	/**
 	 * This method returns immutable collection. For sinks
 	 * manipulation please use addSink method
 	 */
-	Set<Node> getSinks();
+	Set<T> getSinks();
 
-	void addSource(Node source);
+	void addSource(T source);
 
-	void addSink(Node sink);
+	void addSink(T sink);
 
-	Set<Node> getNeighbours();
+	Set<T> getNeighbours();
 }

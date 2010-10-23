@@ -1,6 +1,7 @@
 package com.drawgraph.graphics;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedGraph;
 
 /**
@@ -24,5 +25,5 @@ public interface GraphScaler {
 	void setRightOffset(int off);
 
 
-	PositionedGraph scale(Graph g, LayeredGraphOrder order);
+	PositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order);
 }

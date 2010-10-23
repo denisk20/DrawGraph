@@ -29,7 +29,7 @@ public class LayeredGraphOrderTest {
 
 	@Test
 	public void testSimpleLayeredGraphOrder() throws IOException, SAXException, ParserConfigurationException {
-		Graph g = new GraphImpl("test graph");
+		Graph<Node> g = new GraphImpl("test graph");
 		g.getNodes().addAll(createNodes(NODES_COUNT));
 
 		testable.setLayerLength(LAYER_LENGTH);

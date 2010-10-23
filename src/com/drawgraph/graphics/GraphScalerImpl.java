@@ -3,7 +3,11 @@ package com.drawgraph.graphics;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedGraph;
+import com.drawgraph.model.PositionedLine;
+import com.drawgraph.model.PositionedNode;
+import com.drawgraph.model.PositionedNodeImpl;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -52,8 +56,17 @@ public class GraphScalerImpl implements GraphScaler{
 	}
 
 	@Override
-	public PositionedGraph scale(Graph g, LayeredGraphOrder order) {
+	public PositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order) {
 		final List<List<Node>> layers = order.getLayers(g);
+
+		HashSet<PositionedNode> positionedNodes = new HashSet<PositionedNode>();
+		HashSet<PositionedLine> positionedLines = new HashSet<PositionedLine>();
+
+		int curX = leftOffset;
+		int curY = topOffset;
+		for (List<Node> layer : layers) {
+//			PositionedNode positionedNode = new PositionedNodeImpl();
+		}
 		return null;
 	}
 }
