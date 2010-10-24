@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.drawgraph.graphics.DrawGraphUI">
   <grid id="6a6fe" binding="rootPanel" layout-manager="FormLayout">
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:45px:noGrow"/>
     <rowspec value="top:8px:noGrow"/>
     <rowspec value="center:d:grow"/>
+    <colspec value="fill:max(d;4px):noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
     <colspec value="center:d:grow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="center:210px:grow"/>
     <colspec value="left:d:grow"/>
     <constraints>
-      <xy x="23" y="15" width="829" height="530"/>
+      <xy x="23" y="15" width="829" height="598"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <grid id="b1076" binding="mainPanel" layout-manager="FormLayout">
         <rowspec value="center:d:grow"/>
+        <rowspec value="top:5dlu:noGrow"/>
+        <rowspec value="center:max(d;160px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="center:150px:noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
         <colspec value="center:d:grow"/>
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="2" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -39,9 +49,9 @@
               </component>
             </children>
           </scrollpane>
-          <scrollpane id="4b37b">
+          <scrollpane id="4b37b" binding="canvasScrollPane">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="3" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
@@ -59,6 +69,98 @@
               </grid>
             </children>
           </scrollpane>
+          <grid id="dac1a" binding="optionsPane" layout-manager="FormLayout">
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:21px:noGrow"/>
+            <rowspec value="top:2dlu:noGrow"/>
+            <rowspec value="center:21px:noGrow"/>
+            <rowspec value="top:2dlu:noGrow"/>
+            <rowspec value="center:21px:noGrow"/>
+            <rowspec value="top:2dlu:noGrow"/>
+            <rowspec value="center:21px:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:1dlu:noGrow"/>
+            <colspec value="fill:81px:noGrow"/>
+            <colspec value="fill:6px:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:2dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties>
+              <background color="-10027060"/>
+            </properties>
+            <border type="bevel-raised"/>
+            <children>
+              <component id="455f0" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Distance"/>
+                </properties>
+              </component>
+              <component id="cdccf" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Node radius"/>
+                </properties>
+              </component>
+              <component id="e150e" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Left offset"/>
+                </properties>
+              </component>
+              <component id="efce6" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Top offset"/>
+                </properties>
+              </component>
+              <component id="d9d69" class="javax.swing.JSpinner" binding="spinner1" default-binding="true">
+                <constraints>
+                  <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="2a7e8" class="javax.swing.JSpinner" binding="spinner2" default-binding="true">
+                <constraints>
+                  <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="aa929" class="javax.swing.JSpinner" binding="spinner3" default-binding="true">
+                <constraints>
+                  <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="105ae" class="javax.swing.JSpinner" binding="spinner4" default-binding="true">
+                <constraints>
+                  <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
       <grid id="9166e" binding="tweakPanel" layout-manager="FormLayout">
@@ -74,7 +176,7 @@
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="2" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties>
@@ -84,7 +186,7 @@
         <children>
           <grid id="93951" layout-manager="FormLayout">
             <rowspec value="center:35px:noGrow"/>
-            <colspec value="fill:60px:noGrow"/>
+            <colspec value="fill:80px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:185px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
@@ -99,6 +201,7 @@
             </constraints>
             <properties>
               <background color="-3355393"/>
+              <opaque value="false"/>
             </properties>
             <border type="none"/>
             <children>
@@ -117,7 +220,8 @@
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
-                  <text value="Barycenter"/>
+                  <opaque value="false"/>
+                  <text value="&amp;Barycenter"/>
                 </properties>
               </component>
               <component id="e41d" class="javax.swing.JRadioButton" binding="medianRadioButton" default-binding="true">
@@ -126,7 +230,8 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Median"/>
+                  <opaque value="false"/>
+                  <text value="&amp;Median"/>
                 </properties>
               </component>
               <component id="69232" class="javax.swing.JSlider" binding="layerLengthSlider">
@@ -134,7 +239,9 @@
                   <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <opaque value="false"/>
+                </properties>
               </component>
               <component id="b0b50" class="javax.swing.JLabel">
                 <constraints>
@@ -157,4 +264,7 @@
       <member id="e41d"/>
     </group>
   </buttonGroups>
+  <inspectionSuppressions>
+    <suppress inspection="NoLabelFor"/>
+  </inspectionSuppressions>
 </form>

@@ -32,6 +32,12 @@ public class DrawGraphUI {
 	private JRadioButton medianRadioButton;
 	private JSlider layerLengthSlider;
 	private JPanel canvasPanel;
+	private JPanel optionsPane;
+	private JScrollPane canvasScrollPane;
+	private JSpinner spinner1;
+	private JSpinner spinner2;
+	private JSpinner spinner3;
+	private JSpinner spinner4;
 
 	private LayeredPositionedGraph layeredPositionedGraph;
 	private SimpleGraphDrawer drawer;
@@ -80,7 +86,6 @@ public class DrawGraphUI {
 		chooseFileList.setModel(listModel);
 		layeredPositionedGraph = parseGraph();
 		drawer = new SimpleGraphDrawer();
-
 	}
 
 
@@ -116,43 +121,78 @@ public class DrawGraphUI {
 		createUIComponents();
 		rootPanel = new JPanel();
 		rootPanel
-				.setLayout(new FormLayout("center:d:grow,left:4dlu:noGrow,center:210px:grow,left:d:grow", "center:45px:noGrow,top:8px:noGrow,center:d:grow"));
+				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,center:d:grow,left:4dlu:noGrow,center:210px:grow,left:d:grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:45px:noGrow,top:8px:noGrow,center:d:grow"));
 		mainPanel = new JPanel();
-		mainPanel.setLayout(new FormLayout("center:150px:noGrow,center:d:grow", "center:d:grow"));
+		mainPanel
+				.setLayout(new FormLayout("center:150px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,center:d:grow", "center:d:grow,top:5dlu:noGrow,center:max(d;160px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
 		CellConstraints cc = new CellConstraints();
-		rootPanel.add(mainPanel, cc.xyw(1, 3, 4, CellConstraints.FILL, CellConstraints.FILL));
+		rootPanel.add(mainPanel, cc.xyw(3, 5, 4, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileScrollPanel = new JScrollPane();
 		mainPanel.add(chooseFileScrollPanel, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileList = new JList();
 		chooseFileScrollPanel.setViewportView(chooseFileList);
-		final JScrollPane scrollPane1 = new JScrollPane();
-		mainPanel.add(scrollPane1, cc.xy(2, 1, CellConstraints.FILL, CellConstraints.FILL));
+		canvasScrollPane = new JScrollPane();
+		mainPanel.add(canvasScrollPane, cc.xywh(4, 1, 1, 3, CellConstraints.FILL, CellConstraints.FILL));
 		canvasPanel.setBackground(new Color(-52378));
-		scrollPane1.setViewportView(canvasPanel);
+		canvasScrollPane.setViewportView(canvasPanel);
+		optionsPane = new JPanel();
+		optionsPane
+				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:1dlu:noGrow,fill:81px:noGrow,fill:6px:noGrow,fill:d:grow,left:2dlu:noGrow,fill:max(d;4px):noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow"));
+		optionsPane.setBackground(new Color(-10027060));
+		mainPanel.add(optionsPane, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
+		optionsPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), null));
+		final JLabel label1 = new JLabel();
+		label1.setText("Distance");
+		optionsPane.add(label1, cc.xy(3, 3));
+		final JLabel label2 = new JLabel();
+		label2.setText("Node radius");
+		optionsPane.add(label2, cc.xy(3, 5));
+		final JLabel label3 = new JLabel();
+		label3.setText("Left offset");
+		optionsPane.add(label3, cc.xy(3, 7));
+		final JLabel label4 = new JLabel();
+		label4.setText("Top offset");
+		optionsPane.add(label4, cc.xy(3, 9));
+		spinner1 = new JSpinner();
+		optionsPane.add(spinner1, cc.xy(5, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+		spinner2 = new JSpinner();
+		optionsPane.add(spinner2, cc.xy(5, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+		spinner3 = new JSpinner();
+		optionsPane.add(spinner3, cc.xy(5, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
+		spinner4 = new JSpinner();
+		optionsPane.add(spinner4, cc.xy(5, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tweakPanel = new JPanel();
 		tweakPanel
 				.setLayout(new FormLayout("fill:d:noGrow,fill:60px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:35px:noGrow"));
 		tweakPanel.setBackground(new Color(-3342388));
-		rootPanel.add(tweakPanel, cc.xyw(1, 1, 4, CellConstraints.FILL, CellConstraints.FILL));
+		rootPanel.add(tweakPanel, cc.xyw(3, 3, 4, CellConstraints.FILL, CellConstraints.FILL));
 		tweakPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
 		final JPanel panel1 = new JPanel();
-		panel1.setLayout(new FormLayout("fill:60px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:35px:noGrow"));
+		panel1.setLayout(new FormLayout("fill:80px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:35px:noGrow"));
 		panel1.setBackground(new Color(-3355393));
+		panel1.setOpaque(false);
 		tweakPanel.add(panel1, cc.xyw(2, 1, 9, CellConstraints.DEFAULT, CellConstraints.FILL));
 		directoryChooseButton = new JButton();
 		directoryChooseButton.setText("Folder");
 		panel1.add(directoryChooseButton, cc.xy(1, 1));
 		barycenterRadioButton = new JRadioButton();
+		barycenterRadioButton.setOpaque(false);
 		barycenterRadioButton.setText("Barycenter");
+		barycenterRadioButton.setMnemonic('B');
+		barycenterRadioButton.setDisplayedMnemonicIndex(0);
 		panel1.add(barycenterRadioButton, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		medianRadioButton = new JRadioButton();
+		medianRadioButton.setOpaque(false);
 		medianRadioButton.setText("Median");
+		medianRadioButton.setMnemonic('M');
+		medianRadioButton.setDisplayedMnemonicIndex(0);
 		panel1.add(medianRadioButton, cc.xy(5, 1));
 		layerLengthSlider = new JSlider();
+		layerLengthSlider.setOpaque(false);
 		panel1.add(layerLengthSlider, cc.xy(9, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final JLabel label1 = new JLabel();
-		label1.setText("Layer length:");
-		panel1.add(label1, cc.xy(7, 1));
+		final JLabel label5 = new JLabel();
+		label5.setText("Layer length:");
+		panel1.add(label5, cc.xy(7, 1));
 		ButtonGroup buttonGroup;
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(barycenterRadioButton);
