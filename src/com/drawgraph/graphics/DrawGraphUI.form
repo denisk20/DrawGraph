@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.drawgraph.graphics.DrawGraphUI">
   <grid id="6a6fe" binding="rootPanel" layout-manager="FormLayout">
-    <rowspec value="center:36px:noGrow"/>
+    <rowspec value="center:45px:noGrow"/>
     <rowspec value="top:8px:noGrow"/>
     <rowspec value="center:d:grow"/>
     <colspec value="center:d:grow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="center:210px:grow"/>
+    <colspec value="left:d:grow"/>
     <constraints>
-      <xy x="23" y="15" width="482" height="354"/>
+      <xy x="23" y="15" width="829" height="530"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -16,7 +19,7 @@
         <colspec value="center:150px:noGrow"/>
         <colspec value="center:d:grow"/>
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -52,18 +55,99 @@
         </children>
       </grid>
       <grid id="9166e" binding="tweakPanel" layout-manager="FormLayout">
-        <rowspec value="center:d:grow"/>
+        <rowspec value="center:35px:noGrow"/>
+        <colspec value="fill:d:noGrow"/>
+        <colspec value="fill:60px:noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:185px:noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:185px:noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:80px:noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms top="5" left="5" bottom="0" right="5" defaultalign-horz="false" defaultalign-vert="false"/>
+          <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties>
           <background color="-3342388"/>
         </properties>
         <border type="bevel-lowered"/>
-        <children/>
+        <children>
+          <grid id="93951" layout-manager="FormLayout">
+            <rowspec value="center:35px:noGrow"/>
+            <colspec value="fill:60px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:185px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:185px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:80px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-vert="false"/>
+            </constraints>
+            <properties>
+              <background color="-3355393"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="ea951" class="javax.swing.JButton" binding="directoryChooseButton">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Folder"/>
+                </properties>
+              </component>
+              <component id="17908" class="javax.swing.JRadioButton" binding="barycenterRadioButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="Barycenter"/>
+                </properties>
+              </component>
+              <component id="e41d" class="javax.swing.JRadioButton" binding="medianRadioButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Median"/>
+                </properties>
+              </component>
+              <component id="69232" class="javax.swing.JSlider" binding="layerLengthSlider">
+                <constraints>
+                  <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="b0b50" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Layer length:"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
       </grid>
     </children>
   </grid>
+  <buttonGroups>
+    <group name="crossingReductionAlgotithmsGroup">
+      <member id="17908"/>
+      <member id="e41d"/>
+    </group>
+  </buttonGroups>
 </form>

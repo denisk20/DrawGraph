@@ -17,10 +17,15 @@ public class DrawGraphUI {
 	private JList chooseFileList;
 	//	private JSplitPane verticalSplit;
 	private JScrollPane chooseFileScrollPanel;
-	private JPanel canvasPanel;
 	private JPanel rootPanel;
 	private JPanel mainPanel;
 	private JPanel tweakPanel;
+	private JButton directoryChooseButton;
+	private JRadioButton barycenterRadioButton;
+	private JRadioButton medianRadioButton;
+	private JSlider layerLengthSlider;
+	private JPanel canvasPanel;
+	private JScrollPane canvasScrollPanel;
 
 
 	public static void main(String[] args) {
@@ -71,11 +76,12 @@ public class DrawGraphUI {
 	 */
 	private void $$$setupUI$$$() {
 		rootPanel = new JPanel();
-		rootPanel.setLayout(new FormLayout("center:d:grow", "center:36px:noGrow,top:8px:noGrow,center:d:grow"));
+		rootPanel
+				.setLayout(new FormLayout("center:d:grow,left:4dlu:noGrow,center:210px:grow,left:d:grow", "center:45px:noGrow,top:8px:noGrow,center:d:grow"));
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new FormLayout("center:150px:noGrow,center:d:grow", "center:d:grow"));
 		CellConstraints cc = new CellConstraints();
-		rootPanel.add(mainPanel, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
+		rootPanel.add(mainPanel, cc.xyw(1, 3, 4, CellConstraints.FILL, CellConstraints.FILL));
 		canvasPanel = new JPanel();
 		canvasPanel.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
 		canvasPanel.setBackground(new Color(-52378));
@@ -85,11 +91,33 @@ public class DrawGraphUI {
 		chooseFileList = new JList();
 		chooseFileScrollPanel.setViewportView(chooseFileList);
 		tweakPanel = new JPanel();
-		tweakPanel.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+		tweakPanel
+				.setLayout(new FormLayout("fill:d:noGrow,fill:60px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:35px:noGrow"));
 		tweakPanel.setBackground(new Color(-3342388));
-		rootPanel
-				.add(tweakPanel, new CellConstraints(1, 1, 1, 1, CellConstraints.FILL, CellConstraints.FILL, new Insets(5, 5, 0, 5)));
+		rootPanel.add(tweakPanel, cc.xyw(1, 1, 4, CellConstraints.FILL, CellConstraints.FILL));
 		tweakPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
+		final JPanel panel1 = new JPanel();
+		panel1.setLayout(new FormLayout("fill:60px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:35px:noGrow"));
+		panel1.setBackground(new Color(-3355393));
+		tweakPanel.add(panel1, cc.xyw(2, 1, 9, CellConstraints.DEFAULT, CellConstraints.FILL));
+		directoryChooseButton = new JButton();
+		directoryChooseButton.setText("Folder");
+		panel1.add(directoryChooseButton, cc.xy(1, 1));
+		barycenterRadioButton = new JRadioButton();
+		barycenterRadioButton.setText("Barycenter");
+		panel1.add(barycenterRadioButton, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		medianRadioButton = new JRadioButton();
+		medianRadioButton.setText("Median");
+		panel1.add(medianRadioButton, cc.xy(5, 1));
+		layerLengthSlider = new JSlider();
+		panel1.add(layerLengthSlider, cc.xy(9, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final JLabel label1 = new JLabel();
+		label1.setText("Layer length:");
+		panel1.add(label1, cc.xy(7, 1));
+		ButtonGroup buttonGroup;
+		buttonGroup = new ButtonGroup();
+		buttonGroup.add(barycenterRadioButton);
+		buttonGroup.add(medianRadioButton);
 	}
 
 	/** @noinspection ALL */
