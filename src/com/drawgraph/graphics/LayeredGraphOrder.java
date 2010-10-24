@@ -3,7 +3,6 @@ package com.drawgraph.graphics;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

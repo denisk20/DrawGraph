@@ -8,7 +8,7 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public abstract class AbstractGraph<T extends Node> implements Graph<T>{
+public abstract class AbstractGraph<T extends Node> implements Graph<T> {
 	private String id;
 	private HashSet<T> nodes = new HashSet<T>();
 	private HashSet<Line> lines = new HashSet<Line>();

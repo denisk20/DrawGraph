@@ -8,6 +8,7 @@ package com.drawgraph.model;
  */
 public interface PositionedGraph extends Graph<PositionedNode> {
 	void setRadius(int r);
+
 	int getWidth();
 
 	int getHeight();

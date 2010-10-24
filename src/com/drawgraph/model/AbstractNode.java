@@ -10,8 +10,8 @@ import java.util.Set;
  *
  * @author denisk
  */
-public abstract class AbstractNode<T extends Node> implements Node<T>{
-		private String id;
+public abstract class AbstractNode<T extends Node> implements Node<T> {
+	private String id;
 	private HashSet<T> sources = new HashSet<T>();
 	private HashSet<T> sinks = new HashSet<T>();
 
@@ -77,5 +77,4 @@ public abstract class AbstractNode<T extends Node> implements Node<T>{
 	public String toString() {
 		return "SimpleNode{" + "id='" + id + '\'' + '}';
 	}
-
 }

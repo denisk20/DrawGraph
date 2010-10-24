@@ -10,6 +10,7 @@ import java.util.HashSet;
  */
 public interface Graph<T extends Node> {
 	String getId();
+
 	HashSet<T> getNodes();
 
 	HashSet<Line> getLines();

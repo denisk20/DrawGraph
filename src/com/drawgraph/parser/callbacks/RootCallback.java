@@ -35,6 +35,7 @@ public class RootCallback implements Callback {
 	public Callback getParentCallback() {
 		return null;  //To change body of implemented methods use File | Settings | File Templates.
 	}
+
 	public void postEndElement(GraphAware graphAware) {
 
 	}

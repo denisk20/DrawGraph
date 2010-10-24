@@ -10,5 +10,4 @@ public interface DrawableNode {
 	int getX();
 
 	int getY();
-	
 }

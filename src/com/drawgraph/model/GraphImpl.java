@@ -1,7 +1,5 @@
 package com.drawgraph.model;
 
-import java.util.HashSet;
-
 /**
  * Date: Oct 21, 2010
  * Time: 10:26:29 PM

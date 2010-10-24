@@ -41,7 +41,7 @@ public class LineCallback implements Callback {
 	}
 
 	public void characters(String chars) {
-		
+
 	}
 
 	public Callback getChildCallback() {

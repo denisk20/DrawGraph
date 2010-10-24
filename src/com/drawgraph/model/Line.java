@@ -8,6 +8,7 @@ package com.drawgraph.model;
  */
 public interface Line {
 	String getId();
+
 	Node getSource();
 
 	Node getSink();

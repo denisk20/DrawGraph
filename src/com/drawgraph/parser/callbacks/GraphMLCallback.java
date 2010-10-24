@@ -17,6 +17,7 @@ public class GraphMLCallback implements Callback {
 	private RootCallback parent;
 
 	private Graph<Node> graph;
+
 	public GraphMLCallback(RootCallback parent) {
 		graphCallback = new GraphCallback(this);
 		this.parent = parent;
@@ -49,5 +50,4 @@ public class GraphMLCallback implements Callback {
 	public void postEndElement(GraphAware<Node> graphAware) {
 		graphAware.setGraph(graph);
 	}
-
 }

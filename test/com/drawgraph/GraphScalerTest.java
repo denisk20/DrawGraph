@@ -4,6 +4,7 @@ import com.drawgraph.graphics.GraphScaler;
 import com.drawgraph.graphics.GraphScalerImpl;
 import com.drawgraph.graphics.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Line;
 import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedGraph;
@@ -13,6 +14,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.Assert.*;
@@ -41,13 +43,14 @@ public class GraphScalerTest {
 		scaler.setMinDistance(DIST);
 
 		SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
-		PositionedGraph positionedGraph = scaler.scale(g, layeredGraphOrder);
+		LayeredPositionedGraph positionedGraph = scaler.scale(g, layeredGraphOrder);
 		positionedGraph.setRadius(RADIUS);
 
 		HashSet<PositionedNode> positionedNodes = positionedGraph.getNodes();
 		HashSet<Line> lines = positionedGraph.getLines();
 
-		assertEquals(g.getNodes().size(), positionedNodes.size());
+		int nodesCount = g.getNodes().size();
+		assertEquals(nodesCount, positionedNodes.size());
 		assertEquals(g.getLines().size(), lines.size());
 
 		for (Line line : lines) {
@@ -62,5 +65,13 @@ public class GraphScalerTest {
 		int expectedHeight = scaler.getTopOffset() + scaler.getLayerOffset() * (layeredGraphOrder
 				.getLayersCount() - 1) + positionedGraph.getRadius() / 2;
 		assertEquals(expectedHeight, positionedGraph.getHeight());
+
+		List<List<PositionedNode>> layers = positionedGraph.getLayers();
+		int expectedLayersCount = (int)(nodesCount / (double)LAYER_LENGTH);
+		assertEquals(expectedLayersCount, layers.size());
+
+		for (List<PositionedNode> layer : layers) {
+			assertEquals(LAYER_LENGTH, layer.size());
+		}
 	}
 }

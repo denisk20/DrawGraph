@@ -3,7 +3,6 @@ package com.drawgraph.parser;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 import com.drawgraph.parser.callbacks.Callback;
-import com.drawgraph.parser.callbacks.GraphMLCallback;
 import com.drawgraph.parser.callbacks.RootCallback;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -33,13 +32,13 @@ public class GraphMLHandler extends DefaultHandler implements GraphAware<Node> {
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		currentCallback.endElement(qName);
 		currentCallback.postEndElement(this);
-		
+
 		currentCallback = currentCallback.getParentCallback();
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		super.characters(ch, start, length);	
+		super.characters(ch, start, length);
 	}
 
 	public Graph<Node> getGraph() {

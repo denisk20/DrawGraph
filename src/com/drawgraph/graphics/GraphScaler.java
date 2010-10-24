@@ -1,8 +1,8 @@
 package com.drawgraph.graphics;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;
-import com.drawgraph.model.PositionedGraph;
 
 /**
  * Date: Oct 22, 2010
@@ -20,7 +20,7 @@ public interface GraphScaler {
 	void setLayerOffset(int layerOffset);
 
 
-	PositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order);
+	LayeredPositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order);
 
 	int getMinDistance();
 

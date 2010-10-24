@@ -1,7 +1,5 @@
 package com.drawgraph.model;
 
-import java.util.HashSet;
-
 /**
  * Date: Oct 23, 2010
  * Time: 7:37:24 PM
@@ -10,13 +8,14 @@ import java.util.HashSet;
  */
 public class PositionedGraphImpl extends AbstractGraph<PositionedNode> implements PositionedGraph {
 	private int nodeRadius;
+
 	public PositionedGraphImpl(String id) {
 		super(id);
 	}
 
 	@Override
 	public void setRadius(int r) {
-		this.nodeRadius  = r;
+		this.nodeRadius = r;
 	}
 
 	@Override
@@ -29,7 +28,7 @@ public class PositionedGraphImpl extends AbstractGraph<PositionedNode> implement
 			}
 		}
 
-		return width + nodeRadius/2;
+		return width + nodeRadius / 2;
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class PositionedGraphImpl extends AbstractGraph<PositionedNode> implement
 			}
 		}
 
-		return height + nodeRadius/2;
+		return height + nodeRadius / 2;
 	}
 
 	@Override

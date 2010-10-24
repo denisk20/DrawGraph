@@ -1,12 +1,13 @@
 package com.drawgraph.graphics;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredPositionedGraph;
+import com.drawgraph.model.LayeredPositionedGraphImpl;
 import com.drawgraph.model.Node;
-import com.drawgraph.model.PositionedGraph;
-import com.drawgraph.model.PositionedGraphImpl;
 import com.drawgraph.model.PositionedNode;
 import com.drawgraph.model.PositionedNodeImpl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
  *
  * @author denisk
  */
-public class GraphScalerImpl implements GraphScaler{
+public class GraphScalerImpl implements GraphScaler {
 	private int minDistance;
 	private int layerOffset;
 
@@ -44,25 +45,31 @@ public class GraphScalerImpl implements GraphScaler{
 	}
 
 	@Override
-	public PositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order) {
+	public LayeredPositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order) {
 		final List<List<Node>> layers = order.getLayers(g);
 
 		HashSet<PositionedNode> positionedNodes = new HashSet<PositionedNode>();
 
-		PositionedGraph result = new PositionedGraphImpl(g.getId());
+		List<List<PositionedNode>> positionedLayers = new ArrayList<List<PositionedNode>>();
 		int curX = leftOffset;
 		int curY = topOffset;
 		for (List<Node> layer : layers) {
+			List<PositionedNode> positionedLayer = new ArrayList<PositionedNode>();
 			for (Node n : layer) {
 				int x = curX;
 				int y = curY;
 				PositionedNode positionedNode = new PositionedNodeImpl(n.getId(), x, y);
 				positionedNodes.add(positionedNode);
+
+				positionedLayer.add(positionedNode);
+
 				curX += minDistance;
 			}
+			positionedLayers.add(positionedLayer);
 			curX = leftOffset;
-			curY+= layerOffset;
+			curY += layerOffset;
 		}
+		LayeredPositionedGraph result = new LayeredPositionedGraphImpl(g.getId(), positionedLayers);
 
 		result.getNodes().addAll(positionedNodes);
 		result.getLines().addAll(g.getLines());

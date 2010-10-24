@@ -16,6 +16,7 @@ public interface Node<T extends Node> {
 	 * manipulation please use addSource method
 	 */
 	Set<T> getSources();
+
 	/**
 	 * This method returns immutable collection. For sinks
 	 * manipulation please use addSink method

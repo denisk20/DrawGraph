@@ -13,7 +13,7 @@ import java.util.Stack;
  *
  * @author denisk
  */
-public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node>{
+public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	private int layerLength;
 	private int layersCount;
 
@@ -32,14 +32,14 @@ public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node>{
 	}
 
 	@Override
-	 public List<List<Node>> getLayers(Graph<Node> g) {
+	public List<List<Node>> getLayers(Graph<Node> g) {
 
 		ArrayList<List<Node>> layers = new ArrayList<List<Node>>();
 		boolean moreNodes = true;
 		Stack<Node> nodeStack = new Stack<Node>();
 		nodeStack.addAll(g.getNodes());
 
-		while(moreNodes) {
+		while (moreNodes) {
 			ArrayList<Node> layer = new ArrayList<Node>();
 			for (int j = 0; j < layerLength; j++) {
 				Node n = nodeStack.pop();

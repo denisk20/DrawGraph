@@ -14,7 +14,7 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public class GraphCallback implements Callback{
+public class GraphCallback implements Callback {
 	private final static String NODE = "node";
 	private final static String LINE = "edge";
 

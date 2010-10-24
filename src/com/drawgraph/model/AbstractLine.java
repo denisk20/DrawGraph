@@ -7,11 +7,11 @@ package com.drawgraph.model;
  * @author denisk
  */
 public abstract class AbstractLine implements Line {
-		private String id;
+	private String id;
 	private Node source;
 	private Node sink;
 
-	public AbstractLine (Node source, Node sink, String id) {
+	public AbstractLine(Node source, Node sink, String id) {
 		this.source = source;
 		this.sink = sink;
 		this.id = id;
@@ -59,7 +59,6 @@ public abstract class AbstractLine implements Line {
 
 	@Override
 	public String toString() {
-		return "LineImpl{id=" +id + "source=" + source.getId() + ", sink=" + sink.getId() + '}';
+		return "LineImpl{id=" + id + "source=" + source.getId() + ", sink=" + sink.getId() + '}';
 	}
-
 }

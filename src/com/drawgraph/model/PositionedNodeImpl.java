@@ -1,7 +1,5 @@
 package com.drawgraph.model;
 
-import java.util.Set;
-
 /**
  * Date: Oct 23, 2010
  * Time: 7:40:49 PM
@@ -31,5 +29,4 @@ public class PositionedNodeImpl extends AbstractNode<PositionedNode> implements 
 	public int getY() {
 		return y;
 	}
-
 }
