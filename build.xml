@@ -8,6 +8,12 @@
 	<property name="test.reports.dir" value="reports"/>
 	<property name="lib.dir" value="lib"/>
 
+	<path id="compile.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="jgoodies-forms.jar" />
+		</fileset>
+	</path>
+
 	<path id="test.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="junit-4.7.jar" />
@@ -22,7 +28,11 @@
 
 	<target name="compile">
 		<mkdir dir="${dist.dir}"/>
-		<javac srcdir="${src.dir}" destdir="${dist.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${dist.dir}">
+			<classpath>
+				<path refid="compile.classpath"/>
+			</classpath>
+		</javac>
 	</target>
 
 	<target name="compileTests">

@@ -25,19 +25,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="3da68" binding="canvasPanel" layout-manager="FormLayout">
-            <rowspec value="center:d:grow"/>
-            <colspec value="fill:d:grow"/>
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false" defaultalign-vert="false"/>
-            </constraints>
-            <properties>
-              <background color="-52378"/>
-            </properties>
-            <border type="none"/>
-            <children/>
-          </grid>
           <scrollpane id="a203" binding="chooseFileScrollPanel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -50,6 +37,26 @@
                 <constraints/>
                 <properties/>
               </component>
+            </children>
+          </scrollpane>
+          <scrollpane id="4b37b">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="3da68" binding="canvasPanel" custom-create="true" layout-manager="FormLayout">
+                <rowspec value="center:d:grow"/>
+                <colspec value="fill:d:grow"/>
+                <constraints/>
+                <properties>
+                  <background color="-52378"/>
+                </properties>
+                <border type="none"/>
+                <children/>
+              </grid>
             </children>
           </scrollpane>
         </children>

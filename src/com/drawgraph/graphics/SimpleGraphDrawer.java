@@ -15,18 +15,16 @@ import java.awt.*;
 public class SimpleGraphDrawer implements GraphDrawer<PositionedGraph> {
 	@Override
 	public void drawGraph(PositionedGraph g, Graphics2D canvas) {
-		canvas.scale(g.getWidth(), g.getHeight());
-
 		for (Line l : g.getLines()) {
 			PositionedNode source = g.getNodeById(l.getSource().getId());
 			PositionedNode sink = g.getNodeById(l.getSink().getId());
 
-			canvas.drawLine(source.getX(), source.getY(), sink.getX(), sink.getX());
+			canvas.drawLine(source.getX(), source.getY(), sink.getX(), sink.getY());
 		}
 
 		int radius = g.getRadius();
 		for (PositionedNode node : g.getNodes()) {
-			canvas.drawOval(node.getX(), node.getY(), radius*2, radius*2);
+			canvas.drawOval(node.getX() - radius/2, node.getY() - radius/2, radius, radius);
 		}
 	}
 }

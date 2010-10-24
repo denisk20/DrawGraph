@@ -42,8 +42,12 @@ public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		while (moreNodes) {
 			ArrayList<Node> layer = new ArrayList<Node>();
 			for (int j = 0; j < layerLength; j++) {
-				Node n = nodeStack.pop();
-				layer.add(n);
+				if (! nodeStack.isEmpty()) {
+					Node n = nodeStack.pop();
+					layer.add(n);
+				} else {
+					break;
+				}
 			}
 			layers.add(layer);
 			if (nodeStack.isEmpty()) {

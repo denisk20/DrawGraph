@@ -31,13 +31,21 @@ public class LayeredGraphOrderTest {
 
 	@Test
 	public void testSimpleLayeredGraphOrder() throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g = new GraphImpl("test graph");
-		g.getNodes().addAll(createNodes(NODES_COUNT));
+		createGraphAndGetLayers(NODES_COUNT, LAYER_LENGTH, EXPECTED_LAYERS_COUNT);
+	}
 
-		testable.setLayerLength(LAYER_LENGTH);
+	@Test
+	public void extraPlacesInLayer() {
+		createGraphAndGetLayers(NODES_COUNT, NODES_COUNT -1 , 2);
+	}
+	private void createGraphAndGetLayers(int nodesCount, int layerLength, int expectedLayersCount) {
+		Graph<Node> g = new GraphImpl("test graph");
+		g.getNodes().addAll(createNodes(nodesCount));
+
+		testable.setLayerLength(layerLength);
 
 		List<List<Node>> layers = testable.getLayers(g);
-		assertEquals(EXPECTED_LAYERS_COUNT, layers.size());
+		assertEquals(expectedLayersCount, layers.size());
 	}
 
 	@Test
@@ -47,6 +55,7 @@ public class LayeredGraphOrderTest {
 		List<List<Node>> layers = testable.getLayers(g);
 		assertEquals(REAL_GRAPH_EXPECTED_LAYERS_COUNT, layers.size());
 	}
+
 
 	private ArrayList<Node> createNodes(int count) {
 		ArrayList<Node> result = new ArrayList<Node>();
