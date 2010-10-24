@@ -79,6 +79,8 @@
             <rowspec value="center:21px:noGrow"/>
             <rowspec value="top:2dlu:noGrow"/>
             <rowspec value="center:21px:noGrow"/>
+            <rowspec value="top:2dlu:noGrow"/>
+            <rowspec value="center:21px:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
             <colspec value="left:1dlu:noGrow"/>
             <colspec value="fill:81px:noGrow"/>
@@ -131,30 +133,46 @@
                   <text value="Top offset"/>
                 </properties>
               </component>
-              <component id="d9d69" class="javax.swing.JSpinner" binding="spinner1" default-binding="true">
+              <component id="9fb6d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Layer offset"/>
+                </properties>
+              </component>
+              <component id="d9d69" class="javax.swing.JSpinner" binding="distanceSpin">
                 <constraints>
                   <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="2a7e8" class="javax.swing.JSpinner" binding="spinner2" default-binding="true">
+              <component id="2a7e8" class="javax.swing.JSpinner" binding="radiusSpin">
                 <constraints>
                   <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="aa929" class="javax.swing.JSpinner" binding="spinner3" default-binding="true">
+              <component id="aa929" class="javax.swing.JSpinner" binding="leftOffsetSpin">
                 <constraints>
                   <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="105ae" class="javax.swing.JSpinner" binding="spinner4" default-binding="true">
+              <component id="105ae" class="javax.swing.JSpinner" binding="rightOffsetSpin">
                 <constraints>
                   <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="e14e5" class="javax.swing.JSpinner" binding="layerOffsetSpin">
+                <constraints>
+                  <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties/>
@@ -240,7 +258,13 @@
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
+                  <majorTickSpacing value="1"/>
+                  <maximum value="50"/>
+                  <minimum value="1"/>
                   <opaque value="false"/>
+                  <paintLabels value="false"/>
+                  <paintTicks value="true"/>
+                  <value value="10"/>
                 </properties>
               </component>
               <component id="b0b50" class="javax.swing.JLabel">

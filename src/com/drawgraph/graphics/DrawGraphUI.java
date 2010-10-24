@@ -9,6 +9,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import org.xml.sax.SAXException;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,14 +35,19 @@ public class DrawGraphUI {
 	private JPanel canvasPanel;
 	private JPanel optionsPane;
 	private JScrollPane canvasScrollPane;
-	private JSpinner spinner1;
-	private JSpinner spinner2;
-	private JSpinner spinner3;
-	private JSpinner spinner4;
+	private JSpinner distanceSpin;
+	private JSpinner radiusSpin;
+	private JSpinner leftOffsetSpin;
+	private JSpinner rightOffsetSpin;
+	private JSpinner layerOffsetSpin;
 
+	private final String DIGRAPHS = "data/digraphs";
 	private LayeredPositionedGraph layeredPositionedGraph;
 	private SimpleGraphDrawer drawer;
 
+	private File currentDirectory;
+	private String currentFilePath;
+	private GraphMLParser parser;
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -62,9 +68,33 @@ public class DrawGraphUI {
 		frame.setVisible(true);
 	}
 
-	private LayeredPositionedGraph parseGraph() throws IOException, SAXException, ParserConfigurationException {
-		GraphMLParser parser = new GraphMLParser();
-		Graph<Node> graph = parser.buildGraph("/media/Windows_data/work/swisslabs/g.57.26.graphml");
+	private void initComponents() throws IOException, SAXException, ParserConfigurationException {
+		drawer = new SimpleGraphDrawer();
+		//todo
+		currentDirectory = new File(DIGRAPHS);
+		if (!currentDirectory.exists()) {
+			throw new IllegalStateException("No directory found: " + DIGRAPHS);
+		}
+
+		DefaultListModel listModel = new DefaultListModel();
+		//todo
+		listModel.addElement("g.100.0.graphml");
+		listModel.addElement("g.100.1.graphml");
+
+		chooseFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		chooseFileList.setModel(listModel);
+		chooseFileList.setSelectedIndex(0);
+
+		String selectedFile = (String) listModel.get(chooseFileList.getSelectedIndex());
+		String path = currentDirectory + File.separator + selectedFile;
+
+		currentFilePath = path;
+		parser = new GraphMLParser();
+		Graph<Node> g = parser.buildGraph(currentFilePath);
+		layeredPositionedGraph = scaleGraph(g);
+	}
+
+	private LayeredPositionedGraph scaleGraph(Graph<Node> graph) throws IOException, SAXException, ParserConfigurationException {
 
 		GraphScaler scaler = new GraphScalerImpl();
 		scaler.setLayerOffset(70);
@@ -76,18 +106,6 @@ public class DrawGraphUI {
 
 		return layeredPositionedGraph;
 	}
-
-	private void initComponents() throws IOException, SAXException, ParserConfigurationException {
-		DefaultListModel listModel = new DefaultListModel();
-		listModel.addElement("Hello!");
-		listModel.addElement("World!");
-		chooseFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		chooseFileList.setSelectedIndex(0);
-		chooseFileList.setModel(listModel);
-		layeredPositionedGraph = parseGraph();
-		drawer = new SimpleGraphDrawer();
-	}
-
 
 	private void createUIComponents() {
 		canvasPanel = new JPanel() {
@@ -137,7 +155,7 @@ public class DrawGraphUI {
 		canvasScrollPane.setViewportView(canvasPanel);
 		optionsPane = new JPanel();
 		optionsPane
-				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:1dlu:noGrow,fill:81px:noGrow,fill:6px:noGrow,fill:d:grow,left:2dlu:noGrow,fill:max(d;4px):noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow"));
+				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:1dlu:noGrow,fill:81px:noGrow,fill:6px:noGrow,fill:d:grow,left:2dlu:noGrow,fill:max(d;4px):noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow"));
 		optionsPane.setBackground(new Color(-10027060));
 		mainPanel.add(optionsPane, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
 		optionsPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), null));
@@ -153,14 +171,19 @@ public class DrawGraphUI {
 		final JLabel label4 = new JLabel();
 		label4.setText("Top offset");
 		optionsPane.add(label4, cc.xy(3, 9));
-		spinner1 = new JSpinner();
-		optionsPane.add(spinner1, cc.xy(5, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
-		spinner2 = new JSpinner();
-		optionsPane.add(spinner2, cc.xy(5, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
-		spinner3 = new JSpinner();
-		optionsPane.add(spinner3, cc.xy(5, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
-		spinner4 = new JSpinner();
-		optionsPane.add(spinner4, cc.xy(5, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final JLabel label5 = new JLabel();
+		label5.setText("Layer offset");
+		optionsPane.add(label5, cc.xy(3, 11));
+		distanceSpin = new JSpinner();
+		optionsPane.add(distanceSpin, cc.xy(5, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+		radiusSpin = new JSpinner();
+		optionsPane.add(radiusSpin, cc.xy(5, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+		leftOffsetSpin = new JSpinner();
+		optionsPane.add(leftOffsetSpin, cc.xy(5, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
+		rightOffsetSpin = new JSpinner();
+		optionsPane.add(rightOffsetSpin, cc.xy(5, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
+		layerOffsetSpin = new JSpinner();
+		optionsPane.add(layerOffsetSpin, cc.xy(5, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tweakPanel = new JPanel();
 		tweakPanel
 				.setLayout(new FormLayout("fill:d:noGrow,fill:60px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:35px:noGrow"));
@@ -188,11 +211,17 @@ public class DrawGraphUI {
 		medianRadioButton.setDisplayedMnemonicIndex(0);
 		panel1.add(medianRadioButton, cc.xy(5, 1));
 		layerLengthSlider = new JSlider();
+		layerLengthSlider.setMajorTickSpacing(1);
+		layerLengthSlider.setMaximum(50);
+		layerLengthSlider.setMinimum(1);
 		layerLengthSlider.setOpaque(false);
+		layerLengthSlider.setPaintLabels(false);
+		layerLengthSlider.setPaintTicks(true);
+		layerLengthSlider.setValue(10);
 		panel1.add(layerLengthSlider, cc.xy(9, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final JLabel label5 = new JLabel();
-		label5.setText("Layer length:");
-		panel1.add(label5, cc.xy(7, 1));
+		final JLabel label6 = new JLabel();
+		label6.setText("Layer length:");
+		panel1.add(label6, cc.xy(7, 1));
 		ButtonGroup buttonGroup;
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(barycenterRadioButton);
