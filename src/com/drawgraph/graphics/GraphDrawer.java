@@ -10,6 +10,6 @@ import java.awt.*;
  *
  * @author denisk
  */
-public interface GraphDrawer {
-	void drawGraph(PositionedGraph g, Graphics2D canvas);
+public interface GraphDrawer <T extends PositionedGraph>{
+	void drawGraph(T g, Graphics2D canvas);
 }

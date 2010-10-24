@@ -28,4 +28,14 @@ public abstract class AbstractGraph<T extends Node> implements Graph<T> {
 	public HashSet<Line> getLines() {
 		return lines;
 	}
+
+	@Override
+	public T getNodeById(String id) {
+		for (T node : nodes) {
+			if (node.getId().equals(id)) {
+				return node;
+			}
+		}
+		throw new IllegalArgumentException("No node with id " + id + " in graph " + this.id);
+	}
 }

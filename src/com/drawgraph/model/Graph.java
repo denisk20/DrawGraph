@@ -14,4 +14,6 @@ public interface Graph<T extends Node> {
 	HashSet<T> getNodes();
 
 	HashSet<Line> getLines();
+
+	T getNodeById(String id);
 }

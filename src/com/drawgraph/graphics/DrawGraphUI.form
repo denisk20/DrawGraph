@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.drawgraph.graphics.DrawGraphUI">
+  <grid id="6a6fe" binding="rootPanel" layout-manager="FormLayout">
+    <rowspec value="center:36px:noGrow"/>
+    <rowspec value="top:8px:noGrow"/>
+    <rowspec value="center:d:grow"/>
+    <colspec value="center:d:grow"/>
+    <constraints>
+      <xy x="23" y="15" width="482" height="354"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="b1076" binding="mainPanel" layout-manager="FormLayout">
+        <rowspec value="center:d:grow"/>
+        <colspec value="center:150px:noGrow"/>
+        <colspec value="center:d:grow"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false" defaultalign-vert="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="3da68" binding="canvasPanel" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties>
+              <background color="-52378"/>
+            </properties>
+            <border type="none"/>
+            <children/>
+          </grid>
+          <scrollpane id="a203" binding="chooseFileScrollPanel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="33512" class="javax.swing.JList" binding="chooseFileList">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </grid>
+      <grid id="9166e" binding="tweakPanel" layout-manager="FormLayout">
+        <rowspec value="center:d:grow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms top="5" left="5" bottom="0" right="5" defaultalign-horz="false" defaultalign-vert="false"/>
+        </constraints>
+        <properties>
+          <background color="-3342388"/>
+        </properties>
+        <border type="bevel-lowered"/>
+        <children/>
+      </grid>
+    </children>
+  </grid>
+</form>
