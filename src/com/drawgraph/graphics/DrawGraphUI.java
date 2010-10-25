@@ -8,13 +8,18 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import org.xml.sax.SAXException;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 
 /**
  * Date: Oct 24, 2010
@@ -22,7 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
  *
  * @author denisk
  */
-public class DrawGraphUI implements ChangeListener {
+public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectionListener {
 
 	private JList chooseFileList;
 	//	private JSplitPane verticalSplit;
@@ -73,25 +78,22 @@ public class DrawGraphUI implements ChangeListener {
 	private static final int MAXIMUM_LAYERS_COUNT = 50;
 	private static final int MAJOR_TICK_SPACING = 10;
 	private static final int MINOR_TICK_SPACING = 1;
-	private static final int FRAME_WIDTH = 800;
-	private static final int FRAME_HEIGHT = 600;
+
+	private static final int FRAME_WIDTH = 960;
+	private static final int FRAME_HEIGHT = 700;
+	private static JFrame frame;
+
+	private static final String GRAPHML_EXT = ".graphml";
+
+	private FilenameFilter graphMLFilenameFilter = new FilenameFilter() {
+		@Override
+		public boolean accept(File dir, String name) {
+			return name.endsWith(GRAPHML_EXT);
+		}
+	};
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
-		//Schedule a job for the event-dispatching thread:
-		//creating and showing this application's GUI.
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					createAndShowUI();
-				} catch (IOException e) {
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				} catch (SAXException e) {
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				} catch (ParserConfigurationException e) {
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				}
-			}
-		});
+		createAndShowUI();
 	}
 
 	private static void createAndShowUI() throws IOException, SAXException, ParserConfigurationException {
@@ -100,7 +102,7 @@ public class DrawGraphUI implements ChangeListener {
 
 		double screenWidth = screenSize.getWidth();
 		double screenHeight = screenSize.getHeight();
-		JFrame frame = new JFrame("DrawGraphUI");
+		frame = new JFrame("DrawGraphUI");
 		DrawGraphUI ui = new DrawGraphUI();
 		frame.setContentPane(ui.rootPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,32 +110,36 @@ public class DrawGraphUI implements ChangeListener {
 		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 
 		ui.initSpinners();
-		ui.initComponents();
+		ui.initCanvas();
 
-		//	ui.simpleDraw();
 		frame.setLocation((int) screenWidth / 2 - frame.getWidth() / 2, (int) screenHeight / 2 - frame.getHeight() / 2);
 		frame.setVisible(true);
 	}
 
-	private void initComponents() throws IOException, SAXException, ParserConfigurationException {
+	private void initCanvas() throws IOException, SAXException, ParserConfigurationException {
 		drawer = new SimpleGraphDrawer();
-		//todo
 		currentDirectory = new File(DIGRAPHS);
 		if (!currentDirectory.exists()) {
 			throw new IllegalStateException("No directory found: " + DIGRAPHS);
 		}
 
 		DefaultListModel listModel = new DefaultListModel();
-		//todo
-		listModel.addElement("g.100.0.graphml");
-		listModel.addElement("g.100.1.graphml");
-
 		chooseFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		chooseFileList.setModel(listModel);
-		chooseFileList.setSelectedIndex(0);
 
-		String selectedFile = (String) listModel.get(chooseFileList.getSelectedIndex());
+		fillFileList(currentDirectory);
+		chooseFileList.setSelectedIndex(0);
+	}
+
+	private void parseFileFromList() throws IOException, SAXException, ParserConfigurationException {
+		int selectedIndex = chooseFileList.getSelectedIndex();
+		if (selectedIndex == -1) {
+			selectedIndex = 0;
+		}
+		DefaultListModel listModel = (DefaultListModel) chooseFileList.getModel();
+		String selectedFile = (String) listModel.get(selectedIndex);
 		String path = currentDirectory + File.separator + selectedFile;
+		System.out.println("Parsing file: " + selectedFile);
 
 		currentFilePath = path;
 		parser = new GraphMLParser();
@@ -170,6 +176,10 @@ public class DrawGraphUI implements ChangeListener {
 		topOffsetSpin.addChangeListener(this);
 		layerOffsetSpin.addChangeListener(this);
 		layerLengthSlider.addChangeListener(this);
+
+		directoryChooseButton.addActionListener(this);
+
+		chooseFileList.addListSelectionListener(this);
 	}
 
 	private LayeredPositionedGraph scaleGraph(Graph<Node> graph) throws IOException, SAXException, ParserConfigurationException {
@@ -201,6 +211,53 @@ public class DrawGraphUI implements ChangeListener {
 		} catch (ParserConfigurationException e1) {
 			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == directoryChooseButton) {
+			final JFileChooser fc = new JFileChooser();
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+			fc.setCurrentDirectory(currentDirectory);
+			if (fc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				File directory = fc.getSelectedFile();
+				currentDirectory = directory;
+				fillFileList(currentDirectory);
+
+				chooseFileList.setSelectedIndex(0);
+			}
+		}
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getSource() == chooseFileList && ! e.getValueIsAdjusting()) {
+			//this is done to avoid firing the method when chooseFileList.setModel is called
+			if (chooseFileList.getSelectedIndex() != -1) {
+				try {
+					parseFileFromList();
+					canvasPanel.repaint();
+				} catch (IOException e1) {
+					e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				} catch (SAXException e1) {
+					e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				} catch (ParserConfigurationException e1) {
+					e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				}
+			}
+		}
+	}
+
+	private void fillFileList(File currentDirectory) {
+		final DefaultListModel listModel = new DefaultListModel();
+		listModel.clear();
+		for (File f : currentDirectory.listFiles(graphMLFilenameFilter)) {
+			listModel.addElement(f.getName());
+		}
+
+		chooseFileList.setModel(listModel);
 	}
 
 	private void createUIComponents() {
@@ -324,7 +381,9 @@ public class DrawGraphUI implements ChangeListener {
 		buttonGroup.add(medianRadioButton);
 	}
 
-	/** @noinspection ALL */
+	/**
+	 * @noinspection ALL
+	 */
 	public JComponent $$$getRootComponent$$$() {
 		return rootPanel;
 	}
