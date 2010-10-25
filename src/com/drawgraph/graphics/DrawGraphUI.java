@@ -12,6 +12,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -20,7 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
  *
  * @author denisk
  */
-public class DrawGraphUI {
+public class DrawGraphUI implements ChangeListener {
 
 	private JList chooseFileList;
 	//	private JSplitPane verticalSplit;
@@ -38,16 +40,38 @@ public class DrawGraphUI {
 	private JSpinner distanceSpin;
 	private JSpinner radiusSpin;
 	private JSpinner leftOffsetSpin;
-	private JSpinner rightOffsetSpin;
+	private JSpinner topOffsetSpin;
 	private JSpinner layerOffsetSpin;
 
 	private final String DIGRAPHS = "data/digraphs";
+	private Graph<Node> graph;
 	private LayeredPositionedGraph layeredPositionedGraph;
 	private SimpleGraphDrawer drawer;
 
 	private File currentDirectory;
 	private String currentFilePath;
 	private GraphMLParser parser;
+
+	private static final int MAXIMAL_RADIUS = 100;
+	private static final int INITIAL_DISTANCE = 100;
+	private static final int MINIMAL_OFFSET = 10;
+	private static final int MINIMAL_DISTANCE = 10;
+	private static final int MAXIMAL_LAYER_OFFSET = 500;
+	private static final int MAXIMAL_DISTANCE = 500;
+	private static final int MINIMUM_LAYERS_COUNT = 1;
+	private static final int DISTANCE_STEP_SIZE = 1;
+	private static final int MINIMAL_LAYER_OFFSET = 20;
+	private static final int INITIAL_RADIUS = 20;
+	private static final int MINIMAL_RADIUS = 1;
+	private static final int RADIUS_STEP_SIZE = 1;
+	private static final int INITIAL_OFFSET = 30;
+	private static final int MAXIMAL_OFFSET = 200;
+	private static final int OFFSET_STEP_SIZE = 1;
+	private static final int INITIAL_LAYER_OFFSET = 50;
+	private static final int LAYER_OFFSET_STEP_SIZE = 1;
+	private static final int INITIAL_LAYERS_COUNT = 3;
+	private static final int MAXIMUM_LAYERS_COUNT = 50;
+	private static final int MAJOR_TICK_SPACING = 1;
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -62,7 +86,9 @@ public class DrawGraphUI {
 		frame.pack();
 		frame.setSize(800, 600);
 
+		ui.initSpinners();
 		ui.initComponents();
+
 		//	ui.simpleDraw();
 		frame.setLocation((int) screenWidth / 2 - frame.getWidth() / 2, (int) screenHeight / 2 - frame.getHeight() / 2);
 		frame.setVisible(true);
@@ -91,20 +117,64 @@ public class DrawGraphUI {
 		currentFilePath = path;
 		parser = new GraphMLParser();
 		Graph<Node> g = parser.buildGraph(currentFilePath);
+		graph = g;
 		layeredPositionedGraph = scaleGraph(g);
+	}
+
+	private void initSpinners() {
+		SpinnerModel distanceModel = new SpinnerNumberModel(INITIAL_DISTANCE, MINIMAL_DISTANCE, MAXIMAL_DISTANCE, DISTANCE_STEP_SIZE);
+		distanceSpin.setModel(distanceModel);
+
+		SpinnerModel radiusModel = new SpinnerNumberModel(INITIAL_RADIUS, MINIMAL_RADIUS, MAXIMAL_RADIUS, RADIUS_STEP_SIZE);
+		radiusSpin.setModel(radiusModel);
+
+		SpinnerModel leftOffsetModel = new SpinnerNumberModel(INITIAL_OFFSET, MINIMAL_OFFSET, MAXIMAL_OFFSET, OFFSET_STEP_SIZE);
+		SpinnerModel topOffsetModel = new SpinnerNumberModel(INITIAL_OFFSET, MINIMAL_OFFSET, MAXIMAL_OFFSET, OFFSET_STEP_SIZE);
+		leftOffsetSpin.setModel(leftOffsetModel);
+		topOffsetSpin.setModel(topOffsetModel);
+
+		SpinnerModel layerOffsetModel = new SpinnerNumberModel(INITIAL_LAYER_OFFSET, MINIMAL_LAYER_OFFSET, MAXIMAL_LAYER_OFFSET, LAYER_OFFSET_STEP_SIZE);
+		layerOffsetSpin.setModel(layerOffsetModel);
+
+		layerLengthSlider.setValue(INITIAL_LAYERS_COUNT);
+		layerLengthSlider.setMaximum(MAXIMUM_LAYERS_COUNT);
+		layerLengthSlider.setMinimum(MINIMUM_LAYERS_COUNT);
+		layerLengthSlider.setMajorTickSpacing(MAJOR_TICK_SPACING);
+
+		distanceSpin.addChangeListener(this);
+		radiusSpin.addChangeListener(this);
+		leftOffsetSpin.addChangeListener(this);
+		topOffsetSpin.addChangeListener(this);
+		layerOffsetSpin.addChangeListener(this);
+		layerLengthSlider.addChangeListener(this);
 	}
 
 	private LayeredPositionedGraph scaleGraph(Graph<Node> graph) throws IOException, SAXException, ParserConfigurationException {
 
 		GraphScaler scaler = new GraphScalerImpl();
-		scaler.setLayerOffset(70);
-		scaler.setLeftOffset(30);
-		scaler.setMinDistance(350);
-		scaler.setTopOffset(30);
-		LayeredPositionedGraph layeredPositionedGraph = scaler.scale(graph, new SimpleLayeredGraphOrder(3));
-		layeredPositionedGraph.setRadius(15);
+
+		scaler.setLayerOffset((Integer) layerOffsetSpin.getValue());
+		scaler.setLeftOffset((Integer) leftOffsetSpin.getValue());
+		scaler.setMinDistance((Integer) distanceSpin.getValue());
+		scaler.setTopOffset((Integer) topOffsetSpin.getValue());
+
+		LayeredPositionedGraph layeredPositionedGraph = scaler.scale(graph, new SimpleLayeredGraphOrder(layerLengthSlider.getValue()));
+		layeredPositionedGraph.setRadius((Integer) radiusSpin.getValue());
 
 		return layeredPositionedGraph;
+	}
+
+	public void stateChanged(ChangeEvent e) {
+		try {
+			layeredPositionedGraph = scaleGraph(graph);
+			canvasPanel.repaint();
+		} catch (IOException e1) {
+			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		} catch (SAXException e1) {
+			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		} catch (ParserConfigurationException e1) {
+			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		}
 	}
 
 	private void createUIComponents() {
@@ -146,18 +216,18 @@ public class DrawGraphUI {
 		CellConstraints cc = new CellConstraints();
 		rootPanel.add(mainPanel, cc.xyw(3, 5, 4, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileScrollPanel = new JScrollPane();
-		mainPanel.add(chooseFileScrollPanel, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		mainPanel.add(chooseFileScrollPanel, cc.xy(MINIMUM_LAYERS_COUNT, MINIMUM_LAYERS_COUNT, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileList = new JList();
 		chooseFileScrollPanel.setViewportView(chooseFileList);
 		canvasScrollPane = new JScrollPane();
-		mainPanel.add(canvasScrollPane, cc.xywh(4, 1, 1, 3, CellConstraints.FILL, CellConstraints.FILL));
+		mainPanel.add(canvasScrollPane, cc.xywh(4, MINIMUM_LAYERS_COUNT, MINIMUM_LAYERS_COUNT, 3, CellConstraints.FILL, CellConstraints.FILL));
 		canvasPanel.setBackground(new Color(-52378));
 		canvasScrollPane.setViewportView(canvasPanel);
 		optionsPane = new JPanel();
 		optionsPane
 				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:1dlu:noGrow,fill:81px:noGrow,fill:6px:noGrow,fill:d:grow,left:2dlu:noGrow,fill:max(d;4px):noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow"));
 		optionsPane.setBackground(new Color(-10027060));
-		mainPanel.add(optionsPane, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
+		mainPanel.add(optionsPane, cc.xy(MINIMUM_LAYERS_COUNT, 3, CellConstraints.FILL, CellConstraints.FILL));
 		optionsPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), null));
 		final JLabel label1 = new JLabel();
 		label1.setText("Distance");
@@ -180,8 +250,8 @@ public class DrawGraphUI {
 		optionsPane.add(radiusSpin, cc.xy(5, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 		leftOffsetSpin = new JSpinner();
 		optionsPane.add(leftOffsetSpin, cc.xy(5, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
-		rightOffsetSpin = new JSpinner();
-		optionsPane.add(rightOffsetSpin, cc.xy(5, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
+		topOffsetSpin = new JSpinner();
+		optionsPane.add(topOffsetSpin, cc.xy(5, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
 		layerOffsetSpin = new JSpinner();
 		optionsPane.add(layerOffsetSpin, cc.xy(5, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tweakPanel = new JPanel();
@@ -194,34 +264,34 @@ public class DrawGraphUI {
 		panel1.setLayout(new FormLayout("fill:80px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:35px:noGrow"));
 		panel1.setBackground(new Color(-3355393));
 		panel1.setOpaque(false);
-		tweakPanel.add(panel1, cc.xyw(2, 1, 9, CellConstraints.DEFAULT, CellConstraints.FILL));
+		tweakPanel.add(panel1, cc.xyw(2, MINIMUM_LAYERS_COUNT, 9, CellConstraints.DEFAULT, CellConstraints.FILL));
 		directoryChooseButton = new JButton();
 		directoryChooseButton.setText("Folder");
-		panel1.add(directoryChooseButton, cc.xy(1, 1));
+		panel1.add(directoryChooseButton, cc.xy(MINIMUM_LAYERS_COUNT, MINIMUM_LAYERS_COUNT));
 		barycenterRadioButton = new JRadioButton();
 		barycenterRadioButton.setOpaque(false);
 		barycenterRadioButton.setText("Barycenter");
 		barycenterRadioButton.setMnemonic('B');
 		barycenterRadioButton.setDisplayedMnemonicIndex(0);
-		panel1.add(barycenterRadioButton, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(barycenterRadioButton, cc.xy(3, MINIMUM_LAYERS_COUNT, CellConstraints.FILL, CellConstraints.DEFAULT));
 		medianRadioButton = new JRadioButton();
 		medianRadioButton.setOpaque(false);
 		medianRadioButton.setText("Median");
 		medianRadioButton.setMnemonic('M');
 		medianRadioButton.setDisplayedMnemonicIndex(0);
-		panel1.add(medianRadioButton, cc.xy(5, 1));
+		panel1.add(medianRadioButton, cc.xy(5, MINIMUM_LAYERS_COUNT));
 		layerLengthSlider = new JSlider();
-		layerLengthSlider.setMajorTickSpacing(1);
-		layerLengthSlider.setMaximum(50);
-		layerLengthSlider.setMinimum(1);
+		layerLengthSlider.setMajorTickSpacing(MINIMUM_LAYERS_COUNT);
+		layerLengthSlider.setMaximum(INITIAL_LAYER_OFFSET);
+		layerLengthSlider.setMinimum(MINIMUM_LAYERS_COUNT);
 		layerLengthSlider.setOpaque(false);
 		layerLengthSlider.setPaintLabels(false);
 		layerLengthSlider.setPaintTicks(true);
-		layerLengthSlider.setValue(10);
-		panel1.add(layerLengthSlider, cc.xy(9, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		layerLengthSlider.setValue(MINIMAL_OFFSET);
+		panel1.add(layerLengthSlider, cc.xy(9, MINIMUM_LAYERS_COUNT, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JLabel label6 = new JLabel();
 		label6.setText("Layer length:");
-		panel1.add(label6, cc.xy(7, 1));
+		panel1.add(label6, cc.xy(7, MINIMUM_LAYERS_COUNT));
 		ButtonGroup buttonGroup;
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(barycenterRadioButton);

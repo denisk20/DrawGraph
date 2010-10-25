@@ -163,7 +163,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="105ae" class="javax.swing.JSpinner" binding="rightOffsetSpin">
+              <component id="105ae" class="javax.swing.JSpinner" binding="topOffsetSpin">
                 <constraints>
                   <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
@@ -265,6 +265,7 @@
                   <paintLabels value="false"/>
                   <paintTicks value="true"/>
                   <value value="10"/>
+                  <valueIsAdjusting value="true"/>
                 </properties>
               </component>
               <component id="b0b50" class="javax.swing.JLabel">
