@@ -13,7 +13,7 @@
     <colspec value="center:210px:grow"/>
     <colspec value="left:d:grow"/>
     <constraints>
-      <xy x="23" y="15" width="829" height="598"/>
+      <xy x="23" y="15" width="861" height="598"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -206,13 +206,13 @@
             <rowspec value="center:35px:noGrow"/>
             <colspec value="fill:80px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:185px:noGrow"/>
+            <colspec value="fill:158px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:185px:noGrow"/>
+            <colspec value="fill:136px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:80px:noGrow"/>
+            <colspec value="fill:143px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:d:grow"/>
+            <colspec value="center:301px:noGrow"/>
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-vert="false"/>

@@ -58,7 +58,7 @@ public class DrawGraphUI implements ChangeListener {
 	private static final int MINIMAL_DISTANCE = 10;
 	private static final int MAXIMAL_LAYER_OFFSET = 500;
 	private static final int MAXIMAL_DISTANCE = 500;
-	private static final int MINIMUM_LAYERS_COUNT = 1;
+	private static final int MINIMUM_LAYERS_COUNT = 0;
 	private static final int DISTANCE_STEP_SIZE = 1;
 	private static final int MINIMAL_LAYER_OFFSET = 20;
 	private static final int INITIAL_RADIUS = 20;
@@ -71,9 +71,30 @@ public class DrawGraphUI implements ChangeListener {
 	private static final int LAYER_OFFSET_STEP_SIZE = 1;
 	private static final int INITIAL_LAYERS_COUNT = 3;
 	private static final int MAXIMUM_LAYERS_COUNT = 50;
-	private static final int MAJOR_TICK_SPACING = 1;
+	private static final int MAJOR_TICK_SPACING = 10;
+	private static final int MINOR_TICK_SPACING = 1;
+	private static final int FRAME_WIDTH = 800;
+	private static final int FRAME_HEIGHT = 600;
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
+		//Schedule a job for the event-dispatching thread:
+		//creating and showing this application's GUI.
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					createAndShowUI();
+				} catch (IOException e) {
+					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				} catch (SAXException e) {
+					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				} catch (ParserConfigurationException e) {
+					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				}
+			}
+		});
+	}
+
+	private static void createAndShowUI() throws IOException, SAXException, ParserConfigurationException {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = toolkit.getScreenSize();
 
@@ -84,7 +105,7 @@ public class DrawGraphUI implements ChangeListener {
 		frame.setContentPane(ui.rootPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
-		frame.setSize(800, 600);
+		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 
 		ui.initSpinners();
 		ui.initComponents();
@@ -140,6 +161,8 @@ public class DrawGraphUI implements ChangeListener {
 		layerLengthSlider.setMaximum(MAXIMUM_LAYERS_COUNT);
 		layerLengthSlider.setMinimum(MINIMUM_LAYERS_COUNT);
 		layerLengthSlider.setMajorTickSpacing(MAJOR_TICK_SPACING);
+		layerLengthSlider.setMinorTickSpacing(MINOR_TICK_SPACING);
+		layerLengthSlider.setPaintLabels(true);
 
 		distanceSpin.addChangeListener(this);
 		radiusSpin.addChangeListener(this);
@@ -166,6 +189,9 @@ public class DrawGraphUI implements ChangeListener {
 
 	public void stateChanged(ChangeEvent e) {
 		try {
+			if (layerLengthSlider.getValue() == 0) {
+				layerLengthSlider.setValue(1);
+			}
 			layeredPositionedGraph = scaleGraph(graph);
 			canvasPanel.repaint();
 		} catch (IOException e1) {
