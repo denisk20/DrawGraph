@@ -3,6 +3,7 @@ package com.drawgraph.algorithms;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,13 +19,13 @@ import java.util.Set;
 public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	private int layerLength;
 
-	private static final int EQUAL = 0;
-	private static final int MORE = 1;
-	private static final int LESS = -1;
+	public static final int EQUAL = 0;
+	public static final int MORE = 1;
+	public static final int LESS = -1;
 
-	HashMap<Node, Integer> labels = new HashMap<Node, Integer>();
-	public CoffmanGrahamLayeredGraphOrder(int value) {
-		layerLength = value;
+	protected HashMap<Node, Integer> labels = new HashMap<Node, Integer>();
+	public CoffmanGrahamLayeredGraphOrder(int layerLength) {
+		this.layerLength = layerLength;
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		this.layerLength = layerLength;
 	}
 
-	private int lexicalComparison(Set<Node> first, Set<Node> second) {
+	protected int lexicalComparison(Set<Node> first, Set<Node> second) {
 		final int firstSize = first.size();
 		final int secondSize = second.size();
 
@@ -66,8 +67,8 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		} else if (firstSize == 0 && secondSize == 0) {
 			result = EQUAL;
 		} else {
-			Map.Entry<Node, Integer> maxFirstLabel = getLabelWithMaxLabel(first);
-			Map.Entry<Node, Integer> maxSecondLabel = getLabelWithMaxLabel(second);
+			Map.Entry<Node, Integer> maxFirstLabel = getLabelWithMaxLabel(labels, first );
+			Map.Entry<Node, Integer> maxSecondLabel = getLabelWithMaxLabel(labels, second);
 			if (maxFirstLabel.getValue() > maxSecondLabel.getValue()) {
 				result = MORE;
 			} else if (maxFirstLabel.getValue() < maxSecondLabel.getValue()) {
@@ -85,8 +86,17 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return result;
 	}
 
-	private Map.Entry<Node, Integer> getLabelWithMaxLabel(Set<Node> nodes) {
-		//todo
-		return null;
+	private Map.Entry<Node, Integer> getLabelWithMaxLabel(HashMap<Node, Integer> labels, Set<Node> nodes) {
+		int label = 0;
+		Node n = null;
+		for (Node thisNode : nodes) {
+			int thisLabel = labels.get(thisNode);
+			if (thisLabel > label) {
+				label = thisLabel;
+				n = thisNode;
+			}
+		}
+
+		return new AbstractMap.SimpleImmutableEntry<com.drawgraph.model.Node,java.lang.Integer>(n, label);
 	}
 }

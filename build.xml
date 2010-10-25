@@ -66,6 +66,7 @@
 			<batchtest fork="yes" todir="${test.reports.dir}">
 				<fileset dir="${test.dist.dir}">
 					<exclude name="**/*Util*"/>
+					<exclude name="**/*Mock*"/>
 				</fileset>
 			</batchtest>
 		</junit>
