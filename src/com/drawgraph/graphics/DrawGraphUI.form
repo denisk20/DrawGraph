@@ -13,7 +13,7 @@
     <colspec value="center:210px:grow"/>
     <colspec value="left:d:grow"/>
     <constraints>
-      <xy x="23" y="15" width="861" height="598"/>
+      <xy x="23" y="15" width="905" height="598"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -24,7 +24,7 @@
         <rowspec value="center:max(d;160px):noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="center:150px:noGrow"/>
+        <colspec value="center:190px:noGrow"/>
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:max(d;4px):noGrow"/>
         <colspec value="center:d:grow"/>
@@ -83,11 +83,11 @@
             <rowspec value="center:21px:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
             <colspec value="left:1dlu:noGrow"/>
-            <colspec value="fill:81px:noGrow"/>
+            <colspec value="left:87px:noGrow"/>
             <colspec value="fill:6px:noGrow"/>
-            <colspec value="fill:d:grow"/>
-            <colspec value="left:2dlu:noGrow"/>
-            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="center:d:noGrow"/>
+            <colspec value="center:4px:noGrow"/>
+            <colspec value="center:44px:noGrow"/>
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -263,7 +263,8 @@
                   <minimum value="1"/>
                   <opaque value="false"/>
                   <paintLabels value="false"/>
-                  <paintTicks value="true"/>
+                  <paintTicks value="false"/>
+                  <paintTrack value="false"/>
                   <value value="10"/>
                   <valueIsAdjusting value="true"/>
                 </properties>

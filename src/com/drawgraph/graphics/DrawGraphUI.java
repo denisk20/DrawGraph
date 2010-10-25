@@ -20,6 +20,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Date: Oct 24, 2010
@@ -57,20 +59,21 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private String currentFilePath;
 	private GraphMLParser parser;
 
-	private static final int MAXIMAL_RADIUS = 100;
+	private static final int MAXIMUM_RADIUS = 100;
 	private static final int INITIAL_DISTANCE = 100;
-	private static final int MINIMAL_OFFSET = 10;
-	private static final int MINIMAL_DISTANCE = 10;
-	private static final int MAXIMAL_LAYER_OFFSET = 500;
-	private static final int MAXIMAL_DISTANCE = 500;
+	private static final int MINIMUM_OFFSET = 10;
+	private static final int MINIMUM_DISTANCE = 10;
+	private static final int MAXIMUM_LAYER_OFFSET = 500;
+	private static final int MAXIMUM_DISTANCE = 500;
 	private static final int MINIMUM_LAYERS_COUNT = 0;
 	private static final int DISTANCE_STEP_SIZE = 1;
-	private static final int MINIMAL_LAYER_OFFSET = 20;
+	private static final int MINIMUM_LAYER_OFFSET = 20;
+	private static final int INITIAL_LEFT_OFFSET = 125;
+	private static final int INITIAL_TOP_OFFSET = 50;
 	private static final int INITIAL_RADIUS = 20;
-	private static final int MINIMAL_RADIUS = 1;
+	private static final int MINIMUM_RADIUS = 1;
 	private static final int RADIUS_STEP_SIZE = 1;
-	private static final int INITIAL_OFFSET = 30;
-	private static final int MAXIMAL_OFFSET = 200;
+	private static final int MAXIMUM_OFFSET = 200;
 	private static final int OFFSET_STEP_SIZE = 1;
 	private static final int INITIAL_LAYER_OFFSET = 50;
 	private static final int LAYER_OFFSET_STEP_SIZE = 1;
@@ -106,12 +109,12 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		DrawGraphUI ui = new DrawGraphUI();
 		frame.setContentPane(ui.rootPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 
 		ui.initSpinners();
 		ui.initCanvas();
 
+		frame.pack();
+		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		frame.setLocation((int) screenWidth / 2 - frame.getWidth() / 2, (int) screenHeight / 2 - frame.getHeight() / 2);
 		frame.setVisible(true);
 	}
@@ -149,18 +152,18 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	}
 
 	private void initSpinners() {
-		SpinnerModel distanceModel = new SpinnerNumberModel(INITIAL_DISTANCE, MINIMAL_DISTANCE, MAXIMAL_DISTANCE, DISTANCE_STEP_SIZE);
+		SpinnerModel distanceModel = new SpinnerNumberModel(INITIAL_DISTANCE, MINIMUM_DISTANCE, MAXIMUM_DISTANCE, DISTANCE_STEP_SIZE);
 		distanceSpin.setModel(distanceModel);
 
-		SpinnerModel radiusModel = new SpinnerNumberModel(INITIAL_RADIUS, MINIMAL_RADIUS, MAXIMAL_RADIUS, RADIUS_STEP_SIZE);
+		SpinnerModel radiusModel = new SpinnerNumberModel(INITIAL_RADIUS, MINIMUM_RADIUS, MAXIMUM_RADIUS, RADIUS_STEP_SIZE);
 		radiusSpin.setModel(radiusModel);
 
-		SpinnerModel leftOffsetModel = new SpinnerNumberModel(INITIAL_OFFSET, MINIMAL_OFFSET, MAXIMAL_OFFSET, OFFSET_STEP_SIZE);
-		SpinnerModel topOffsetModel = new SpinnerNumberModel(INITIAL_OFFSET, MINIMAL_OFFSET, MAXIMAL_OFFSET, OFFSET_STEP_SIZE);
+		SpinnerModel leftOffsetModel = new SpinnerNumberModel(INITIAL_LEFT_OFFSET, MINIMUM_OFFSET, MAXIMUM_OFFSET, OFFSET_STEP_SIZE);
+		SpinnerModel topOffsetModel = new SpinnerNumberModel(INITIAL_TOP_OFFSET, MINIMUM_OFFSET, MAXIMUM_OFFSET, OFFSET_STEP_SIZE);
 		leftOffsetSpin.setModel(leftOffsetModel);
 		topOffsetSpin.setModel(topOffsetModel);
 
-		SpinnerModel layerOffsetModel = new SpinnerNumberModel(INITIAL_LAYER_OFFSET, MINIMAL_LAYER_OFFSET, MAXIMAL_LAYER_OFFSET, LAYER_OFFSET_STEP_SIZE);
+		SpinnerModel layerOffsetModel = new SpinnerNumberModel(INITIAL_LAYER_OFFSET, MINIMUM_LAYER_OFFSET, MAXIMUM_LAYER_OFFSET, LAYER_OFFSET_STEP_SIZE);
 		layerOffsetSpin.setModel(layerOffsetModel);
 
 		layerLengthSlider.setValue(INITIAL_LAYERS_COUNT);
@@ -168,7 +171,16 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		layerLengthSlider.setMinimum(MINIMUM_LAYERS_COUNT);
 		layerLengthSlider.setMajorTickSpacing(MAJOR_TICK_SPACING);
 		layerLengthSlider.setMinorTickSpacing(MINOR_TICK_SPACING);
+		final Hashtable<Integer, JLabel> hashtable = new Hashtable<Integer, JLabel>();
+		for (int i = MINIMUM_LAYERS_COUNT; i <= MAXIMUM_LAYERS_COUNT; i++) {
+			if (i % 10 == 0) {
+				hashtable.put(new Integer(i), new JLabel(Integer.toString(i)));
+			}
+		}
+		layerLengthSlider.setLabelTable(hashtable);
 		layerLengthSlider.setPaintLabels(true);
+		layerLengthSlider.setPaintTicks(true);
+		layerLengthSlider.setPaintTrack(true);
 
 		distanceSpin.addChangeListener(this);
 		radiusSpin.addChangeListener(this);
@@ -223,6 +235,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			fc.setCurrentDirectory(currentDirectory);
 			if (fc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				File directory = fc.getSelectedFile();
+
 				currentDirectory = directory;
 				fillFileList(currentDirectory);
 
@@ -370,7 +383,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		layerLengthSlider.setOpaque(false);
 		layerLengthSlider.setPaintLabels(false);
 		layerLengthSlider.setPaintTicks(true);
-		layerLengthSlider.setValue(MINIMAL_OFFSET);
+		layerLengthSlider.setValue(MINIMUM_OFFSET);
 		panel1.add(layerLengthSlider, cc.xy(9, MINIMUM_LAYERS_COUNT, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JLabel label6 = new JLabel();
 		label6.setText("Layer length:");
