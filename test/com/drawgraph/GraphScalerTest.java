@@ -1,13 +1,12 @@
 package com.drawgraph;
 
+import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.graphics.GraphScaler;
 import com.drawgraph.graphics.GraphScalerImpl;
-import com.drawgraph.graphics.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Line;
 import com.drawgraph.model.Node;
-import com.drawgraph.model.PositionedGraph;
 import com.drawgraph.model.PositionedNode;
 import org.junit.Test;
 import org.xml.sax.SAXException;

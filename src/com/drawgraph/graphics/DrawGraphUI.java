@@ -1,5 +1,11 @@
 package com.drawgraph.graphics;
 
+import com.drawgraph.algorithms.BarycenterReducer;
+import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
+import com.drawgraph.algorithms.CrossingReducer;
+import com.drawgraph.algorithms.LayeredGraphOrder;
+import com.drawgraph.algorithms.MedianReducer;
+import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;
@@ -20,7 +26,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -49,6 +54,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JSpinner leftOffsetSpin;
 	private JSpinner topOffsetSpin;
 	private JSpinner layerOffsetSpin;
+	private JCheckBox coffmanGrahamLayeringCheckBox;
+	private JRadioButton noneRadioButton;
 
 	private final String DIGRAPHS = "data/digraphs";
 	private Graph<Node> graph;
@@ -84,6 +91,16 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private static final int FRAME_WIDTH = 960;
 	private static final int FRAME_HEIGHT = 700;
+
+
+	private boolean useGrahamLayering = false;
+
+	private static final int NO_REDUCTION_METHOD = 0;
+	private static final int MEDIAN_METHOD = 1;
+	private static final int BARYCENTER_METHOD = 2;
+	private int currentReductionMethod = NO_REDUCTION_METHOD;
+
+
 	private static JFrame frame;
 
 	private static final String GRAPHML_EXT = ".graphml";
@@ -94,6 +111,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			return name.endsWith(GRAPHML_EXT);
 		}
 	};
+	private static final String FILE_CHOOSER_TITLE = "Choose a directory to fetch resources from";
+	private CrossingReducer medianReducer = new MedianReducer();
+	private CrossingReducer barycenterReducer = new BarycenterReducer();
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		createAndShowUI();
@@ -132,6 +152,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 		fillFileList(currentDirectory);
 		chooseFileList.setSelectedIndex(0);
+
+		frame.setTitle(currentDirectory.getAbsolutePath());
 	}
 
 	private void parseFileFromList() throws IOException, SAXException, ParserConfigurationException {
@@ -192,6 +214,14 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		directoryChooseButton.addActionListener(this);
 
 		chooseFileList.addListSelectionListener(this);
+
+		barycenterRadioButton.addActionListener(this);
+		medianRadioButton.addActionListener(this);
+		noneRadioButton.addActionListener(this);
+		noneRadioButton.setSelected(true);
+
+		coffmanGrahamLayeringCheckBox.setSelected(false);
+		coffmanGrahamLayeringCheckBox.addActionListener(this);
 	}
 
 	private LayeredPositionedGraph scaleGraph(Graph<Node> graph) throws IOException, SAXException, ParserConfigurationException {
@@ -203,10 +233,43 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		scaler.setMinDistance((Integer) distanceSpin.getValue());
 		scaler.setTopOffset((Integer) topOffsetSpin.getValue());
 
-		LayeredPositionedGraph layeredPositionedGraph = scaler.scale(graph, new SimpleLayeredGraphOrder(layerLengthSlider.getValue()));
-		layeredPositionedGraph.setRadius((Integer) radiusSpin.getValue());
+		LayeredGraphOrder<Node> layeredGraphOrder = getLayeredGraphOrder(layerLengthSlider.getValue());
+		LayeredPositionedGraph layeredPositionedGraph = scaler.scale(graph, layeredGraphOrder);
 
-		return layeredPositionedGraph;
+		LayeredPositionedGraph reducedGraph = reduceCrossings(layeredPositionedGraph);
+
+		reducedGraph.setRadius((Integer) radiusSpin.getValue());
+		return reducedGraph;
+	}
+
+	private LayeredPositionedGraph reduceCrossings(LayeredPositionedGraph layeredPositionedGraph) {
+		LayeredPositionedGraph result;
+		switch (currentReductionMethod) {
+			case (NO_REDUCTION_METHOD):
+				result = layeredPositionedGraph;
+				break;
+			case (MEDIAN_METHOD):
+				result = medianReducer.reduce(layeredPositionedGraph);
+				break;
+			case (BARYCENTER_METHOD):
+				result = barycenterReducer.reduce(layeredPositionedGraph);
+				break;
+			default:
+				throw new IllegalStateException("Wrong reduction code passed: " + currentReductionMethod);
+		}
+
+		return result;
+	}
+
+	private LayeredGraphOrder<Node> getLayeredGraphOrder(int value) {
+		LayeredGraphOrder<Node> result;
+		if (useGrahamLayering) {
+			result = new CoffmanGrahamLayeredGraphOrder(value);
+		} else {
+			result = new SimpleLayeredGraphOrder(value);
+		}
+
+		return result;
 	}
 
 	public void stateChanged(ChangeEvent e) {
@@ -233,6 +296,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 			fc.setCurrentDirectory(currentDirectory);
+			fc.setDialogTitle(FILE_CHOOSER_TITLE);
 			if (fc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				File directory = fc.getSelectedFile();
 
@@ -240,7 +304,36 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 				fillFileList(currentDirectory);
 
 				chooseFileList.setSelectedIndex(0);
+				frame.setTitle(currentDirectory.getAbsolutePath());
 			}
+		} else if (e.getSource() == noneRadioButton) {
+			currentReductionMethod = NO_REDUCTION_METHOD;
+			scaleGraphAndCatchExceptions();
+			canvasPanel.repaint();
+		} else if (e.getSource() == barycenterRadioButton) {
+			currentReductionMethod = BARYCENTER_METHOD;
+			scaleGraphAndCatchExceptions();
+			canvasPanel.repaint();
+		} else if (e.getSource() == medianRadioButton) {
+			currentReductionMethod = MEDIAN_METHOD;
+			scaleGraphAndCatchExceptions();
+			canvasPanel.repaint();
+		} else if (e.getSource() == coffmanGrahamLayeringCheckBox) {
+			useGrahamLayering = coffmanGrahamLayeringCheckBox.isSelected();
+			scaleGraphAndCatchExceptions();
+			canvasPanel.repaint();
+		}
+	}
+
+	private void scaleGraphAndCatchExceptions() {
+		try {
+			layeredPositionedGraph = scaleGraph(graph);
+		} catch (IOException e1) {
+			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		} catch (SAXException e1) {
+			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		} catch (ParserConfigurationException e1) {
+			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		}
 	}
 

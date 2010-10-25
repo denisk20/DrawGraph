@@ -1,4 +1,4 @@
-package com.drawgraph.graphics;
+package com.drawgraph.algorithms;
 
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;

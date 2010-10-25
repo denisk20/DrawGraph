@@ -1,5 +1,6 @@
 package com.drawgraph.graphics;
 
+import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;

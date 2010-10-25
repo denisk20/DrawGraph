@@ -1,6 +1,6 @@
 package com.drawgraph;
 
-import com.drawgraph.graphics.SimpleLayeredGraphOrder;
+import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.GraphImpl;
 import com.drawgraph.model.Node;
