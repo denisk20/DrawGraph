@@ -4,6 +4,9 @@ import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,14 +19,14 @@ import java.util.Set;
  *
  * @author denisk
  */
-public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
+public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node<Node>> {
 	private int layerLength;
 
 	public static final int EQUAL = 0;
 	public static final int MORE = 1;
 	public static final int LESS = -1;
 
-	protected HashMap<Node, Integer> labels = new HashMap<Node, Integer>();
+	protected HashMap<Node<Node>, Integer> labels = new HashMap<Node<Node>, Integer>();
 	public CoffmanGrahamLayeredGraphOrder(int layerLength) {
 		this.layerLength = layerLength;
 	}
@@ -34,10 +37,10 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	}
 
 	@Override
-	public List<List<Node>> getLayers(Graph<Node> g) {
-		HashSet<Node> notSourcesNodes = new HashSet<Node>();
+	public List<List<Node<Node>>> getLayers(Graph<Node<Node>> g) {
+		HashSet<Node<Node>> notSourcesNodes = new HashSet<Node<Node>>();
 		int label = 1;
-		for(Node n:	g.getNodes()) {
+		for(Node<Node> n:	g.getNodes()) {
 			if (n.getSources().isEmpty()) {
 				labels.put(n, label);
 				label++;
@@ -46,7 +49,16 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			}
 		}
 
-		//todo
+		int uncheckedNodesCount = notSourcesNodes.size();
+
+		for (int i = 0; i < uncheckedNodesCount; i++) {
+			Node n = getNodeWithMinLexMarkedSources(labels, notSourcesNodes);
+			labels.put(n, label);
+			label++;
+			notSourcesNodes.remove(n);
+		}
+
+		
 		return null;
 	}
 
@@ -55,7 +67,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		this.layerLength = layerLength;
 	}
 
-	protected int lexicalComparison(Set<Node> first, Set<Node> second) {
+	protected int lexicalComparison(Set<Node<Node>> first, Set<Node<Node>> second) {
 		final int firstSize = first.size();
 		final int secondSize = second.size();
 
@@ -67,15 +79,15 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		} else if (firstSize == 0 && secondSize == 0) {
 			result = EQUAL;
 		} else {
-			Map.Entry<Node, Integer> maxFirstLabel = getLabelWithMaxLabel(labels, first );
-			Map.Entry<Node, Integer> maxSecondLabel = getLabelWithMaxLabel(labels, second);
+			Map.Entry<Node<Node>, Integer> maxFirstLabel = getLabelWithMaxValue(labels, first );
+			Map.Entry<Node<Node>, Integer> maxSecondLabel = getLabelWithMaxValue(labels, second);
 			if (maxFirstLabel.getValue() > maxSecondLabel.getValue()) {
 				result = MORE;
 			} else if (maxFirstLabel.getValue() < maxSecondLabel.getValue()) {
 				result = LESS;
 			} else  {
-				HashSet<Node> newFirstSet = new HashSet<Node>(first);
-				HashSet<Node> newSecondSet = new HashSet<Node>(second);
+				HashSet<Node<Node>> newFirstSet = new HashSet<Node<Node>>(first);
+				HashSet<Node<Node>> newSecondSet = new HashSet<Node<Node>>(second);
 
 				newFirstSet.remove(maxFirstLabel.getKey());
 				newSecondSet.remove(maxSecondLabel.getKey());
@@ -86,10 +98,10 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return result;
 	}
 
-	private Map.Entry<Node, Integer> getLabelWithMaxLabel(HashMap<Node, Integer> labels, Set<Node> nodes) {
+	private Map.Entry<Node<Node>, Integer> getLabelWithMaxValue(HashMap<Node<Node>, Integer> labels, Set<Node<Node>> nodes) {
 		int label = 0;
-		Node n = null;
-		for (Node thisNode : nodes) {
+		Node<Node> n = null;
+		for (Node<Node> thisNode : nodes) {
 			int thisLabel = labels.get(thisNode);
 			if (thisLabel > label) {
 				label = thisLabel;
@@ -97,6 +109,39 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			}
 		}
 
-		return new AbstractMap.SimpleImmutableEntry<com.drawgraph.model.Node,java.lang.Integer>(n, label);
+		return new AbstractMap.SimpleImmutableEntry<com.drawgraph.model.Node<Node>,java.lang.Integer>(n, label);
+	}
+
+	private Node<Node> getNodeWithMinLexMarkedSources(HashMap<Node<Node>, Integer> labels, Set<Node<Node>> nodes) {
+		HashSet<Node<Node>> nodesWithMarkedSources = new HashSet<Node<Node>>();
+
+		for (Node<Node> thisNode : nodes) {
+			boolean sourcesLabeled = true;
+			Set<Node> sources = thisNode.getSources();
+			for (Node source : sources) {
+				if (! labels.containsKey(source)) {
+					sourcesLabeled = false;
+					break;
+				}
+			}
+			if (sourcesLabeled) {
+				nodesWithMarkedSources.add(thisNode);
+			}
+		}
+		Node<Node> result = getNodeWithMinimalLexSources(nodesWithMarkedSources);
+
+		return result;
+	}
+
+	private Node<Node> getNodeWithMinimalLexSources(HashSet<Node<Node>> nodesWithUnmarkesSources) {
+		ArrayList<Node> list = new ArrayList<Node>(nodesWithUnmarkesSources);
+		Node<Node> result = Collections.max(list, new Comparator<Node>() {
+			@Override
+			public int compare(Node o1, Node o2) {
+				return lexicalComparison(o1.getSources(), o2.getSources());
+			}
+		});
+
+		return result;
 	}
 }

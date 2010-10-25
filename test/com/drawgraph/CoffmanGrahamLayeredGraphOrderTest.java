@@ -117,6 +117,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		}
 		return result;
 	}
+
 	private class MockCoffmanGrahamLayeredGraphOrder extends CoffmanGrahamLayeredGraphOrder {
 		public MockCoffmanGrahamLayeredGraphOrder(int layerLength) {
 			super(layerLength);
