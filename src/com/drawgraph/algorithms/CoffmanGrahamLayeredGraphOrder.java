@@ -134,38 +134,42 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		ArrayList<Node> slot = new ArrayList<Node>(slotsLength);
 		HashSet<Node> extraGrapes = new HashSet<Node>();
 
-		if (grapes.size() <= slotsLength) {
-		} else {
+		List<Node> whiteGrapes = new ArrayList<Node>();
+		if (grapes.size() > slotsLength) {
 			//ohhh, we've got so many grapes! Can't fit at a time!
-			//just put the rest in the beginning of whiteGrapes!
-			extraGrapes = getOldestGrapes(grapes, grapes.size() - slotsLength);
+			//just put the rest (the youngest ones) in the beginning of whiteGrapes!
+			HashSet<Node> oldestGrapes = getOldestGrapes(grapes, slotsLength);
+			HashSet<Node> youngestGrapes = new HashSet<Node>(grapes);
+			youngestGrapes.removeAll(oldestGrapes);
+
+			extraGrapes.addAll(youngestGrapes);
 			grapes.removeAll(extraGrapes);
-		}
-		//our slot will take all grapes! Coool!
+			//white grapes for grapes that are in the slot. Extras go first!
+			whiteGrapes = new ArrayList<Node>(extraGrapes);
+		} else {
+			//our slot will take all grapes! Coool!
+			int extraSlots = slotsLength - grapes.size();
+			//this is where we'll look for extra grapes - in remaining grapes \ white grapes
+			HashSet<Node> grapesToLookForExtra = new HashSet<Node>(allRemainingGrapes);
+			grapesToLookForExtra.removeAll(whiteGrapes);
+			//hey, let's put extra grapes to fill the slot!
+			HashSet<Node> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
+			//OK, let's put them as well!
+			for (Node grapeToFillTheSlot : grapesToFillTheSlot) {
+				slot.add(grapeToFillTheSlot);
+			}
+			//get white grapes for extra grapes
+			ArrayList<Node> whiteGrapesForExtras = getWhiteGrapes(grapesToFillTheSlot);
+			whiteGrapes.addAll(whiteGrapesForExtras);
+		} 
 		for (Node grape : grapes) {
 			slot.add(grape);
 		}
-		int extraSlots = slotsLength - grapes.size();
 
-		//white grapes for grapes that are in the slot
-		List<Node> whiteGrapes = new ArrayList<Node>(extraGrapes);
 		whiteGrapes.addAll(getWhiteGrapes(slot));
 
-		//this is where we'll look for extra grapes - in remaining grapes \ white grapes
-		HashSet<Node> grapesToLookForExtra = new HashSet<Node>(allRemainingGrapes);
-		grapesToLookForExtra.removeAll(whiteGrapes);
 
 
-		//hey, let's put extra grapes to fill the slot!
-		HashSet<Node> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
-		//OK, let's put them as well!
-		for (Node grapeToFillTheSlot : grapesToFillTheSlot) {
-			slot.add(grapeToFillTheSlot);
-		}
-
-		//get white grapes for extra grapes
-		ArrayList<Node> whiteGrapesForExtras = getWhiteGrapes(grapesToFillTheSlot);
-		whiteGrapes.addAll(whiteGrapesForExtras);
 
 		//but what if there is still some space?
 //			if (slot.size() < slotsLength) {
@@ -181,9 +185,9 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		//OK, our slot is filled with grapes! Or not? - if so, then there are no more grapes and we shall finish and enjoy grapes!
 		if (whiteGrapes.size() == 0) {
 			if (allRemainingGrapes.size() > 0) {
-				System.out.println("this is very special situation, we seem to have another sack of grapes (another graph...)");
-				HashSet<Node> whiteGrapesFromAnotherSack = getOldestGrapes(allRemainingGrapes, extraSlots, grapesAges);
-				return putGrapesIntoSlots(whiteGrapesFromAnotherSack, whiteGrapesFromAnotherSack, boxOfGrapes, slotsLength, grapesAges);
+				throw new IllegalStateException("this is very special situation, we seem to have another sack of grapes (another graph...)");
+//				HashSet<Node> whiteGrapesFromAnotherSack = getOldestGrapes(allRemainingGrapes, extraSlots, grapesAges);
+//				return putGrapesIntoSlots(whiteGrapesFromAnotherSack, whiteGrapesFromAnotherSack, boxOfGrapes, slotsLength, grapesAges);
 			}
 			return boxOfGrapes;
 		} else {
