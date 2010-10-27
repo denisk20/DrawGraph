@@ -20,6 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class GraphMLTestUtils {
 	public final static String FILE_NAME = "test.graphml";
+	public final static String PURE_SOURCE_FILE_NAME = "test-pureSource.graphml";
+	public final static String PURE_SOURCE_SINK_FILE_NAME = "test-pureSourcePureSink.graphml";
 
 	private final static String N_0 = "n0";
 	private final static String N_1 = "n1";
@@ -83,6 +85,9 @@ public class GraphMLTestUtils {
 
 	public static Graph<Node> parseGraph() throws IOException, SAXException, ParserConfigurationException {
 		return parser.buildGraph(FILE_NAME);
+	}
+	public static Graph<Node> parseGraph(String filename) throws IOException, SAXException, ParserConfigurationException {
+		return parser.buildGraph(filename);
 	}
 
 }
