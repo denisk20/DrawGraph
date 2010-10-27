@@ -132,7 +132,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		}
 		//creating new slot - cosy place for our grapes
 		ArrayList<Node> slot = new ArrayList<Node>(slotsLength);
-		HashSet<Node> extraGrapes = new HashSet<Node>();
 
 		List<Node> whiteGrapes = new ArrayList<Node>();
 		if (grapes.size() > slotsLength) {
@@ -142,10 +141,9 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			HashSet<Node> youngestGrapes = new HashSet<Node>(grapes);
 			youngestGrapes.removeAll(oldestGrapes);
 
-			extraGrapes.addAll(youngestGrapes);
-			grapes.removeAll(extraGrapes);
+			grapes.removeAll(youngestGrapes);
 			//white grapes for grapes that are in the slot. Extras go first!
-			whiteGrapes = new ArrayList<Node>(extraGrapes);
+			whiteGrapes = new ArrayList<Node>(youngestGrapes);
 		} else {
 			//our slot will take all grapes! Coool!
 			int extraSlots = slotsLength - grapes.size();
