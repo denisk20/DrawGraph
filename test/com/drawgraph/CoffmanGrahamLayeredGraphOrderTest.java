@@ -115,16 +115,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 	@Test
 	public void phase1() throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g = GraphMLTestUtils.parseGraph();
-		HashMap<Node, Integer> map = testable.phase1(g);
-		Set<Node> nodes = map.keySet();
-		for (Node n : nodes) {
-			if (n.getSources().isEmpty()) {
-				assertEquals(new Integer(1), map.get(n));
-			} else {
-				assertFalse(new Integer(1).equals(map.get(n)));
-			}
-		}
+		performAndAssertPhase1(GraphMLTestUtils.FILE_NAME);
 	}
 
 	@Test
@@ -138,7 +129,11 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 	@Test
 	public void phase1_pureSource() throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g = GraphMLTestUtils.parseGraph(GraphMLTestUtils.PURE_SOURCE_FILE_NAME);
+		performAndAssertPhase1(GraphMLTestUtils.PURE_SOURCE_FILE_NAME);
+	}
+
+	private void performAndAssertPhase1(String sourceFileName) throws IOException, SAXException, ParserConfigurationException {
+		Graph<Node> g = GraphMLTestUtils.parseGraph(sourceFileName);
 		HashMap<Node, Integer> map = testable.phase1(g);
 		Set<Node> nodes = map.keySet();
 		for (Node n : nodes) {
@@ -155,6 +150,10 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		applyCoffmanGrahamToDagAndAssert(GraphMLTestUtils.DAG_FILE_NAME);
 	}
 
+	@Test
+	public void parseAllDags() {
+
+	}
 	private void applyCoffmanGrahamToDagAndAssert(String dagFileName) throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> g = GraphMLTestUtils.parseGraph(dagFileName);
 		final int layerLength = 2;
