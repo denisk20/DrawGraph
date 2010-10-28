@@ -103,7 +103,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private static JFrame frame;
 
-	private static final String GRAPHML_EXT = ".graphml";
+	public static final String GRAPHML_EXT = ".graphml";
 
 	private FilenameFilter graphMLFilenameFilter = new FilenameFilter() {
 		@Override
@@ -164,7 +164,6 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		DefaultListModel listModel = (DefaultListModel) chooseFileList.getModel();
 		String selectedFile = (String) listModel.get(selectedIndex);
 		String path = currentDirectory + File.separator + selectedFile;
-		System.out.println("Parsing file: " + selectedFile);
 
 		currentFilePath = path;
 		parser = new GraphMLParser();

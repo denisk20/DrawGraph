@@ -1,6 +1,7 @@
 package com.drawgraph;
 
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
+import com.drawgraph.graphics.DrawGraphUI;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 import com.drawgraph.model.SimpleNode;
@@ -8,6 +9,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,6 +134,29 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		performAndAssertPhase1(GraphMLTestUtils.PURE_SOURCE_FILE_NAME);
 	}
 
+	@Test
+	public void phase2_pureSource_pureSink() throws IOException, SAXException, ParserConfigurationException {
+		performAndAssertPhase2(GraphMLTestUtils.DAG_FILE_NAME);
+	}
+
+	@Test
+	public void parseAllDags() throws IOException, SAXException, ParserConfigurationException {
+		File dagsDirectory = new File(DAGS_DIRECTORY);
+		assertTrue(dagsDirectory.exists());
+		assertTrue(dagsDirectory.isDirectory());
+
+		String[] files = dagsDirectory.list();
+		for (String fileName : files) {
+			if (fileName.endsWith(DrawGraphUI.GRAPHML_EXT)) {
+				String fullFileName = DAGS_DIRECTORY + File.separator + fileName;
+
+				performAndAssertPhase1(fullFileName);
+
+				performAndAssertPhase2(fullFileName);
+			}
+		}
+	}
+
 	private void performAndAssertPhase1(String sourceFileName) throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> g = GraphMLTestUtils.parseGraph(sourceFileName);
 		HashMap<Node, Integer> map = testable.phase1(g);
@@ -144,17 +169,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 			}
 		}
 	}
-
-	@Test
-	public void phase2_pureSource_pureSink() throws IOException, SAXException, ParserConfigurationException {
-		applyCoffmanGrahamToDagAndAssert(GraphMLTestUtils.DAG_FILE_NAME);
-	}
-
-	@Test
-	public void parseAllDags() {
-
-	}
-	private void applyCoffmanGrahamToDagAndAssert(String dagFileName) throws IOException, SAXException, ParserConfigurationException {
+	private void performAndAssertPhase2(String dagFileName) throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> g = GraphMLTestUtils.parseGraph(dagFileName);
 		final int layerLength = 2;
 		final List<List<Node>> layers = performPhase2(dagFileName, layerLength);
