@@ -43,47 +43,48 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	public List<List<Node>> getLayers(Graph<Node> g) {
 		labels = phase1(g);
 
-		List<List<Node>> result = phase2(labels);
-		return null;
+		return phase2_2(g);
 	}
 
-	protected List<List<Node>> phase2(HashMap<Node, Integer> labels) {
-		List<List<Node>> result = new ArrayList<List<Node>>();
-		HashMap<Node, Integer> nodesToCheck = new HashMap<Node, Integer>(labels);
-
-		boolean nextLayer = !labels.isEmpty();
-		if (layerLength > 0) {
-			while (nextLayer) {
-				List<Node> layer = new ArrayList<Node>();
-				for (int i = 0; i < layerLength; i++) {
-					Node nodeWithMaxLabel = getNodeWithMaxLabel(nodesToCheck);
-
-					if (nodeWithMaxLabel != null) {
-						layer.add(nodeWithMaxLabel);
-						nodesToCheck.remove(nodeWithMaxLabel);
-					} else {
-						//finish this one
-						if (!layer.isEmpty()) {
-							result.add(layer);
-						}
-						//exit outer loop
-						nextLayer = false;
-						//exit this loop
-						break;
-					}
-				}
-
-				if (nextLayer) {
-					result.add(layer);
-				}
+	/**
+	 * This method returns a map of nodes which all nodes have labels
+	 * assigned
+	 *
+	 * @param g graph to analyze
+	 * @return map of signature <Node, Label>
+	 */
+	protected HashMap<Node, Integer> phase1(Graph<Node> g) {
+		HashMap<Node, Integer> resultingLabels = new HashMap<Node, Integer>();
+		HashSet<Node> notSourcesNodes = new HashSet<Node>();
+		int label = 1;
+		for (Node n : g.getNodes()) {
+			if (n.getSources().isEmpty()) {
+				resultingLabels.put(n, label);
+				//label++;
+			} else {
+				notSourcesNodes.add(n);
 			}
 		}
-		return result;
+
+		int uncheckedNodesCount = notSourcesNodes.size();
+
+		for (int i = 0; i < uncheckedNodesCount; i++) {
+			Node<Node> n = getNodeWithMinLexMarkedSources(resultingLabels, notSourcesNodes);
+			if (n == null) {
+				//just get node with ANY sources (marked/unmarked)
+				n = getNodeWithMinimalLexSources(notSourcesNodes);
+			}
+			resultingLabels.put(n, ++label);
+			notSourcesNodes.remove(n);
+		}
+
+		return resultingLabels;
 	}
 
-	protected List<List<Node>> phase2_1(HashMap<Node, Integer> labels, int layerLength) {
-		List<List<Node>> result = new ArrayList<List<Node>>();
-		//first grape
+	protected List<List<Node>> phase2_2(Graph<Node> g) {
+		if (labels.isEmpty()) {
+			throw new IllegalArgumentException("Labels are empty");
+		}
 		HashSet<Node> nodesWithoutSources = new HashSet<Node>();
 		for (Node n : labels.keySet()) {
 			if (n.getSinks().isEmpty()) {
@@ -91,41 +92,13 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			}
 		}
 
-		boolean moreGrapes = true;
-
-		ArrayList<Node> whiteGrapes = new ArrayList<Node>();
-		while (moreGrapes) {
-			List<Node> slots = new ArrayList<Node>(layerLength);
-
-		}
-
-
-		List<Node> bottomLayer = new ArrayList<Node>();
-		final int nodesWithoutSourcesCount = nodesWithoutSources.size();
-		int emptyCells = layerLength - nodesWithoutSourcesCount;
-		if (emptyCells >= 0) {
-			bottomLayer.addAll(nodesWithoutSources);
-			nodesWithoutSources.removeAll(bottomLayer);
-			//will be empty
-		} else {
-			Iterator<Node> nodeIterator = nodesWithoutSources.iterator();
-			for (int i = 0; i < layerLength; i++) {
-				Node n = nodeIterator.next();
-				bottomLayer.add(n);
-			}
-			nodesWithoutSources.removeAll(bottomLayer);
-		}
-		if (!bottomLayer.isEmpty()) {
-			result.add(bottomLayer);
-		}
-		if (!nodesWithoutSources.isEmpty()) {
-
-		}
-
-		return null;
+		HashSet<Node> allNodes = new HashSet<Node>(g.getNodes());
+		allNodes.removeAll(nodesWithoutSources);
+		List<List<Node>> result = putGrapesIntoSlots(allNodes, nodesWithoutSources, null, layerLength, labels);
+		return result;
 	}
 
-	private List<List<Node>> putGrapesIntoSlots(Collection<Node> allRemainingGrapes, Collection<Node> grapes, List<List<Node>> boxOfGrapes, final int slotsLength, HashMap<Node, Integer> grapesAges) {
+	protected List<List<Node>> putGrapesIntoSlots(Collection<Node> allRemainingGrapes, Collection<Node> grapes, List<List<Node>> boxOfGrapes, final int slotsLength, HashMap<Node, Integer> grapesAges) {
 		//this is our treasure - our box of grapes...
 		if (boxOfGrapes == null) {
 			boxOfGrapes = new ArrayList<List<Node>>();
@@ -137,43 +110,43 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		if (grapes.size() > slotsLength) {
 			//ohhh, we've got so many grapes! Can't fit at a time!
 			//just put the rest (the youngest ones) in the beginning of whiteGrapes!
-			HashSet<Node> oldestGrapes = getOldestGrapes(grapes, slotsLength);
+			ArrayList<Node> oldestGrapes = getOldestGrapes(grapes, slotsLength, grapesAges);
 			HashSet<Node> youngestGrapes = new HashSet<Node>(grapes);
 			youngestGrapes.removeAll(oldestGrapes);
 
 			grapes.removeAll(youngestGrapes);
 			//white grapes for grapes that are in the slot. Extras go first!
 			whiteGrapes = new ArrayList<Node>(youngestGrapes);
+			whiteGrapes.addAll(getWhiteGrapes(grapes));
+			//remove duplicates!
+			whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
 		} else {
 			//our slot will take all grapes! Coool!
 			int extraSlots = slotsLength - grapes.size();
+			whiteGrapes.addAll(getWhiteGrapes(grapes));
 			//this is where we'll look for extra grapes - in remaining grapes \ white grapes
 			HashSet<Node> grapesToLookForExtra = new HashSet<Node>(allRemainingGrapes);
+
+			//this is useful when we parse the last layer
+			grapes.removeAll(whiteGrapes);
 			grapesToLookForExtra.removeAll(whiteGrapes);
+			grapesToLookForExtra.removeAll(grapes);
 			//hey, let's put extra grapes to fill the slot!
-			HashSet<Node> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
+			ArrayList<Node> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
 			//OK, let's put them as well!
 			for (Node grapeToFillTheSlot : grapesToFillTheSlot) {
-				slot.add(grapeToFillTheSlot);
+				grapes.add(grapeToFillTheSlot);
 			}
+
 			//get white grapes for extra grapes
 			ArrayList<Node> whiteGrapesForExtras = getWhiteGrapes(grapesToFillTheSlot);
 			whiteGrapes.addAll(whiteGrapesForExtras);
-		} 
+			whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
+		}
 		for (Node grape : grapes) {
 			slot.add(grape);
 		}
 
-		whiteGrapes.addAll(getWhiteGrapes(slot));
-
-
-
-
-		//but what if there is still some space?
-//			if (slot.size() < slotsLength) {
-//				int evenNowExtraSlots = slotsLength - slot.size();
-//				//ok, I don't want to do this, but let's pull some grapes from white - NO!!!!!!!!! Let's create new layer instead
-//			}
 		//remove grapes from the sack they were in...
 		allRemainingGrapes.removeAll(slot);
 		//remove white grapes as well - we'd put them into a special container...
@@ -194,6 +167,27 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 	}
 
+	/**
+	 * This method returns MAXIMUM slotsLength oldest grapes (which has biggest label)
+	 * from grapes
+	 */
+	protected ArrayList<Node> getOldestGrapes(Collection<Node> grapes, int slotsLength, HashMap<Node, Integer> grapesAges) {
+		HashMap<Node, Integer> ages = new HashMap<Node, Integer>(grapesAges);
+		Set<Node> interestedGrapes = ages.keySet();
+		interestedGrapes.retainAll(grapes);
+
+		ArrayList<Node> result = new ArrayList<Node>();
+		for (int i = 0; i < slotsLength; i++) {
+			Node n = getNodeWithMaxLabel(ages);
+			if (n != null) {
+				ages.remove(n);
+				result.add(n);
+			}
+		}
+
+		return result;
+	}
+
 	private ArrayList<Node> getWhiteGrapes(Collection<Node> grapes) {
 		ArrayList<Node> whiteGrapes = new ArrayList<Node>();
 
@@ -202,19 +196,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		}
 
 		return whiteGrapes;
-	}
-
-	protected List<Node> getSortedNodesList(Set<Node> currentLayerSources, HashMap<Node, Integer> labels) {
-		ArrayList<Node> result = new ArrayList<Node>();
-		ArrayList<Integer> passedLabels = new ArrayList<Integer>();
-		for (Node n : currentLayerSources) {
-			passedLabels.add(labels.get(n));
-		}
-		Collections.sort(passedLabels);
-		for (Integer label : passedLabels) {
-			Node n = getNodeForLabel(labels, label);
-			result.add(n);
-		}
 	}
 
 	private Node getNodeWithMaxLabel(HashMap<Node, Integer> nodesToCheck) {
@@ -238,41 +219,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * This method returns a map of nodes which all nodes have labels
-	 * assigned
-	 *
-	 * @param g graph to analyze
-	 * @return map of signature <Node, Label>
-	 */
-	protected HashMap<Node, Integer> phase1(Graph<Node> g) {
-		HashMap<Node, Integer> resultingLabels = new HashMap<Node, Integer>();
-		HashSet<Node> notSourcesNodes = new HashSet<Node>();
-		int label = 1;
-		for (Node<Node> n : g.getNodes()) {
-			if (n.getSources().isEmpty()) {
-				resultingLabels.put(n, label);
-				//label++;
-			} else {
-				notSourcesNodes.add(n);
-			}
-		}
-
-		int uncheckedNodesCount = notSourcesNodes.size();
-
-		for (int i = 0; i < uncheckedNodesCount; i++) {
-			Node<Node> n = getNodeWithMinLexMarkedSources(resultingLabels, notSourcesNodes);
-			if (n == null) {
-				//just get node with ANY sources (marked/unmarked)
-				n = getNodeWithMinimalLexSources(notSourcesNodes);
-			}
-			resultingLabels.put(n, ++label);
-			notSourcesNodes.remove(n);
-		}
-
-		return resultingLabels;
 	}
 
 	@Override
@@ -364,4 +310,5 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 		return result;
 	}
+
 }
