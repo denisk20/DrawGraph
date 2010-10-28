@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +30,8 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	protected HashMap<Node, Integer> labels = new HashMap<Node, Integer>();
 
 	protected HashSet<Node> addedNodes = new HashSet<Node>();
+
+	boolean isBottomLayer = true;
 	public CoffmanGrahamLayeredGraphOrder(int layerLength) {
 		this.layerLength = layerLength;
 	}
@@ -108,14 +109,29 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		ArrayList<Node> slot = new ArrayList<Node>(slotsLength);
 
 		List<Node> whiteGrapes = new ArrayList<Node>();
+		HashSet<Node> hangingNodes = getHangingNodes(grapes);
+		if (hangingNodes.size() > 0) {
+			//put only hanging grapes into the layer
+			HashSet<Node> remainingGrapes = new HashSet<Node>(grapes);
+			remainingGrapes.removeAll(hangingNodes);
+
+			//just put the rest in white grapes. Goes the first
+			whiteGrapes.addAll(remainingGrapes);
+
+			//add white grapes for our hanging nodes as well...
+			grapes.removeAll(remainingGrapes);
+			//todo do I need these lines?
+			whiteGrapes.removeAll(addedNodes);
+			whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
+		}
 		if (grapes.size() > slotsLength) {
 			//ohhh, we've got so many grapes! Can't fit at a time!
-			//just put the rest (the youngest ones) in the beginning of whiteGrapes!
 			ArrayList<Node> oldestGrapes = getOldestGrapes(grapes, slotsLength, grapesAges);
 			HashSet<Node> youngestGrapes = new HashSet<Node>(grapes);
 			youngestGrapes.removeAll(oldestGrapes);
 
 			grapes.removeAll(youngestGrapes);
+			//just put the rest (the youngest ones) in the beginning of whiteGrapes!
 			//white grapes for grapes that are in the slot. Extras go first!
 			whiteGrapes = new ArrayList<Node>(youngestGrapes);
 			ArrayList<Node> allWhiteGrapes = getWhiteGrapes(grapes);
@@ -125,35 +141,39 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
 		} else {
 			//our slot will take all grapes! Coool!
-			int extraSlots = slotsLength - grapes.size();
-			ArrayList<Node> allWhiteGrapes = getWhiteGrapes(grapes);
-			whiteGrapes.addAll(allWhiteGrapes);
-			whiteGrapes.removeAll(addedNodes);
-			//this is where we'll look for extra grapes - in remaining grapes \ white grapes
-			HashSet<Node> grapesToLookForExtra = new HashSet<Node>(allRemainingGrapes);
 
-			//this is useful when we parse the last layer
-			grapes.removeAll(whiteGrapes);
-			grapesToLookForExtra.removeAll(whiteGrapes);
-			grapesToLookForExtra.removeAll(grapes);
-			//hey, let's put extra grapes to fill the slot!
-			ArrayList<Node> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
-			//OK, let's put them as well!
-			for (Node grapeToFillTheSlot : grapesToFillTheSlot) {
-				grapes.add(grapeToFillTheSlot);
+				int extraSlots = slotsLength - grapes.size();
+				ArrayList<Node> allWhiteGrapes = getWhiteGrapes(grapes);
+				whiteGrapes.addAll(allWhiteGrapes);
+				whiteGrapes.removeAll(addedNodes);
+				//this is where we'll look for extra grapes - in remaining grapes \ white grapes
+				HashSet<Node> grapesToLookForExtra = new HashSet<Node>(allRemainingGrapes);
+
+				//this is useful when we parse the last layer
+				grapes.removeAll(whiteGrapes);
+				grapesToLookForExtra.removeAll(whiteGrapes);
+				grapesToLookForExtra.removeAll(grapes);
+			if (hangingNodes.size() == 0) {
+//hey, let's put extra grapes to fill the slot!
+				ArrayList<Node> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
+				//OK, let's put them as well!
+				for (Node grapeToFillTheSlot : grapesToFillTheSlot) {
+					grapes.add(grapeToFillTheSlot);
+				}
+
+				//get white grapes for extra grapes
+				ArrayList<Node> whiteGrapesForExtras = getWhiteGrapes(grapesToFillTheSlot);
+				//make sure we don't look at previously added grapes
+				whiteGrapes.addAll(whiteGrapesForExtras);
+				whiteGrapes.removeAll(addedNodes);
+				whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
 			}
-
-			//get white grapes for extra grapes
-			ArrayList<Node> whiteGrapesForExtras = getWhiteGrapes(grapesToFillTheSlot);
-			//make sure we don't look at previously added grapes
-			whiteGrapes.addAll(whiteGrapesForExtras);
-			whiteGrapes.removeAll(addedNodes);
-			whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
 		}
 		for (Node grape : grapes) {
 			slot.add(grape);
 		}
 
+		whiteGrapes.removeAll(grapes);
 		addedNodes.addAll(grapes);
 
 		//remove grapes from the sack they were in...
@@ -176,6 +196,17 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 	}
 
+	private HashSet<Node> getHangingNodes(Collection<Node> grapes) {
+		HashSet<Node> result = new HashSet<Node>();
+		for (Node n : grapes) {
+			if (n.getSinks().size() == 0) {
+				result.add(n);
+			}
+		}
+
+		return result;
+	}
+
 	/**
 	 * This method returns MAXIMUM slotsLength oldest grapes (which has biggest label)
 	 * from grapes
@@ -186,25 +217,52 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		interestedGrapes.retainAll(grapes);
 
 		ArrayList<Node> result = new ArrayList<Node>();
-		for (int i = 0; i < slotsLength; i++) {
+		int addedNodes = 0;
+		while (addedNodes < slotsLength) {
 			Node n = getNodeWithMaxLabel(ages);
 			if (n != null) {
-				ages.remove(n);
-				result.add(n);
+				if (!nodeIsBound(n, result)) {
+					result.add(n);
+					addedNodes++;
+				}
+			} else {
+				break;
 			}
+			ages.remove(n);
 		}
 
 		return result;
 	}
 
+	private boolean nodeIsBound(Node n, Collection<Node> result) {
+		boolean bound = false;
+		loop:
+		for (Node<Node> node : result) {
+			for (Node source : node.getSources()) {
+				if (source.equals(n)) {
+					bound = true;
+					break loop;
+				}
+			}
+			for (Node<Node> sink : node.getSinks()) {
+				if (sink.equals(n)) {
+					bound = true;
+					break loop;
+				}
+			}
+		}
+
+		return bound;
+	}
+
 	private ArrayList<Node> getWhiteGrapes(Collection<Node> grapes) {
-		ArrayList<Node> whiteGrapes = new ArrayList<Node>();
+		HashSet<Node> whiteGrapes = new HashSet<Node>();
 
 		for (Node grape : grapes) {
 			whiteGrapes.addAll(grape.getSources());
 		}
 
-		return whiteGrapes;
+		return new ArrayList<Node>(whiteGrapes);
 	}
 
 	private Node getNodeWithMaxLabel(HashMap<Node, Integer> nodesToCheck) {
