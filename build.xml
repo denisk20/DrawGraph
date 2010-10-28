@@ -55,7 +55,7 @@
 
 	<target name="test" depends="compile, compileTests, copyTestResources">
 		<mkdir dir="${test.reports.dir}"/>
-		<junit printsummary="yes" haltonfailure="yes">
+		<junit printsummary="yes" haltonfailure="yes" >
 			<formatter type="plain"/>
 			<classpath>
 				<path refid="test.classpath"/>

@@ -227,7 +227,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		int initialSize = allNodes.size();
 		int uniqueSize = new HashSet<Node>(allNodes).size();
 
-		assertEquals(initialSize, uniqueSize);
+		assertEquals(uniqueSize, initialSize);
 	}
 
 	private void assertLayersFitLimit(List<List<Node>> layers, int layerLength) {
