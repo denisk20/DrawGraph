@@ -34,6 +34,8 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 	private final static String DAGS_DIRECTORY = "data/dags";
 
 	private MockCoffmanGrahamLayeredGraphOrder testable = new MockCoffmanGrahamLayeredGraphOrder(0);
+	private static final int MAX_LAYER_LENGTH = 25;
+	private static final int MIN_LAYER_LENGTH = 1;
 
 	@Test
 	public void testLexicalComparison_less() {
@@ -136,10 +138,13 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 	@Test
 	public void phase2_pureSource_pureSink() throws IOException, SAXException, ParserConfigurationException {
-		performAndAssertPhase2(GraphMLTestUtils.DAG_FILE_NAME);
+		performAndAssertPhase2(GraphMLTestUtils.DAG_FILE_NAME, 1);
 	}
 
 	@Test
+	/**
+	 * This is the main test
+	 */
 	public void parseAllDags() throws IOException, SAXException, ParserConfigurationException {
 		File dagsDirectory = new File(DAGS_DIRECTORY);
 		assertTrue(dagsDirectory.exists());
@@ -147,17 +152,24 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 		String[] files = dagsDirectory.list();
 		for (String fileName : files) {
-			if (fileName.endsWith(DrawGraphUI.GRAPHML_EXT)) {
-				String fullFileName = DAGS_DIRECTORY + File.separator + fileName;
 
-				performAndAssertPhase1(fullFileName);
-
-				performAndAssertPhase2(fullFileName);
+			for (int i = MIN_LAYER_LENGTH; i < MAX_LAYER_LENGTH; i++) {
+				if (fileName.endsWith(DrawGraphUI.GRAPHML_EXT)) {
+					performCoffmanGrahamLayering(fileName, MIN_LAYER_LENGTH);
+				}
 			}
 		}
 	}
 
-	private void performAndAssertPhase1(String sourceFileName) throws IOException, SAXException, ParserConfigurationException {
+	private void performCoffmanGrahamLayering(String fileName, int layerLength) throws IOException, SAXException, ParserConfigurationException {
+		String fullFileName = DAGS_DIRECTORY + File.separator + fileName;
+
+		HashMap<Node, Integer> map = performAndAssertPhase1(fullFileName);
+
+		performAndAssertPhase2(fullFileName, layerLength);
+	}
+
+	private HashMap<Node, Integer> performAndAssertPhase1(String sourceFileName) throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> g = GraphMLTestUtils.parseGraph(sourceFileName);
 		HashMap<Node, Integer> map = testable.phase1(g);
 		Set<Node> nodes = map.keySet();
@@ -168,10 +180,9 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 				assertFalse(new Integer(1).equals(map.get(n)));
 			}
 		}
+		return map;
 	}
-	private void performAndAssertPhase2(String dagFileName) throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g = GraphMLTestUtils.parseGraph(dagFileName);
-		final int layerLength = 2;
+	private void performAndAssertPhase2(String dagFileName, int layerLength) throws IOException, SAXException, ParserConfigurationException {
 		final List<List<Node>> layers = performPhase2(dagFileName, layerLength);
 		List<Node> upperLayer = layers.get(layers.size()-1);
 		List<Node> bottomLayer = layers.get(0);
@@ -254,6 +265,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 		HashMap<Node, Integer> labels = testable.phase1(g);
 		testable.setLabels(labels);
+		testable.setAddedNodes(new HashSet<Node>());
 		final List<List<Node>> layers = testable.phase2_2(g);
 
 		return layers;
