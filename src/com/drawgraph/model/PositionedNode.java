@@ -10,4 +10,8 @@ public interface PositionedNode extends Node<PositionedNode> {
 	int getX();
 
 	int getY();
+
+	void setX(int x);
+
+	void setY(int y);
 }

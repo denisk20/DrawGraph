@@ -29,4 +29,14 @@ public class PositionedNodeImpl extends AbstractNode<PositionedNode> implements 
 	public int getY() {
 		return y;
 	}
+
+	@Override
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	@Override
+	public void setY(int y) {
+		this.y = y;
+	}
 }

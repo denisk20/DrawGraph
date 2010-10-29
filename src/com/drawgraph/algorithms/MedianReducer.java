@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public class MedianReducer extends AbstractCrossingReducer{
 	@Override
-	protected Map<PositionedNode, Integer> getNodeWeights(List<PositionedNode> currentLayer,
-													  List<PositionedNode> bottomLayer) {
+	protected List<Map.Entry<PositionedNode, Integer>> getNodeWeights(List<PositionedNode> currentLayer,
+																   List<PositionedNode> bottomLayer) {
 		return null;
 	}
 }
