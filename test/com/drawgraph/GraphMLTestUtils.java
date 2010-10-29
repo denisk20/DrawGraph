@@ -23,6 +23,7 @@ public class GraphMLTestUtils {
 	public final static String PURE_SOURCE_FILE_NAME = "test-pureSource.graphml";
 	public final static String PURE_SOURCE_SINK_FILE_NAME = "test-pureSourcePureSink.graphml";
 	public final static String DAG_FILE_NAME = "test-DAG.graphml";
+	public final static String DIGRAPH_FILE_NAME = "test-digraph.graphml";
 
 	private final static String N_0 = "n0";
 	private final static String N_1 = "n1";

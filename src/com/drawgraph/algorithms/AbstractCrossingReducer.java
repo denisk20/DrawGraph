@@ -23,17 +23,19 @@ public abstract class AbstractCrossingReducer implements CrossingReducer{
 		List<List<PositionedNode>> resultingLayers = new ArrayList<List<PositionedNode>>();
 		int layersCount = layers.size();
 		if (layersCount > 1) {
-			List<PositionedNode> bottomLayer = layers.get(0);
 			final HashSet<PositionedNode> allResultNodes = new HashSet<PositionedNode>();
-			allResultNodes.addAll(bottomLayer);
 
+			List<PositionedNode> firstLayer = layers.get(0);
+			allResultNodes.addAll(firstLayer);
+			resultingLayers.add(firstLayer);
 			for (int i = 1; i < layersCount; i++) {
+				List<PositionedNode> bottomLayer = layers.get(i-1);
 				List<PositionedNode> currentLayer = layers.get(i);
+
 				List<Map.Entry<PositionedNode,Integer>> positions = getNodeWeights(currentLayer, bottomLayer);
 				List<PositionedNode> reorderedCurrentLayer = reorder(positions);
 
 				resultingLayers.add(reorderedCurrentLayer);
-				bottomLayer = currentLayer;
 				allResultNodes.addAll(reorderedCurrentLayer);
 			}
 			LayeredPositionedGraph result = new LayeredPositionedGraphImpl(source.getId(), resultingLayers);
