@@ -1,6 +1,7 @@
 package com.drawgraph;
 
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
+import com.drawgraph.algorithms.GraphUtils;
 import com.drawgraph.graphics.DrawGraphUI;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
@@ -215,34 +216,20 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 	}
 
 	private void assertDirection(List<List<Node>> layers) {
+		GraphUtils	graphUtils = new GraphUtils();
 		//starting from bottom to top
 		for (int layerIndex = 0; layerIndex< layers.size(); layerIndex++) {
 			List<Node> layer = layers.get(layerIndex);
 			for (Node<Node> n : layer) {
-				int nodeLayerIndex = getIndexForNode(n, layers);
+				int nodeLayerIndex = graphUtils.getLayerIndexForNode(n, layers);
 				for (Node source : n.getSources()) {
-					int sourceIndex = getIndexForNode(source, layers);
+					int sourceIndex = graphUtils.getLayerIndexForNode(source, layers);
 					assertTrue(nodeLayerIndex < sourceIndex);
 
 				}
 			}
 		}
 
-	}
-
-	private void assertIndexIsHigher(int nodeLayerIndex, Node source) {
-	}
-
-	private int getIndexForNode(Node<Node> inputNode, List<List<Node>> layers) {
-		for (int layerIndex = 0; layerIndex< layers.size(); layerIndex++) {
-			List<Node> layer = layers.get(layerIndex);
-			for (Node<Node> n : layer) {
-				if (n.equals(inputNode)) {
-					return layerIndex;
-				}
-			}
-		}
-		throw new IllegalArgumentException("No node in layers: " + inputNode);
 	}
 
 	private void assertNoDuplicates(List<List<Node>> layers) {

@@ -6,7 +6,7 @@
     <rowspec value="center:100px:noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;43px):noGrow"/>
-    <rowspec value="top:8px:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:d:grow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
@@ -16,12 +16,22 @@
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="center:100px:noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:119px:noGrow"/>
+    <colspec value="fill:16px:noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:398px:noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(d;4px):noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(d;4px):noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(d;4px):noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="center:210px:grow"/>
     <colspec value="left:d:grow"/>
     <constraints>
-      <xy x="23" y="15" width="905" height="598"/>
+      <xy x="23" y="15" width="1120" height="598"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -37,7 +47,7 @@
         <colspec value="fill:max(d;4px):noGrow"/>
         <colspec value="center:d:grow"/>
         <constraints>
-          <grid row="6" column="2" row-span="1" col-span="10" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="2" row-span="1" col-span="20" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -204,7 +214,7 @@
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="10" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="2" row-span="1" col-span="20" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties>
@@ -323,6 +333,49 @@
           </component>
         </children>
       </grid>
+      <grid id="93759" layout-manager="FormLayout">
+        <rowspec value="center:26px:noGrow"/>
+        <colspec value="fill:95px:noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <constraints>
+          <grid row="4" column="10" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="line" title="Dummy nodes"/>
+        <children>
+          <component id="99533" class="javax.swing.JRadioButton" binding="dummyEnabledRadioButton">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="enabled"/>
+            </properties>
+          </component>
+          <component id="4311a" class="javax.swing.JRadioButton" binding="dummyDisabledRadioButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="disabled"/>
+            </properties>
+          </component>
+          <component id="d5f2e" class="javax.swing.JCheckBox" binding="dummiesOptimizedCheckBox">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Optimized"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
   <buttonGroups>
@@ -335,6 +388,10 @@
       <member id="efa0e"/>
       <member id="a9ff7"/>
       <member id="f3953"/>
+    </group>
+    <group name="dummyButtonGroup">
+      <member id="99533"/>
+      <member id="4311a"/>
     </group>
   </buttonGroups>
   <inspectionSuppressions>

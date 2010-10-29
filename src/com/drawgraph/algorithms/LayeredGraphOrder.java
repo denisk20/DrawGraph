@@ -17,4 +17,5 @@ public interface LayeredGraphOrder<T extends Node> extends GraphOrder {
 	List<List<T>> getLayers(Graph<T> g);
 
 	void setLayerLength(int layerLength);
+
 }

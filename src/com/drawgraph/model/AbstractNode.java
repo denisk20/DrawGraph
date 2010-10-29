@@ -15,6 +15,8 @@ public abstract class AbstractNode<T extends Node> implements Node<T> {
 	private HashSet<T> sources = new HashSet<T>();
 	private HashSet<T> sinks = new HashSet<T>();
 
+	boolean isDummy = false;
+
 	public AbstractNode(String id) {
 		this.id = id;
 	}
@@ -50,6 +52,14 @@ public abstract class AbstractNode<T extends Node> implements Node<T> {
 		return result;
 	}
 
+	@Override
+	public boolean isDummy() {
+		return isDummy;
+	}
+
+	public void setDummy(boolean dummy) {
+		this.isDummy = dummy;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

@@ -28,4 +28,6 @@ public interface Node<T extends Node> {
 	void addSink(T sink);
 
 	Set<T> getNeighbours();
+
+	boolean isDummy();
 }

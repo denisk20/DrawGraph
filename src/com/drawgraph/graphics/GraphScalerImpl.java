@@ -1,5 +1,6 @@
 package com.drawgraph.graphics;
 
+import com.drawgraph.algorithms.DummyNodesAssigner;
 import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredPositionedGraph;
@@ -25,6 +26,7 @@ public class GraphScalerImpl implements GraphScaler {
 	private int topOffset;
 	private int leftOffset;
 
+	private DummyNodesAssigner dummyNodesAssigner;
 	@Override
 	public void setMinDistance(int dist) {
 		minDistance = dist;
@@ -47,7 +49,8 @@ public class GraphScalerImpl implements GraphScaler {
 
 	@Override
 	public LayeredPositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order) {
-		final List<List<Node>> layers = order.getLayers(g);
+		List<List<Node>> layers = order.getLayers(g);
+		layers = dummyNodesAssigner.getLayersWithDummiesAssigned(layers, g);
 
 		HashSet<PositionedNode> positionedNodes = new HashSet<PositionedNode>();
 

@@ -251,27 +251,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return result;
 	}
 
-	private boolean nodeIsBound(Node n, Collection<Node> result) {
-		boolean bound = false;
-		loop:
-		for (Node<Node> node : result) {
-			for (Node source : node.getSources()) {
-				if (source.equals(n)) {
-					bound = true;
-					break loop;
-				}
-			}
-			for (Node<Node> sink : node.getSinks()) {
-				if (sink.equals(n)) {
-					bound = true;
-					break loop;
-				}
-			}
-		}
-
-		return bound;
-	}
-
 	private ArrayList<Node> getWhiteGrapes(Collection<Node> grapes) {
 		HashSet<Node> whiteGrapes = new HashSet<Node>();
 
@@ -293,16 +272,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		}
 
 		return result.getKey();
-	}
-
-	private Node getNodeForLabel(HashMap<Node, Integer> labels, Integer label) {
-		Node result = null;
-		for (Node n : labels.keySet()) {
-			if (labels.get(n).equals(label)) {
-				result = n;
-			}
-		}
-		return result;
 	}
 
 	@Override
