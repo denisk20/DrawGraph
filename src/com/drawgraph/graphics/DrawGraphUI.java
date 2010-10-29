@@ -6,6 +6,7 @@ import com.drawgraph.algorithms.CrossingReducer;
 import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.algorithms.MedianReducer;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
+import com.drawgraph.algorithms.UnexpectedCycledGraphException;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;
@@ -115,8 +116,23 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private CrossingReducer medianReducer = new MedianReducer();
 	private CrossingReducer barycenterReducer = new BarycenterReducer();
 
+	private LayeredGraphOrder<Node> simpleOrder = new SimpleLayeredGraphOrder(0);
+	private LayeredGraphOrder<Node> coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
+
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
-		createAndShowUI();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					createAndShowUI();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (SAXException e) {
+					e.printStackTrace();
+				} catch (ParserConfigurationException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	private static void createAndShowUI() throws IOException, SAXException, ParserConfigurationException {
@@ -232,13 +248,33 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		scaler.setMinDistance((Integer) distanceSpin.getValue());
 		scaler.setTopOffset((Integer) topOffsetSpin.getValue());
 
-		LayeredGraphOrder<Node> layeredGraphOrder = getLayeredGraphOrder(layerLengthSlider.getValue());
-		LayeredPositionedGraph layeredPositionedGraph = scaler.scale(graph, layeredGraphOrder);
+		int layerLength = layerLengthSlider.getValue();
+		LayeredGraphOrder<Node> layeredGraphOrder = getLayeredGraphOrder(layerLength);
+		LayeredPositionedGraph layeredPositionedGraph;
+		try {
+			layeredPositionedGraph = scaler.scale(graph, layeredGraphOrder);
+		} catch (UnexpectedCycledGraphException e) {
+			layeredPositionedGraph = handleAsynkGraphError(graph, scaler, layerLength);
+		} catch (StackOverflowError e) {
+			layeredPositionedGraph = handleAsynkGraphError(graph, scaler, layerLength);
+		}
 
 		LayeredPositionedGraph reducedGraph = reduceCrossings(layeredPositionedGraph);
 
 		reducedGraph.setRadius((Integer) radiusSpin.getValue());
 		return reducedGraph;
+	}
+
+	private LayeredPositionedGraph handleAsynkGraphError(Graph<Node> graph, GraphScaler scaler, int layerLength) {
+		final LayeredPositionedGraph layeredPositionedGraph;
+		JOptionPane
+				.showMessageDialog(frame, "Cycled graph detected, Coffman-Graham algo is not applicable. " + "Reordering using simple layout", "Error", JOptionPane.ERROR_MESSAGE);
+
+		simpleOrder.setLayerLength(layerLength);
+		layeredPositionedGraph = scaler.scale(graph, simpleOrder);
+		coffmanGrahamLayeringCheckBox.setSelected(false);
+		useGrahamLayering = false;
+		return layeredPositionedGraph;
 	}
 
 	private LayeredPositionedGraph reduceCrossings(LayeredPositionedGraph layeredPositionedGraph) {
@@ -260,12 +296,14 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		return result;
 	}
 
-	private LayeredGraphOrder<Node> getLayeredGraphOrder(int value) {
+	private LayeredGraphOrder<Node> getLayeredGraphOrder(int layerLength) {
 		LayeredGraphOrder<Node> result;
 		if (useGrahamLayering) {
-			result = new CoffmanGrahamLayeredGraphOrder(value);
+			result = coffmanGrahamOrder;
+			result.setLayerLength(layerLength);
 		} else {
-			result = new SimpleLayeredGraphOrder(value);
+			result = simpleOrder;
+			result.setLayerLength(layerLength);
 		}
 
 		return result;
@@ -371,7 +409,18 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				drawer.drawGraph(layeredPositionedGraph, g2);
+				try {
+					drawer.drawGraph(layeredPositionedGraph, g2);
+				} catch (IllegalArgumentException e) {
+					coffmanGrahamLayeringCheckBox.setSelected(false);
+					useGrahamLayering = false;
+					//								JOptionPane
+					//					.showMessageDialog(frame, "Coffman-Graham algo is not applicable. "
+					//							+ "Choose another graph or uncheck layering", "Error", JOptionPane.ERROR_MESSAGE);
+					//					throw e;
+					System.out.println("Error - it seems that you're trying to apply algorithm for cycled graph: " + chooseFileList
+							.getSelectedValue());
+				}
 
 				setPreferredSize(new Dimension(layeredPositionedGraph.getWidth(), layeredPositionedGraph.getHeight()));
 				revalidate();

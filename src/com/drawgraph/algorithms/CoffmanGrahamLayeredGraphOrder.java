@@ -41,15 +41,11 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return layerLength;
 	}
 
-	public void setAddedNodes(HashSet<Node> addedNodes) {
-		this.addedNodes = addedNodes;
-	}
-
 	@Override
 	public List<List<Node>> getLayers(Graph<Node> g) {
 		labels = phase1(g);
 
-		return phase2_2(g);
+		return phase2(g);
 	}
 
 	/**
@@ -87,10 +83,11 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return resultingLabels;
 	}
 
-	protected List<List<Node>> phase2_2(Graph<Node> g) {
+	protected List<List<Node>> phase2(Graph<Node> g) {
 		if (labels.isEmpty()) {
 			throw new IllegalArgumentException("Labels are empty");
 		}
+		addedNodes.clear();
 		HashSet<Node> nodesWithoutSinks = getNodesWithoutSinks(g.getNodes());
 
 		HashSet<Node> allNodes = new HashSet<Node>(g.getNodes());
@@ -196,13 +193,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		//OK, our slot is filled with grapes! Or not? - if so, then there are no more grapes and we shall finish and enjoy grapes!
 		if (whiteGrapes.size() == 0) {
 			if (allRemainingGrapes.size() > 0) {
-				System.out.println("this is very special situation, we seem to have another sack of grapes (another graph...)");
-				Set<Node> nodesWithoutSinks = getNodesWithoutSinks(allRemainingGrapes);
-				HashSet<Node> miniGraphNodes = new HashSet<Node>(allRemainingGrapes);
-				miniGraphNodes.removeAll(nodesWithoutSinks);
-				return putGrapesIntoSlots(miniGraphNodes, nodesWithoutSinks, boxOfGrapes, layerLength, labels);
-//				HashSet<Node> whiteGrapesFromAnotherSack = getOldestGrapes(allRemainingGrapes, extraSlots, grapesAges);
-//				return putGrapesIntoSlots(whiteGrapesFromAnotherSack, whiteGrapesFromAnotherSack, boxOfGrapes, slotsLength, grapesAges);
+				throw new UnexpectedCycledGraphException("this is very special situation, we seem to have another sack of grapes (another graph...)");
 			}
 			return boxOfGrapes;
 		} else {

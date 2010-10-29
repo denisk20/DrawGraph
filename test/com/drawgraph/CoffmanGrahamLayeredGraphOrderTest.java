@@ -138,7 +138,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 	@Test
 	public void phase2_pureSource_pureSink() throws IOException, SAXException, ParserConfigurationException {
-		performAndAssertPhase2(GraphMLTestUtils.DAG_FILE_NAME, 1);
+		performAndAssertPhase2(GraphMLTestUtils.DAG_FILE_NAME, 2);
 	}
 
 	@Test
@@ -265,8 +265,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 		HashMap<Node, Integer> labels = testable.phase1(g);
 		testable.setLabels(labels);
-		testable.setAddedNodes(new HashSet<Node>());
-		final List<List<Node>> layers = testable.phase2_2(g);
+		final List<List<Node>> layers = testable.phase2(g);
 
 		return layers;
 	}
@@ -310,8 +309,8 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		}
 
 		@Override
-		protected List<List<Node>> phase2_2(Graph<Node> g) {
-			return super.phase2_2(g);
+		protected List<List<Node>> phase2(Graph<Node> g) {
+			return super.phase2(g);
 		}
 
 		@Override
