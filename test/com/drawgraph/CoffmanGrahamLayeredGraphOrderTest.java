@@ -137,11 +137,6 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 	}
 
 	@Test
-	public void phase2_pureSource_pureSink() throws IOException, SAXException, ParserConfigurationException {
-		performAndAssertPhase2(GraphMLTestUtils.DAG_FILE_NAME, 2);
-	}
-
-	@Test
 	/**
 	 * This is the main test
 	 */
@@ -166,7 +161,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 		HashMap<Node, Integer> map = performAndAssertPhase1(fullFileName);
 
-		performAndAssertPhase2(fullFileName, layerLength);
+		performAndAssertPhase2(fullFileName, layerLength, map);
 	}
 
 	private HashMap<Node, Integer> performAndAssertPhase1(String sourceFileName) throws IOException, SAXException, ParserConfigurationException {
@@ -182,14 +177,15 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		}
 		return map;
 	}
-	private void performAndAssertPhase2(String dagFileName, int layerLength) throws IOException, SAXException, ParserConfigurationException {
-		final List<List<Node>> layers = performPhase2(dagFileName, layerLength);
+	private void performAndAssertPhase2(String dagFileName, int layerLength, HashMap<Node, Integer> labels) throws IOException, SAXException, ParserConfigurationException {
+		final List<List<Node>> layers = performPhase2(dagFileName, layerLength, labels);
 		List<Node> upperLayer = layers.get(layers.size()-1);
 		List<Node> bottomLayer = layers.get(0);
 
 		assertLayersFitLimit(layers, layerLength);
 		assertNoDuplicates(layers);
 		assertDirection(layers);
+		assertNodesOnSameLayerHasNoPointerToEachOther(layers);
 
 		for (Node n : upperLayer) {
 			assertTrue(n.getSources().isEmpty());
@@ -197,6 +193,25 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		for (Node n : bottomLayer) {
 			assertTrue(n.getSinks().isEmpty());
 		}
+	}
+
+	private void assertNodesOnSameLayerHasNoPointerToEachOther(List<List<Node>> layers) {
+		for (List<Node> layer : layers) {
+			//inside layer
+			ArrayList<Node> allLayerSourcesTargets = new ArrayList<Node>();
+			for (Node n : layer) {
+				//inside node
+				allLayerSourcesTargets.addAll(n.getSources());
+				allLayerSourcesTargets.addAll(n.getSinks());
+			}
+
+			allLayerSourcesTargets.addAll(layer);
+			int initialSize = allLayerSourcesTargets.size();
+			int actualSize = new HashSet<Node>(allLayerSourcesTargets).size();
+
+			assertEquals(actualSize, initialSize);
+		}
+
 	}
 
 	private void assertDirection(List<List<Node>> layers) {
@@ -258,12 +273,11 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		int i = 0;
 	}
 	
-	private List<List<Node>> performPhase2(String pureSourceFileName, int layerLength) throws IOException, SAXException, ParserConfigurationException {
+	private List<List<Node>> performPhase2(String pureSourceFileName, int layerLength, HashMap<Node, Integer> labels) throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> g = GraphMLTestUtils.parseGraph(pureSourceFileName);
 		HashSet<Node> nodes = g.getNodes();
 		testable.setLayerLength(layerLength);
 
-		HashMap<Node, Integer> labels = testable.phase1(g);
 		testable.setLabels(labels);
 		final List<List<Node>> layers = testable.phase2(g);
 

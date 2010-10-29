@@ -1,5 +1,6 @@
 package com.drawgraph.graphics;
 
+import com.drawgraph.algorithms.AbstractCrossingReducer;
 import com.drawgraph.algorithms.BarycenterReducer;
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
 import com.drawgraph.algorithms.CrossingReducer;

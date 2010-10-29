@@ -1,16 +1,20 @@
 package com.drawgraph.algorithms;
 
-import com.drawgraph.model.LayeredPositionedGraph;
+import com.drawgraph.model.PositionedNode;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * Date: Oct 25, 2010
- * Time: 4:26:56 PM
+ * Date: Oct 29, 2010
+ * Time: 2:19:45 PM
  *
  * @author denisk
  */
-public class MedianReducer implements CrossingReducer{
+public class MedianReducer extends AbstractCrossingReducer{
 	@Override
-	public LayeredPositionedGraph reduce(LayeredPositionedGraph source) {
-		return source;
+	protected Map<PositionedNode, Integer> getNodeWeights(List<PositionedNode> currentLayer,
+													  List<PositionedNode> bottomLayer) {
+		return null;
 	}
 }
