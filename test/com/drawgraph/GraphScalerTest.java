@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.Assert.*;
@@ -48,8 +49,16 @@ public class GraphScalerTest {
 		HashSet<PositionedNode> positionedNodes = positionedGraph.getNodes();
 		HashSet<Line> lines = positionedGraph.getLines();
 
-		int nodesCount = g.getNodes().size();
+		HashSet<Node> initialNodes = g.getNodes();
+		int nodesCount = initialNodes.size();
 		assertEquals(nodesCount, positionedNodes.size());
+		for (PositionedNode n : positionedNodes) {
+			Set<PositionedNode> sources = n.getSources();
+			Set<PositionedNode> sinks = n.getSinks();
+			assertTrue(sources.size() > 0 || sinks.size() > 0);
+			assertTrue(initialNodes.containsAll(sources));
+			assertTrue(initialNodes.containsAll(sinks));
+		}
 		assertEquals(g.getLines().size(), lines.size());
 
 		for (Line line : lines) {

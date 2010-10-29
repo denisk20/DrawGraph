@@ -70,12 +70,31 @@ public class GraphScalerImpl implements GraphScaler {
 			curX = leftOffset;
 			curY += layerOffset;
 		}
+		assignSourcesSinks(g.getNodes(), positionedNodes);
 		LayeredPositionedGraph result = new LayeredPositionedGraphImpl(g.getId(), positionedLayers);
 
 		result.getNodes().addAll(positionedNodes);
 		result.getLines().addAll(g.getLines());
 
 		return result;
+	}
+
+	private void assignSourcesSinks(HashSet<Node> nodes, HashSet<PositionedNode> destNodes) {
+		ArrayList<PositionedNode> positionedNodes = new ArrayList<PositionedNode>(destNodes);
+		for (Node<Node> n : nodes) {
+			int index = positionedNodes.indexOf(n);
+			PositionedNode equalNode = positionedNodes.get(index);
+			for (Node source : n.getSources()) {
+				int sourceIndex = positionedNodes.indexOf(source);
+				PositionedNode positionedSource = positionedNodes.get(sourceIndex);
+				equalNode.addSource(positionedSource);
+			}
+			for (Node sink : n.getSinks()) {
+				int sinkIndex = positionedNodes.indexOf(sink);
+				PositionedNode positionedSink = positionedNodes.get(sinkIndex);
+				equalNode.addSink(positionedSink);
+			}
+		}
 	}
 
 	@Override

@@ -73,6 +73,16 @@ public class AbstractCrossingReducerTest {
 		assertReducedGraph(positionedGraph, reducedGraph);
 	}
 
+	@Test
+	public void barycenterTest() throws IOException, SAXException, ParserConfigurationException {
+		BarycenterReducer reducer = new BarycenterReducer();
+		LayeredPositionedGraph positionedGraph = getPositionedDigraph();
+
+		LayeredPositionedGraph reducedGraph = reducer.reduce(positionedGraph);
+
+		assertReducedGraph(positionedGraph, reducedGraph);
+	}
+
 	private LayeredPositionedGraph getPositionedDigraph() throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> graph = GraphMLTestUtils.parseGraph(GraphMLTestUtils.DIGRAPH_FILE_NAME);
 

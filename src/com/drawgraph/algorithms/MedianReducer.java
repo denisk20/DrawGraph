@@ -4,6 +4,8 @@ import com.drawgraph.model.PositionedNode;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,17 +26,24 @@ public class MedianReducer extends AbstractCrossingReducer{
 			int weight = 0;
 			Set<PositionedNode> sources = node.getSources();
 			int sourcesCount = sources.size();
+
+			ArrayList<PositionedNode> positionedNode = new ArrayList<PositionedNode>(sources);
+			Collections.sort(positionedNode, new PositionedNodeHorizontalComparator());
 			if (sourcesCount > 0) {
-				int totalPosition = 0;
-				for (PositionedNode source : sources) {
-					totalPosition += source.getX();
-				}
-
-				weight = totalPosition / sourcesCount;
+				int middleIndex = sourcesCount / 2;
+				PositionedNode middleNode = positionedNode.get(middleIndex);
+				weight = middleNode.getX();
 			}
-
 			result.add(new AbstractMap.SimpleImmutableEntry<PositionedNode, Integer>(node, weight));
 		}
 		return result;
+	}
+
+	private static class PositionedNodeHorizontalComparator implements Comparator<PositionedNode>{
+		@Override
+		public int compare(PositionedNode o1, PositionedNode o2) {
+			return new Integer(o1.getX()).compareTo(new Integer(o2.getX()));
+		}
+
 	}
 }

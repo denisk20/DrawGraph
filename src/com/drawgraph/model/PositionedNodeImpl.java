@@ -35,7 +35,6 @@ public class PositionedNodeImpl extends AbstractNode<PositionedNode> implements 
 		this.x = x;
 	}
 
-	@Override
 	public void setY(int y) {
 		this.y = y;
 	}
