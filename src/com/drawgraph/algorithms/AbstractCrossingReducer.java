@@ -29,10 +29,9 @@ public abstract class AbstractCrossingReducer implements CrossingReducer{
 			allResultNodes.addAll(firstLayer);
 			resultingLayers.add(firstLayer);
 			for (int i = 1; i < layersCount; i++) {
-				List<PositionedNode> bottomLayer = layers.get(i-1);
 				List<PositionedNode> currentLayer = layers.get(i);
 
-				List<Map.Entry<PositionedNode,Integer>> positions = getNodeWeights(currentLayer, bottomLayer);
+				List<Map.Entry<PositionedNode,Integer>> positions = getNodeWeights(currentLayer);
 				List<PositionedNode> reorderedCurrentLayer = reorder(positions);
 
 				resultingLayers.add(reorderedCurrentLayer);
@@ -89,5 +88,5 @@ public abstract class AbstractCrossingReducer implements CrossingReducer{
 		return result;
 	}
 
-	protected abstract List<Map.Entry<PositionedNode, Integer>> getNodeWeights(List<PositionedNode> currentLayer, List<PositionedNode> bottomLayer);
+	protected abstract List<Map.Entry<PositionedNode, Integer>> getNodeWeights(List<PositionedNode> currentLayer);
 }

@@ -14,8 +14,7 @@ import java.util.Map;
  */
 public class BarycenterReducer extends AbstractCrossingReducer{
 	@Override
-	protected List<Map.Entry<PositionedNode,Integer>> getNodeWeights(List<PositionedNode> currentLayer,
-													  List<PositionedNode> bottomLayer) {
+	protected List<Map.Entry<PositionedNode,Integer>> getNodeWeights(List<PositionedNode> currentLayer) {
 		return null;
 	}
 }

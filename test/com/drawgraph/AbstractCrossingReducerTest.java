@@ -1,6 +1,8 @@
 package com.drawgraph;
 
 import com.drawgraph.algorithms.AbstractCrossingReducer;
+import com.drawgraph.algorithms.BarycenterReducer;
+import com.drawgraph.algorithms.MedianReducer;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.graphics.GraphScalerImpl;
 import com.drawgraph.graphics.SimpleGraphDrawer;
@@ -54,6 +56,24 @@ public class AbstractCrossingReducerTest {
 
 	@Test
 	public void testReduce() throws IOException, SAXException, ParserConfigurationException {
+		LayeredPositionedGraph positionedGraph = getPositionedDigraph();
+
+		LayeredPositionedGraph reducedGraph = testable.reduce(positionedGraph);
+
+		assertReducedGraph(positionedGraph, reducedGraph);
+	}
+
+	@Test
+	public void medianTest() throws IOException, SAXException, ParserConfigurationException {
+		MedianReducer reducer = new MedianReducer();
+		LayeredPositionedGraph positionedGraph = getPositionedDigraph();
+
+		LayeredPositionedGraph reducedGraph = reducer.reduce(positionedGraph);
+
+		assertReducedGraph(positionedGraph, reducedGraph);
+	}
+
+	private LayeredPositionedGraph getPositionedDigraph() throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> graph = GraphMLTestUtils.parseGraph(GraphMLTestUtils.DIGRAPH_FILE_NAME);
 
 		GraphScalerImpl scaler = new GraphScalerImpl();
@@ -64,9 +84,10 @@ public class AbstractCrossingReducerTest {
 
 		LayeredPositionedGraph positionedGraph =
 				scaler.scale(graph, new SimpleLayeredGraphOrder(LAYER_LENGTH));
+		return positionedGraph;
+	}
 
-		LayeredPositionedGraph reducedGraph = testable.reduce(positionedGraph);
-
+	private void assertReducedGraph(LayeredPositionedGraph positionedGraph, LayeredPositionedGraph reducedGraph) {
 		List<List<PositionedNode>> initialLayers = positionedGraph.getLayers();
 		List<List<PositionedNode>> reducedLayers = reducedGraph.getLayers();
 		int layersCount = initialLayers.size();
@@ -99,8 +120,7 @@ public class AbstractCrossingReducerTest {
 		}
 
 		@Override
-		protected List<Map.Entry<PositionedNode, Integer>> getNodeWeights(List<PositionedNode> currentLayer,
-																	List<PositionedNode> bottomLayer) {
+		protected List<Map.Entry<PositionedNode, Integer>> getNodeWeights(List<PositionedNode> currentLayer) {
 			List<Map.Entry<PositionedNode, Integer>> result = new ArrayList<Map.Entry<PositionedNode, Integer>>();
 			for (int i = currentLayer.size() - 1; i >= 0; i--) {
 				result.add(new AbstractMap.SimpleImmutableEntry<PositionedNode, Integer>(currentLayer.get(i), i));
