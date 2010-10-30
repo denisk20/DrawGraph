@@ -33,7 +33,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 	protected HashSet<Node> addedNodes = new HashSet<Node>();
 
-	boolean isBottomLayer = true;
 	public CoffmanGrahamLayeredGraphOrder(int layerLength) {
 		this.layerLength = layerLength;
 	}
@@ -45,6 +44,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 	@Override
 	public LayeredGraph<Node> getLayeredGraph(Graph<? extends Node> g) {
+		addedNodes.clear();
 		labels = phase1(g);
 
 		List<List<Node>> layers = phase2(g);
@@ -94,7 +94,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		if (labels.isEmpty()) {
 			throw new IllegalArgumentException("Labels are empty");
 		}
-		addedNodes.clear();
 		HashSet<Node> nodesWithoutSinks = getNodesWithoutSinks(g.getNodes());
 
 		HashSet<Node> allNodes = new HashSet<Node>(g.getNodes());

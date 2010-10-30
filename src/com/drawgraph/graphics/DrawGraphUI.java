@@ -63,10 +63,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JRadioButton noneRadioButton;
 	private JRadioButton dummyEnabledRadioButton;
 	private JRadioButton dummyDisabledRadioButton;
-	private JCheckBox dummiesOptimizedCheckBox;
 
 	private boolean dummiesEnabled = false;
-	private boolean dummiesOptimized = false;
 
 	private final String DIGRAPHS = "data/digraphs";
 	private Graph<Node> graph;
@@ -253,7 +251,6 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		dummyDisabledRadioButton.addActionListener(this);
 		dummyDisabledRadioButton.setSelected(true);
 		dummyEnabledRadioButton.addActionListener(this);
-		dummiesOptimizedCheckBox.addActionListener(this);
 	}
 
 	private LayeredPositionedGraph scaleGraph(LayeredGraph<? extends Node> source) {
@@ -271,6 +268,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private LayeredPositionedGraph transformGraph(Graph<? extends Node> graph) throws IOException, SAXException, ParserConfigurationException {
 
+		graph = graph.copy();
 		int layerLength = layerLengthSlider.getValue();
 		LayeredGraphOrder<Node> layeredGraphOrder = getLayeredGraphOrder(layerLength);
 		LayeredGraph<Node> layeredGraph;
@@ -338,7 +336,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 				layerLengthSlider.setValue(1);
 			}
 			try {
-				layeredPositionedGraph = transformGraph(layeredPositionedGraph);
+				layeredPositionedGraph = transformGraph(graph);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} catch (SAXException e1) {
@@ -384,14 +382,14 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			canvasPanel.repaint();
 		} else if (e.getSource() == coffmanGrahamLayeringCheckBox) {
 			useGrahamLayering = coffmanGrahamLayeringCheckBox.isSelected();
-			scaleGraphAndCatchExceptions(layeredPositionedGraph);
+			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == dummyDisabledRadioButton) {
+			//			coffmanGrahamLayeringCheckBox.
 			dummiesEnabled = false;
-			dummiesOptimizedCheckBox.setEnabled(false);
 			currentAssigner = noDummyAssigner;
 			try {
-				parseFileFromList();
+				layeredPositionedGraph = transformGraph(graph);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} catch (SAXException e1) {
@@ -403,7 +401,6 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			canvasPanel.repaint();
 		} else if (e.getSource() == dummyEnabledRadioButton) {
 			dummiesEnabled = true;
-			dummiesOptimizedCheckBox.setEnabled(true);
 			currentAssigner = simpleDummyAssigner;
 			scaleGraphAndCatchExceptions(layeredPositionedGraph);
 			canvasPanel.repaint();
@@ -586,7 +583,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		noneRadioButton.setText("none");
 		panel3.add(noneRadioButton, cc.xy(1, 1));
 		final JPanel panel4 = new JPanel();
-		panel4.setLayout(new FormLayout("fill:95px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
+		panel4.setLayout(new FormLayout("fill:95px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
 		rootPanel.add(panel4, cc.xyw(11, 5, 5));
 		panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Dummy nodes"));
 		dummyEnabledRadioButton = new JRadioButton();
@@ -595,9 +592,6 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		dummyDisabledRadioButton = new JRadioButton();
 		dummyDisabledRadioButton.setText("disabled");
 		panel4.add(dummyDisabledRadioButton, cc.xy(1, 1));
-		dummiesOptimizedCheckBox = new JCheckBox();
-		dummiesOptimizedCheckBox.setText("Optimized");
-		panel4.add(dummiesOptimizedCheckBox, cc.xy(5, 1));
 		ButtonGroup buttonGroup;
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(noneRadioButton);

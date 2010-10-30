@@ -21,4 +21,16 @@ public class LayeredGraphImpl extends AbstractGraph<Node> implements LayeredGrap
 	public List<List<Node>> getLayers() {
 		return layers;
 	}
+
+	@Override
+	public Graph<Node> copy() {
+		Graph<Node> copy = new GraphImpl(getId());
+		for (Node node : getNodes()) {
+			SimpleNode copyNode = new SimpleNode(node.getId());
+			copy.getNodes().add(copyNode);
+		}
+
+		addSourcesSinksLines(copy);
+		return copy;
+	}
 }

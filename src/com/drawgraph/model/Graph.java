@@ -16,4 +16,6 @@ public interface Graph<T extends Node> {
 	HashSet<Line> getLines();
 
 	T getNodeById(String id);
+
+	Graph<T> copy();
 }

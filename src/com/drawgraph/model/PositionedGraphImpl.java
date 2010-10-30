@@ -48,4 +48,19 @@ public class PositionedGraphImpl extends AbstractGraph<PositionedNode> implement
 	public int getRadius() {
 		return nodeRadius;
 	}
+
+	@Override
+	public Graph<PositionedNode> copy() {
+		PositionedGraphImpl copy = new PositionedGraphImpl(getId());
+		copy.setRadius(nodeRadius);
+		for (PositionedNode node : getNodes()) {
+			PositionedNodeImpl copyNode = new PositionedNodeImpl(node.getId(), node.getX(), node.getY());
+
+			copy.getNodes().add(copyNode);
+		}
+
+		addSourcesSinksLines(copy);
+
+		return copy;
+	}
 }

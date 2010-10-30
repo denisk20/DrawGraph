@@ -38,4 +38,24 @@ public abstract class AbstractGraph<T extends Node> implements Graph<T> {
 		}
 		throw new IllegalArgumentException("No node with id " + id + " in graph " + this.id);
 	}
+
+	protected void addSourcesSinksLines(Graph<T> copy) {
+		for (Node<Node> node : getNodes()) {
+			Node copyNode = copy.getNodeById(node.getId());
+			for (Node source : node.getSources()) {
+				Node copySource = copy.getNodeById(source.getId());
+				copyNode.getSources().add(copySource);
+			}
+			for (Node sink : node.getSinks()) {
+				Node copySink = copy.getNodeById(sink.getId());
+				copyNode.getSinks().add(copySink);
+			}
+		}
+
+		for (Line l : getLines()) {
+			LineImpl line = new LineImpl(copy.getNodeById(l.getSource().getId()), copy.getNodeById(l
+					.getSink().getId()), l.getId());
+			copy.getLines().add(line);
+		}
+	}
 }
