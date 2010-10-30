@@ -22,4 +22,14 @@ public class GraphUtils {
 		}
 		return index;
 	}
+
+	public int getDummiesCount(List<Node> layer) {
+		int count = 0;
+		for (Node n : layer) {
+			if (n.isDummy()) {
+				count++;
+			}
+		}
+		return count;
+	}
 }

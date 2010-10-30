@@ -26,11 +26,11 @@ public abstract class AbstractNode<T extends Node> implements Node<T> {
 	}
 
 	public Set<T> getSources() {
-		return Collections.unmodifiableSet(sources);
+		return sources;
 	}
 
 	public Set<T> getSinks() {
-		return Collections.unmodifiableSet(sinks);
+		return sinks;
 	}
 
 	@Override

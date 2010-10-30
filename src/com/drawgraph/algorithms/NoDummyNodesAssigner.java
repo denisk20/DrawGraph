@@ -13,8 +13,7 @@ import java.util.List;
  */
 public class NoDummyNodesAssigner implements DummyNodesAssigner {
 	@Override
-	public void getLayersWithDummiesAssigned(List<List<Node>> layers, Graph<Node> g) {
+	public void assignDummyNodes(List<List<Node>> layers, Graph<Node> g) {
 		//do nothing
-		return layers;
 	}
 }

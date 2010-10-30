@@ -8,6 +8,7 @@ import com.drawgraph.model.SimpleNode;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Date: Oct 29, 2010
@@ -19,12 +20,15 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 	private int dummyCount = 0;
 
 	@Override
-	public void getLayersWithDummiesAssigned(List<List<Node>> layers, Graph<Node> g) {
+	public void assignDummyNodes(List<List<Node>> layers, Graph<Node> g) {
 		GraphUtils gu = new GraphUtils();
+
 		for (int i = 2; i < layers.size(); i++) {
 			List<Node> layer =layers.get(i);
 			for (Node<Node> nodeFromLayer : layer) {
-				for (Node<Node> sink : nodeFromLayer.getSinks()) {
+				Set<Node> sinksCopyFromLayer = new HashSet<Node>(nodeFromLayer.getSinks());
+
+				for (Node<Node> sink : sinksCopyFromLayer) {
 					int indexOfSink = gu.getLayerIndexForNode(sink, layers);
 					if (indexOfSink == -1) {
 						throw new IllegalStateException("No index for sink: " + sink);
@@ -44,13 +48,18 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 							dummy.addSink(previous);
 							previous.addSource(dummy);
 
+							dummyCount++;
 							List<Node> layerToAddDummyTo = layers.get(j);
 							if (right) {
-								layerToAddDummyTo.add(currentLayerSize - 1, dummy);
+								layerToAddDummyTo.add(layerToAddDummyTo.size(), dummy);
 							} else {
 								layerToAddDummyTo.add(0, dummy);
 							}
+							previous=dummy;
 						}
+
+						nodeFromLayer.getSinks().add(previous);
+						previous.getSources().add(nodeFromLayer);
 					}
 				}
 			}

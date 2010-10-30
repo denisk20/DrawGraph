@@ -12,5 +12,5 @@ import java.util.List;
  * @author denisk
  */
 public interface DummyNodesAssigner {
-	void getLayersWithDummiesAssigned(List<List<Node>> layers, Graph<Node> g);
+	void assignDummyNodes(List<List<Node>> layers, Graph<Node> g);
 }

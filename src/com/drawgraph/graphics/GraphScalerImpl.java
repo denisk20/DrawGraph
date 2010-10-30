@@ -50,7 +50,8 @@ public class GraphScalerImpl implements GraphScaler {
 	@Override
 	public LayeredPositionedGraph scale(Graph<Node> g, LayeredGraphOrder<Node> order) {
 		List<List<Node>> layers = order.getLayers(g);
-		layers = dummyNodesAssigner.getLayersWithDummiesAssigned(layers, g);
+		
+		dummyNodesAssigner.assignDummyNodes(layers, g);
 
 		HashSet<PositionedNode> positionedNodes = new HashSet<PositionedNode>();
 
