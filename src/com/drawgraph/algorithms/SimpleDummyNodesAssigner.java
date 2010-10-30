@@ -55,7 +55,7 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 							dummy.addSink(previous);
 							previous.addSource(dummy);
 
-							layeredGraph.getLines().add(new LineImpl(previous, dummy, previous.getId() + "->" + dummy.getId()));
+							layeredGraph.getLines().add(new LineImpl(dummy, previous, dummy.getId() + "->" + previous.getId()));
 							layeredGraph.getNodes().add(dummy);
 							dummyCount++;
 							List<Node> layerToAddDummyTo = layeredGraph.getLayers().get(j);
@@ -67,7 +67,7 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 							previous=dummy;
 						}
 
-						layeredGraph.getLines().add(new LineImpl(previous, nodeFromLayer, previous.getId() + "->" + nodeFromLayer.getId()));
+						layeredGraph.getLines().add(new LineImpl(nodeFromLayer, previous, nodeFromLayer.getId() + "->" + previous.getId()));
 						
 						nodeFromLayer.getSinks().add(previous);
 						previous.getSources().add(nodeFromLayer);

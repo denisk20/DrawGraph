@@ -81,7 +81,7 @@ public class GraphScalerImpl implements GraphScaler {
 //		int curX = leftOffset;
 		int curY = topOffset;
 		int curDummyX = dummiesEdge- minDistance;
-		for (int i = 0; i<layers.size(); i++) {
+		for (int i = layers.size()-1; i>=0; i--) {
 			List<? extends Node> layer = layers.get(i);
 
 			List<PositionedNode> positionedLayer = new ArrayList<PositionedNode>();

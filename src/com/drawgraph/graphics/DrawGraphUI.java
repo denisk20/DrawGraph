@@ -86,7 +86,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private static final int MINIMUM_LAYER_OFFSET = 20;
 	private static final int INITIAL_LEFT_OFFSET = 125;
 	private static final int INITIAL_TOP_OFFSET = 50;
-	private static final int INITIAL_RADIUS = 20;
+	private static final int INITIAL_RADIUS = 35;
 	private static final int MINIMUM_RADIUS = 1;
 	private static final int RADIUS_STEP_SIZE = 1;
 	private static final int MAXIMUM_OFFSET = 200;
@@ -503,7 +503,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		chooseFileScrollPanel.setViewportView(chooseFileList);
 		canvasScrollPane = new JScrollPane();
 		mainPanel.add(canvasScrollPane, cc.xywh(4, 1, 1, 3, CellConstraints.FILL, CellConstraints.FILL));
-		canvasPanel.setBackground(new Color(-52378));
+		canvasPanel.setBackground(new Color(-2627329));
 		canvasScrollPane.setViewportView(canvasPanel);
 		optionsPane = new JPanel();
 		optionsPane

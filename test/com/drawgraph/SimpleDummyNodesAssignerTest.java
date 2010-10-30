@@ -82,7 +82,7 @@ public class SimpleDummyNodesAssignerTest {
 						Node<Node> previous = sink;
 
 						while (current.isDummy()) {
-							LineImpl line = new LineImpl(previous, current, previous.getId() + "->" + current.getId());
+							LineImpl line = new LineImpl(current, previous, current.getId() + "->" + previous.getId());
 							//todo this should be done as well
 							assertTrue(layeredWithDummies.getNodes().contains(current));
 							assertTrue(layeredWithDummies.getLines().contains(line));
@@ -95,7 +95,7 @@ public class SimpleDummyNodesAssignerTest {
 							previous = current;
 							current = previous.getSources().iterator().next();
 						}
-						LineImpl line = new LineImpl(previous, current, previous.getId() + "->" + current.getId());
+						LineImpl line = new LineImpl(current, previous, current.getId() + "->" + previous.getId());
 						assertTrue(layeredWithDummies.getLines().contains(line));
 
 						if (current.equals(mainSource)) {
