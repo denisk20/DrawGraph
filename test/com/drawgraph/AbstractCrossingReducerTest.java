@@ -1,11 +1,9 @@
 package com.drawgraph;
 
-import com.drawgraph.algorithms.AbstractCrossingReducer;
 import com.drawgraph.algorithms.BarycenterReducer;
 import com.drawgraph.algorithms.MedianReducer;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.graphics.GraphScalerImpl;
-import com.drawgraph.graphics.SimpleGraphDrawer;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
@@ -15,6 +13,7 @@ import com.drawgraph.model.PositionedNodeImpl;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -56,49 +55,38 @@ public class AbstractCrossingReducerTest {
 	}
 
 	@Test
-	public void testReduce() throws IOException, SAXException, ParserConfigurationException {
-		LayeredPositionedGraph positionedGraph = getPositionedDigraph();
+	public void medianBarycenterTest() throws IOException, SAXException, ParserConfigurationException {
+		BarycenterReducer barycenterReducer = new BarycenterReducer();
+		MedianReducer medianReducer = new MedianReducer();
+		ArrayList<LayeredPositionedGraph> positionedGraphs = getPositionedGraphs(GraphMLTestUtils.getFilesInDirectories(GraphMLTestUtils.DAGS_DIRECTORY, GraphMLTestUtils.DIGRAPHS_DIRECTORY));
 
-		LayeredPositionedGraph reducedGraph = testable.reduce(positionedGraph);
+		for (LayeredPositionedGraph positionedGraph: positionedGraphs) {
+			LayeredPositionedGraph barycenterReducedGraph = barycenterReducer.reduce(positionedGraph);
+			LayeredPositionedGraph medianReducedGraph = medianReducer.reduce(positionedGraph);
 
-		assertReducedGraph(positionedGraph, reducedGraph);
+			assertReducedGraph(positionedGraph, barycenterReducedGraph);
+			assertReducedGraph(positionedGraph, medianReducedGraph);
+		}
 	}
 
-	@Test
-	public void medianTest() throws IOException, SAXException, ParserConfigurationException {
-		MedianReducer reducer = new MedianReducer();
-		LayeredPositionedGraph positionedGraph = getPositionedDigraph();
+	private ArrayList<LayeredPositionedGraph> getPositionedGraphs(ArrayList<File> files) throws IOException, SAXException, ParserConfigurationException {
+		ArrayList<LayeredPositionedGraph> result = new ArrayList<LayeredPositionedGraph>(files.size());
+		for (File file: files) {
+			Graph<Node> graph = GraphMLTestUtils.parseGraph(file);
 
-		LayeredPositionedGraph reducedGraph = reducer.reduce(positionedGraph);
+			GraphScalerImpl scaler = new GraphScalerImpl();
+			scaler.setLayerOffset(20);
+			scaler.setLeftOffset(30);
+			scaler.setMinDistance(40);
+			scaler.setTopOffset(30);
 
-		assertReducedGraph(positionedGraph, reducedGraph);
-	}
+			SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
+			LayeredGraph<Node> layeredGraph = layeredGraphOrder.getLayeredGraph(graph);
 
-	@Test
-	public void barycenterTest() throws IOException, SAXException, ParserConfigurationException {
-		BarycenterReducer reducer = new BarycenterReducer();
-		LayeredPositionedGraph positionedGraph = getPositionedDigraph();
-
-		LayeredPositionedGraph reducedGraph = reducer.reduce(positionedGraph);
-
-		assertReducedGraph(positionedGraph, reducedGraph);
-	}
-
-	private LayeredPositionedGraph getPositionedDigraph() throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> graph = GraphMLTestUtils.parseGraph(GraphMLTestUtils.DIGRAPH_FILE_NAME);
-
-		GraphScalerImpl scaler = new GraphScalerImpl();
-		scaler.setLayerOffset(20);
-		scaler.setLeftOffset(30);
-		scaler.setMinDistance(40);
-		scaler.setTopOffset(30);
-
-		SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
-		LayeredGraph<Node> layeredGraph = layeredGraphOrder.getLayeredGraph(graph);
-
-		LayeredPositionedGraph positionedGraph =
-				scaler.scale(layeredGraph);
-		return positionedGraph;
+					LayeredPositionedGraph positionedGraph = scaler.scale(layeredGraph);
+			result.add(positionedGraph);
+		}
+		return result;
 	}
 
 	private void assertReducedGraph(LayeredPositionedGraph positionedGraph, LayeredPositionedGraph reducedGraph) {

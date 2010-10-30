@@ -13,7 +13,7 @@ import java.awt.*;
  * @author denisk
  */
 public class SimpleGraphDrawer implements GraphDrawer<PositionedGraph> {
-	@Override
+	@Overridehg 
 	public void drawGraph(PositionedGraph g, Graphics2D canvas) {
 		for (Line l : g.getLines()) {
 			PositionedNode source = g.getNodeById(l.getSource().getId());

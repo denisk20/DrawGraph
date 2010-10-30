@@ -34,19 +34,6 @@ public class GraphMLTestUtils {
 	public final static String DAGS_DIRECTORY = "data/dags";
 	public final static String DIGRAPHS_DIRECTORY = "data/digraphs";
 
-	private final static String N_0 = "n0";
-	private final static String N_1 = "n1";
-	private final static String N_2 = "n2";
-	private final static String N_3 = "n3";
-
-	private final static String E_0 = "e0";
-	private final static String E_1 = "e1";
-	private final static String E_2 = "e2";
-	private final static String E_3 = "e3";
-	private final static String E_4 = "e4";
-	private final static String E_5 = "e5";
-
-
 	public final static String GRAPH_NAME = "Test Graph";
 
 	private static GraphMLParser parser = new GraphMLParser();

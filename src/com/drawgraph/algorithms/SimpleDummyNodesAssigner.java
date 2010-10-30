@@ -19,11 +19,10 @@ import java.util.Set;
  * @author denisk
  */
 public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
-	private int dummyCount = 0;
 
 	@Override
 	public LayeredGraph<Node> assignDummyNodes(LayeredGraph<Node> source) {
-		dummyCount=0;
+		int dummyCount = 0;
 		
 		LayeredGraphImpl layeredGraph = new LayeredGraphImpl(source.getId(), source.getLayers());
 		layeredGraph.getLines().addAll(source.getLines());

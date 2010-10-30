@@ -10,7 +10,9 @@ import com.drawgraph.model.Node;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,16 +35,17 @@ public class SimpleDummyNodesAssignerTest {
 	private HashMap<Node, HashSet<Node>> nodeDummyLines = new HashMap<Node, HashSet<Node>>();
 	@Test
 	public void testGetLayersWithDummiesAssigned() throws IOException, SAXException, ParserConfigurationException {
-		assertDummies(GraphMLTestUtils.DIGRAPH_FILE_NAME);
+		ArrayList<File> files = GraphMLTestUtils
+				.getFilesInDirectories(GraphMLTestUtils.DAGS_DIRECTORY, GraphMLTestUtils.DIGRAPHS_DIRECTORY);
+
+		for (File file: files) {
+			Graph<Node> graph = GraphMLTestUtils.parseGraph(file);
+			assertDummies(graph);
+			nodeDummyLines.clear();
+		}
 	}
 
-	@Test
-	public void testSimpleGraph() throws IOException, SAXException, ParserConfigurationException {
-		assertDummies(GraphMLTestUtils.PURE_SOURCE_SINK_FILE_NAME);
-	}
-
-	private void assertDummies(String fileName) throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> graph = GraphMLTestUtils.parseGraph(fileName);
+	private void assertDummies(Graph<Node> graph) throws IOException, SAXException, ParserConfigurationException {
 		SimpleLayeredGraphOrder graphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
 
 		LayeredGraph<Node> layeredGraph = graphOrder.getLayeredGraph(graph);
