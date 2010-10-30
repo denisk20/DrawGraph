@@ -9,7 +9,6 @@ import com.drawgraph.model.SimpleNode;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,7 +32,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class CoffmanGrahamLayeredGraphOrderTest {
 
-	private final static String DAGS_DIRECTORY = "data/dags";
 
 	private MockCoffmanGrahamLayeredGraphOrder testable = new MockCoffmanGrahamLayeredGraphOrder(0);
 	private static final int MAX_LAYER_LENGTH = 25;
@@ -120,7 +119,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 	@Test
 	public void phase1() throws IOException, SAXException, ParserConfigurationException {
-		performAndAssertPhase1(GraphMLTestUtils.FILE_NAME);
+		performAndAssertPhase1(GraphMLTestUtils.parseGraph(GraphMLTestUtils.FILE_NAME));
 	}
 
 	@Test
@@ -134,7 +133,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 	@Test
 	public void phase1_pureSource() throws IOException, SAXException, ParserConfigurationException {
-		performAndAssertPhase1(GraphMLTestUtils.PURE_SOURCE_FILE_NAME);
+		performAndAssertPhase1(GraphMLTestUtils.parseGraph(GraphMLTestUtils.PURE_SOURCE_FILE_NAME));
 	}
 
 	@Test
@@ -142,31 +141,24 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 	 * This is the main test
 	 */
 	public void parseAllDags() throws IOException, SAXException, ParserConfigurationException {
-		File dagsDirectory = new File(DAGS_DIRECTORY);
-		assertTrue(dagsDirectory.exists());
-		assertTrue(dagsDirectory.isDirectory());
-
-		String[] files = dagsDirectory.list();
-		for (String fileName : files) {
+		ArrayList<File> files = GraphMLTestUtils.getFilesInDirectories(GraphMLTestUtils.DAGS_DIRECTORY);
+		for (File file : files) {
+			Graph<Node> g = GraphMLTestUtils.parseGraph(file);
 
 			for (int i = MIN_LAYER_LENGTH; i < MAX_LAYER_LENGTH; i++) {
-				if (fileName.endsWith(DrawGraphUI.GRAPHML_EXT)) {
-					performCoffmanGrahamLayering(fileName, MIN_LAYER_LENGTH);
-				}
+				performCoffmanGrahamLayering(MIN_LAYER_LENGTH, g);
 			}
 		}
 	}
 
-	private void performCoffmanGrahamLayering(String fileName, int layerLength) throws IOException, SAXException, ParserConfigurationException {
-		String fullFileName = DAGS_DIRECTORY + File.separator + fileName;
+	private void performCoffmanGrahamLayering(int layerLength,
+											  Graph<Node> g) throws IOException, SAXException, ParserConfigurationException {
+		HashMap<Node, Integer> map = performAndAssertPhase1(g);
 
-		HashMap<Node, Integer> map = performAndAssertPhase1(fullFileName);
-
-		performAndAssertPhase2(fullFileName, layerLength, map);
+		performAndAssertPhase2(layerLength, map, g);
 	}
 
-	private HashMap<Node, Integer> performAndAssertPhase1(String sourceFileName) throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g = GraphMLTestUtils.parseGraph(sourceFileName);
+	private HashMap<Node, Integer> performAndAssertPhase1(Graph<Node> g) throws IOException, SAXException, ParserConfigurationException {
 		HashMap<Node, Integer> map = testable.phase1(g);
 		Set<Node> nodes = map.keySet();
 		for (Node n : nodes) {
@@ -179,9 +171,11 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		return map;
 	}
 
-	private void performAndAssertPhase2(String dagFileName, int layerLength, HashMap<Node, Integer> labels) throws IOException, SAXException, ParserConfigurationException {
-		final List<List<Node>> layers = performPhase2(dagFileName, layerLength, labels);
-		List<Node> upperLayer = layers.get(layers.size()-1);
+	private void performAndAssertPhase2(int layerLength,
+										HashMap<Node, Integer> labels,
+										Graph<Node> g) throws IOException, SAXException, ParserConfigurationException {
+		final List<List<Node>> layers = performPhase2(layerLength, labels, g);
+		List<Node> upperLayer = layers.get(layers.size() - 1);
 		List<Node> bottomLayer = layers.get(0);
 
 		assertLayersFitLimit(layers, layerLength);
@@ -213,24 +207,21 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 
 			assertEquals(actualSize, initialSize);
 		}
-
 	}
 
 	private void assertDirection(List<List<Node>> layers) {
-		GraphUtils	graphUtils = new GraphUtils();
+		GraphUtils graphUtils = new GraphUtils();
 		//starting from bottom to top
-		for (int layerIndex = 0; layerIndex< layers.size(); layerIndex++) {
+		for (int layerIndex = 0; layerIndex < layers.size(); layerIndex++) {
 			List<Node> layer = layers.get(layerIndex);
 			for (Node<Node> n : layer) {
 				int nodeLayerIndex = graphUtils.getLayerIndexForNode(n, layers);
 				for (Node source : n.getSources()) {
 					int sourceIndex = graphUtils.getLayerIndexForNode(source, layers);
 					assertTrue(nodeLayerIndex < sourceIndex);
-
 				}
 			}
 		}
-
 	}
 
 	private void assertNoDuplicates(List<List<Node>> layers) {
@@ -260,9 +251,10 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		Collections.sort(list);
 		int i = 0;
 	}
-	
-	private List<List<Node>> performPhase2(String pureSourceFileName, int layerLength, HashMap<Node, Integer> labels) throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g = GraphMLTestUtils.parseGraph(pureSourceFileName);
+
+	private List<List<Node>> performPhase2(int layerLength,
+										   HashMap<Node, Integer> labels,
+										   Graph<Node> g) throws IOException, SAXException, ParserConfigurationException {
 		HashSet<Node> nodes = g.getNodes();
 		testable.setLayerLength(layerLength);
 
@@ -316,7 +308,9 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		}
 
 		@Override
-		protected ArrayList<Node> getOldestGrapes(Collection<Node> grapes, int slotsLength, HashMap<Node, Integer> grapesAges) {
+		protected ArrayList<Node> getOldestGrapes(Collection<Node> grapes,
+												  int slotsLength,
+												  HashMap<Node, Integer> grapesAges) {
 			return super.getOldestGrapes(grapes, slotsLength, grapesAges);
 		}
 

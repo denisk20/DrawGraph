@@ -44,7 +44,6 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 	@Override
 	public LayeredGraph<Node> getLayeredGraph(Graph<? extends Node> g) {
-		addedNodes.clear();
 		labels = phase1(g);
 
 		List<List<Node>> layers = phase2(g);
@@ -91,6 +90,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	}
 
 	protected List<List<Node>> phase2(Graph<? extends Node> g) {
+		addedNodes.clear();
 		if (labels.isEmpty()) {
 			throw new IllegalArgumentException("Labels are empty");
 		}

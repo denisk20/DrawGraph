@@ -1,5 +1,6 @@
 package com.drawgraph;
 
+import com.drawgraph.graphics.DrawGraphUI;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.Node;
 import com.drawgraph.model.SimpleNode;
@@ -7,10 +8,15 @@ import com.drawgraph.parser.GraphMLParser;
 import com.drawgraph.parser.callbacks.LineCallback;
 import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Date: Oct 23, 2010
@@ -24,6 +30,9 @@ public class GraphMLTestUtils {
 	public final static String PURE_SOURCE_SINK_FILE_NAME = "test-pureSourcePureSink.graphml";
 	public final static String DAG_FILE_NAME = "test-DAG.graphml";
 	public final static String DIGRAPH_FILE_NAME = "test-digraph.graphml";
+
+	public final static String DAGS_DIRECTORY = "data/dags";
+	public final static String DIGRAPHS_DIRECTORY = "data/digraphs";
 
 	private final static String N_0 = "n0";
 	private final static String N_1 = "n1";
@@ -90,6 +99,28 @@ public class GraphMLTestUtils {
 	}
 	public static Graph<Node> parseGraph(String filename) throws IOException, SAXException, ParserConfigurationException {
 		return parser.buildGraph(filename);
+	}
+
+	public static Graph<Node> parseGraph(File file) throws IOException, SAXException, ParserConfigurationException {
+		return parser.buildGraph(file);
+	}
+
+	public static ArrayList<File> getFilesInDirectories(String... relativeDirNames) {
+		ArrayList<File> result = new ArrayList<File>();
+		for (String dirName : relativeDirNames) {
+			File directory = new File(dirName);
+			assertTrue(directory.exists());
+			assertTrue(directory.isDirectory());
+
+			result.addAll(Arrays.asList(directory.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(DrawGraphUI.GRAPHML_EXT);
+				}
+			})));
+		}
+		
+		return result;
 	}
 
 }
