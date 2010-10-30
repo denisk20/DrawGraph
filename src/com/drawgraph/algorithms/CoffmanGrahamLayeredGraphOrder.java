@@ -1,6 +1,8 @@
 package com.drawgraph.algorithms;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredGraph;
+import com.drawgraph.model.LayeredGraphImpl;
 import com.drawgraph.model.Node;
 
 import java.util.AbstractMap;
@@ -42,10 +44,15 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	}
 
 	@Override
-	public List<List<Node>> getLayers(Graph<Node> g) {
+	public LayeredGraph<Node> getLayeredGraph(Graph<? extends Node> g) {
 		labels = phase1(g);
 
-		return phase2(g);
+		List<List<Node>> layers = phase2(g);
+
+		LayeredGraphImpl result = new LayeredGraphImpl(g.getId(), layers);
+		result.getLines().addAll(g.getLines());
+		result.getNodes().addAll(g.getNodes());
+		return result;
 	}
 
 	/**
@@ -55,7 +62,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	 * @param g graph to analyze
 	 * @return map of signature <Node, Label>
 	 */
-	protected HashMap<Node, Integer> phase1(Graph<Node> g) {
+	protected HashMap<Node, Integer> phase1(Graph<? extends Node> g) {
 		HashMap<Node, Integer> resultingLabels = new HashMap<Node, Integer>();
 		HashSet<Node> notSourcesNodes = new HashSet<Node>();
 		int label = 1;
@@ -83,7 +90,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return resultingLabels;
 	}
 
-	protected List<List<Node>> phase2(Graph<Node> g) {
+	protected List<List<Node>> phase2(Graph<? extends Node> g) {
 		if (labels.isEmpty()) {
 			throw new IllegalArgumentException("Labels are empty");
 		}
@@ -96,7 +103,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return result;
 	}
 
-	private HashSet<Node> getNodesWithoutSinks(Collection<Node> nodes) {
+	private HashSet<Node> getNodesWithoutSinks(Collection<? extends Node> nodes) {
 		HashSet<Node> nodesWithoutSinks = new HashSet<Node>();
 		for (Node n : nodes) {
 			if (n.getSinks().isEmpty()) {

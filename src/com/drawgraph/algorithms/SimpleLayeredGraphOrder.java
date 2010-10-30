@@ -2,6 +2,8 @@ package com.drawgraph.algorithms;
 
 import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredGraph;
+import com.drawgraph.model.LayeredGraphImpl;
 import com.drawgraph.model.Node;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	}
 
 	@Override
-	public List<List<Node>> getLayers(Graph<Node> g) {
+	public LayeredGraph<Node> getLayeredGraph(Graph<? extends Node> g) {
 		ArrayList<List<Node>> layers = new ArrayList<List<Node>>();
 
 		if (layerLength != 0) {
@@ -60,7 +62,12 @@ public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 		}
 		layersCount = layers.size();
-		return layers;
+
+		LayeredGraphImpl result = new LayeredGraphImpl(g.getId(), layers);
+		result.getLines().addAll(g.getLines());
+		result.getNodes().addAll(g.getNodes());
+
+		return result;
 	}
 
 	public int getLayersCount() {

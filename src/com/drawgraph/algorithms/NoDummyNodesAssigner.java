@@ -1,6 +1,7 @@
 package com.drawgraph.algorithms;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.Node;
 
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
  */
 public class NoDummyNodesAssigner implements DummyNodesAssigner {
 	@Override
-	public void assignDummyNodes(List<List<Node>> layers, Graph<Node> g) {
+	public LayeredGraph<Node> assignDummyNodes(LayeredGraph<Node> source) {
 		//do nothing
+		return source;
 	}
 }

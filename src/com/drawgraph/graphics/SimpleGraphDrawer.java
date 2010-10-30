@@ -24,7 +24,13 @@ public class SimpleGraphDrawer implements GraphDrawer<PositionedGraph> {
 
 		int radius = g.getRadius();
 		for (PositionedNode node : g.getNodes()) {
-			canvas.drawOval(node.getX() - radius/2, node.getY() - radius/2, radius, radius);
+			if (node.isDummy()) {
+				canvas.drawOval(node.getX() - radius / 4, node.getY() - radius / 4, radius/2, radius/2);
+
+			} else {
+				canvas.drawOval(node.getX() - radius / 2, node.getY() - radius / 2, radius, radius);
+
+			}
 		}
 	}
 }

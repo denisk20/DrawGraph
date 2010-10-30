@@ -7,6 +7,7 @@ import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.graphics.GraphScalerImpl;
 import com.drawgraph.graphics.SimpleGraphDrawer;
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedNode;
@@ -92,8 +93,11 @@ public class AbstractCrossingReducerTest {
 		scaler.setMinDistance(40);
 		scaler.setTopOffset(30);
 
+		SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
+		LayeredGraph<Node> layeredGraph = layeredGraphOrder.getLayeredGraph(graph);
+
 		LayeredPositionedGraph positionedGraph =
-				scaler.scale(graph, new SimpleLayeredGraphOrder(LAYER_LENGTH));
+				scaler.scale(layeredGraph);
 		return positionedGraph;
 	}
 
@@ -123,19 +127,4 @@ public class AbstractCrossingReducerTest {
 		return nodes;
 	}
 
-	private static class MockAbstractCrossingReducer extends AbstractCrossingReducer {
-		@Override
-		public List<PositionedNode> reorder(List<Map.Entry<PositionedNode, Integer>> positions) {
-			return super.reorder(positions);
-		}
-
-		@Override
-		protected List<Map.Entry<PositionedNode, Integer>> getNodeWeights(List<PositionedNode> currentLayer) {
-			List<Map.Entry<PositionedNode, Integer>> result = new ArrayList<Map.Entry<PositionedNode, Integer>>();
-			for (int i = currentLayer.size() - 1; i >= 0; i--) {
-				result.add(new AbstractMap.SimpleImmutableEntry<PositionedNode, Integer>(currentLayer.get(i), i));
-			}
-			return result;
-		}
-	}
 }

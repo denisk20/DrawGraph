@@ -8,6 +8,5 @@ import java.util.List;
  *
  * @author denisk
  */
-public interface LayeredPositionedGraph extends PositionedGraph {
-	List<List<PositionedNode>> getLayers();
+public interface LayeredPositionedGraph extends PositionedGraph, LayeredGraph<PositionedNode> {
 }

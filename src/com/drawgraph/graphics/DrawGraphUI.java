@@ -1,14 +1,17 @@
 package com.drawgraph.graphics;
 
-import com.drawgraph.algorithms.AbstractCrossingReducer;
 import com.drawgraph.algorithms.BarycenterReducer;
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
 import com.drawgraph.algorithms.CrossingReducer;
+import com.drawgraph.algorithms.DummyNodesAssigner;
 import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.algorithms.MedianReducer;
+import com.drawgraph.algorithms.NoDummyNodesAssigner;
+import com.drawgraph.algorithms.SimpleDummyNodesAssigner;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.algorithms.UnexpectedCycledGraphException;
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;
 import com.drawgraph.parser.GraphMLParser;
@@ -72,7 +75,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private File currentDirectory;
 	private String currentFilePath;
-	private GraphMLParser parser;
+	private GraphMLParser parser = new GraphMLParser();
 
 	private static final int MAXIMUM_RADIUS = 100;
 	private static final int INITIAL_DISTANCE = 100;
@@ -108,6 +111,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private static final int BARYCENTER_METHOD = 2;
 	private int currentReductionMethod = NO_REDUCTION_METHOD;
 
+	private DummyNodesAssigner noDummyAssigner = new NoDummyNodesAssigner();
+	private DummyNodesAssigner simpleDummyAssigner = new SimpleDummyNodesAssigner();
+	private DummyNodesAssigner currentAssigner = noDummyAssigner;
 
 	private static JFrame frame;
 
@@ -189,10 +195,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		String path = currentDirectory + File.separator + selectedFile;
 
 		currentFilePath = path;
-		parser = new GraphMLParser();
 		Graph<Node> g = parser.buildGraph(currentFilePath);
 		graph = g;
-		layeredPositionedGraph = scaleGraph(g);
+		layeredPositionedGraph = transformGraph(g);
 	}
 
 	private void initSpinners() {
@@ -251,55 +256,61 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		dummiesOptimizedCheckBox.addActionListener(this);
 	}
 
-	private LayeredPositionedGraph scaleGraph(Graph<Node> graph) throws IOException, SAXException, ParserConfigurationException {
-
+	private LayeredPositionedGraph scaleGraph(LayeredGraph<? extends Node> source) {
 		GraphScaler scaler = new GraphScalerImpl();
 
 		scaler.setLayerOffset((Integer) layerOffsetSpin.getValue());
 		scaler.setLeftOffset((Integer) leftOffsetSpin.getValue());
 		scaler.setMinDistance((Integer) distanceSpin.getValue());
 		scaler.setTopOffset((Integer) topOffsetSpin.getValue());
+		LayeredPositionedGraph result = scaler.scale(source);
+		result.setRadius((Integer) radiusSpin.getValue());
+
+		return result;
+	}
+
+	private LayeredPositionedGraph transformGraph(Graph<? extends Node> graph) throws IOException, SAXException, ParserConfigurationException {
 
 		int layerLength = layerLengthSlider.getValue();
 		LayeredGraphOrder<Node> layeredGraphOrder = getLayeredGraphOrder(layerLength);
-		LayeredPositionedGraph layeredPositionedGraph;
+		LayeredGraph<Node> layeredGraph;
 		try {
-			layeredPositionedGraph = scaler.scale(graph, layeredGraphOrder);
+			layeredGraph = layeredGraphOrder.getLayeredGraph(graph);
 		} catch (UnexpectedCycledGraphException e) {
-			layeredPositionedGraph = handleAsynkGraphError(graph, scaler, layerLength);
+			layeredGraph = handleAsynkGraphError(graph, layerLength);
 		} catch (StackOverflowError e) {
-			layeredPositionedGraph = handleAsynkGraphError(graph, scaler, layerLength);
+			layeredGraph = handleAsynkGraphError(graph, layerLength);
 		}
 
-		LayeredPositionedGraph reducedGraph = reduceCrossings(layeredPositionedGraph);
+		LayeredGraph<Node> graphWithDummies = currentAssigner.assignDummyNodes(layeredGraph);
+		LayeredPositionedGraph scaledGraph = scaleGraph(graphWithDummies);
+		LayeredPositionedGraph reducedGraph = reduceCrossings(scaledGraph);
 
-		reducedGraph.setRadius((Integer) radiusSpin.getValue());
 		return reducedGraph;
 	}
 
-	private LayeredPositionedGraph handleAsynkGraphError(Graph<Node> graph, GraphScaler scaler, int layerLength) {
-		final LayeredPositionedGraph layeredPositionedGraph;
+	private LayeredGraph<Node> handleAsynkGraphError(Graph<? extends Node> graph, int layerLength) {
 		JOptionPane
 				.showMessageDialog(frame, "Cycled graph detected, Coffman-Graham algo is not applicable. " + "Reordering using simple layout", "Error", JOptionPane.ERROR_MESSAGE);
 
 		simpleOrder.setLayerLength(layerLength);
-		layeredPositionedGraph = scaler.scale(graph, simpleOrder);
+		LayeredGraph<Node> layeredGraph = simpleOrder.getLayeredGraph(graph);
 		coffmanGrahamLayeringCheckBox.setSelected(false);
 		useGrahamLayering = false;
-		return layeredPositionedGraph;
+		return layeredGraph;
 	}
 
-	private LayeredPositionedGraph reduceCrossings(LayeredPositionedGraph layeredPositionedGraph) {
+	private LayeredPositionedGraph reduceCrossings(LayeredPositionedGraph graph) {
 		LayeredPositionedGraph result;
 		switch (currentReductionMethod) {
 			case (NO_REDUCTION_METHOD):
-				result = layeredPositionedGraph;
+				result = graph;
 				break;
 			case (MEDIAN_METHOD):
-				result = medianReducer.reduce(layeredPositionedGraph);
+				result = medianReducer.reduce(graph);
 				break;
 			case (BARYCENTER_METHOD):
-				result = barycenterReducer.reduce(layeredPositionedGraph);
+				result = barycenterReducer.reduce(graph);
 				break;
 			default:
 				throw new IllegalStateException("Wrong reduction code passed: " + currentReductionMethod);
@@ -322,19 +333,23 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	}
 
 	public void stateChanged(ChangeEvent e) {
-		try {
+		if (e.getSource() == layerLengthSlider) {
 			if (layerLengthSlider.getValue() == 0) {
 				layerLengthSlider.setValue(1);
 			}
-			layeredPositionedGraph = scaleGraph(graph);
-			canvasPanel.repaint();
-		} catch (IOException e1) {
-			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		} catch (SAXException e1) {
-			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		} catch (ParserConfigurationException e1) {
-			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			try {
+				layeredPositionedGraph = transformGraph(layeredPositionedGraph);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} catch (SAXException e1) {
+				e1.printStackTrace();
+			} catch (ParserConfigurationException e1) {
+				e1.printStackTrace();
+			}
+		} else {
+			layeredPositionedGraph = scaleGraph(layeredPositionedGraph);
 		}
+		canvasPanel.repaint();
 	}
 
 	@Override
@@ -357,36 +372,47 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			}
 		} else if (e.getSource() == noneRadioButton) {
 			currentReductionMethod = NO_REDUCTION_METHOD;
-			scaleGraphAndCatchExceptions();
+			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == barycenterRadioButton) {
 			currentReductionMethod = BARYCENTER_METHOD;
-			scaleGraphAndCatchExceptions();
+			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == medianRadioButton) {
 			currentReductionMethod = MEDIAN_METHOD;
-			scaleGraphAndCatchExceptions();
+			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == coffmanGrahamLayeringCheckBox) {
 			useGrahamLayering = coffmanGrahamLayeringCheckBox.isSelected();
-			scaleGraphAndCatchExceptions();
+			scaleGraphAndCatchExceptions(layeredPositionedGraph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == dummyDisabledRadioButton) {
 			dummiesEnabled = false;
 			dummiesOptimizedCheckBox.setEnabled(false);
-			scaleGraphAndCatchExceptions();
+			currentAssigner = noDummyAssigner;
+			try {
+				parseFileFromList();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} catch (SAXException e1) {
+				e1.printStackTrace();
+			} catch (ParserConfigurationException e1) {
+				e1.printStackTrace();
+			}
+			scaleGraphAndCatchExceptions(layeredPositionedGraph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == dummyEnabledRadioButton) {
 			dummiesEnabled = true;
 			dummiesOptimizedCheckBox.setEnabled(true);
-			scaleGraphAndCatchExceptions();
+			currentAssigner = simpleDummyAssigner;
+			scaleGraphAndCatchExceptions(layeredPositionedGraph);
 			canvasPanel.repaint();
 		}
 	}
 
-	private void scaleGraphAndCatchExceptions() {
+	private void scaleGraphAndCatchExceptions(Graph<? extends Node> graph) {
 		try {
-			layeredPositionedGraph = scaleGraph(graph);
+			layeredPositionedGraph = transformGraph(graph);
 		} catch (IOException e1) {
 			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		} catch (SAXException e1) {
@@ -468,12 +494,12 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		createUIComponents();
 		rootPanel = new JPanel();
 		rootPanel
-				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,center:196px:noGrow,left:4dlu:noGrow,center:100px:noGrow,left:4dlu:noGrow,center:100px:noGrow,left:4dlu:noGrow,fill:16px:noGrow,left:4dlu:noGrow,fill:398px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,center:210px:grow,left:d:grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:100px:noGrow,top:4dlu:noGrow,center:max(d;43px):noGrow,top:4dlu:noGrow,center:d:grow"));
+				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,center:196px:noGrow,left:4dlu:noGrow,center:100px:noGrow,left:4dlu:noGrow,center:100px:noGrow,left:4dlu:noGrow,fill:16px:noGrow,left:4dlu:noGrow,fill:398px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,center:d:grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:100px:noGrow,top:4dlu:noGrow,center:max(d;43px):noGrow,top:4dlu:noGrow,center:d:grow"));
 		mainPanel = new JPanel();
 		mainPanel
 				.setLayout(new FormLayout("center:190px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,center:d:grow", "center:d:grow,top:5dlu:noGrow,center:max(d;160px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
 		CellConstraints cc = new CellConstraints();
-		rootPanel.add(mainPanel, cc.xyw(3, 7, 20, CellConstraints.FILL, CellConstraints.FILL));
+		rootPanel.add(mainPanel, cc.xyw(3, 7, 19, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileScrollPanel = new JScrollPane();
 		mainPanel.add(chooseFileScrollPanel, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileList = new JList();
@@ -517,7 +543,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		tweakPanel
 				.setLayout(new FormLayout("fill:d:noGrow,fill:197px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:70px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
 		tweakPanel.setBackground(new Color(-3342388));
-		rootPanel.add(tweakPanel, cc.xyw(3, 3, 20, CellConstraints.FILL, CellConstraints.FILL));
+		rootPanel.add(tweakPanel, cc.xyw(3, 3, 19, CellConstraints.FILL, CellConstraints.FILL));
 		tweakPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
 		final JPanel panel1 = new JPanel();
 		panel1.setLayout(new FormLayout("fill:143px:noGrow,left:4dlu:noGrow,center:d:grow", "center:67px:noGrow"));
@@ -528,7 +554,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		directoryChooseButton.setText("Choose Folder:");
 		panel1.add(directoryChooseButton, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.TOP));
 		final JPanel panel2 = new JPanel();
-		panel2.setLayout(new FormLayout("fill:d:grow", "center:46px:noGrow"));
+		panel2.setLayout(new FormLayout("center:d:grow", "center:46px:noGrow"));
 		panel2.setOpaque(false);
 		panel1.add(panel2, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Layer length"));

@@ -1,6 +1,7 @@
 package com.drawgraph.algorithms;
 
 import com.drawgraph.model.Graph;
+import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.Node;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public interface LayeredGraphOrder<T extends Node> extends GraphOrder {
 	int getLayerLength();
 
-	List<List<T>> getLayers(Graph<T> g);
+	LayeredGraph<T> getLayeredGraph(Graph<? extends T> g);
 
 	void setLayerLength(int layerLength);
 

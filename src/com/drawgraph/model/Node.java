@@ -30,4 +30,6 @@ public interface Node<T extends Node> {
 	Set<T> getNeighbours();
 
 	boolean isDummy();
+
+	void setDummy(boolean dummy);
 }

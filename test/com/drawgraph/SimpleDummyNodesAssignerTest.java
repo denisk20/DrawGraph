@@ -4,14 +4,13 @@ import com.drawgraph.algorithms.GraphUtils;
 import com.drawgraph.algorithms.SimpleDummyNodesAssigner;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
-import com.drawgraph.model.Line;
+import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LineImpl;
 import com.drawgraph.model.Node;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,12 +45,13 @@ public class SimpleDummyNodesAssignerTest {
 		Graph<Node> graph = GraphMLTestUtils.parseGraph(fileName);
 		SimpleLayeredGraphOrder graphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
 
-		List<List<Node>> layers = graphOrder.getLayers(graph);
+		LayeredGraph<Node> layeredGraph = graphOrder.getLayeredGraph(graph);
 
-		HashMap<Integer, Integer> expectedDummiesCountMap = getExpectedDummiesCount(layers);
+		List<List<Node>> initialLayers = layeredGraph.getLayers();
+		HashMap<Integer, Integer> expectedDummiesCountMap = getExpectedDummiesCount(initialLayers);
 
-		testable.assignDummyNodes(layers, graph);
-
+		LayeredGraph<Node> layeredWithDummies = testable.assignDummyNodes(layeredGraph);
+		List<List<Node>> layers = layeredWithDummies.getLayers();
 		GraphUtils gu = new GraphUtils();
 		for (int i = 0; i<layers.size(); i++) {
 			List<Node> layer = layers.get(i);
@@ -79,6 +79,10 @@ public class SimpleDummyNodesAssignerTest {
 						Node<Node> previous = sink;
 
 						while (current.isDummy()) {
+							LineImpl line = new LineImpl(previous, current, previous.getId() + "->" + current.getId());
+							//todo this should be done as well
+							assertTrue(layeredWithDummies.getNodes().contains(current));
+							assertTrue(layeredWithDummies.getLines().contains(line));
 							Set<Node> dummiesSources = current.getSources();
 							Set<Node> dummiesSinks = current.getSinks();
 							assertTrue(dummiesSources.size() == 1);
@@ -88,6 +92,9 @@ public class SimpleDummyNodesAssignerTest {
 							previous = current;
 							current = previous.getSources().iterator().next();
 						}
+						LineImpl line = new LineImpl(previous, current, previous.getId() + "->" + current.getId());
+						assertTrue(layeredWithDummies.getLines().contains(line));
+
 						if (current.equals(mainSource)) {
 							success = true;
 							break;

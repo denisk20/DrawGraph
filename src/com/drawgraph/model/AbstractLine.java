@@ -59,6 +59,6 @@ public abstract class AbstractLine implements Line {
 
 	@Override
 	public String toString() {
-		return "LineImpl{id=" + id + "source=" + source.getId() + ", sink=" + sink.getId() + '}';
+		return "LineImpl{id=" + id + ", source=" + source.getId() + ", sink=" + sink.getId() + '}';
 	}
 }

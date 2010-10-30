@@ -3,6 +3,7 @@ package com.drawgraph;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.GraphImpl;
+import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.Node;
 import com.drawgraph.model.SimpleNode;
 import org.junit.Test;
@@ -44,16 +45,16 @@ public class LayeredGraphOrderTest {
 
 		testable.setLayerLength(layerLength);
 
-		List<List<Node>> layers = testable.getLayers(g);
-		assertEquals(expectedLayersCount, layers.size());
+		LayeredGraph<Node> layeredGraph = testable.getLayeredGraph(g);
+		assertEquals(expectedLayersCount, layeredGraph.getLayers().size());
 	}
 
 	@Test
 	public void realGraph() throws IOException, SAXException, ParserConfigurationException {
 		Graph<Node> g = GraphMLTestUtils.parseGraph();
 		testable.setLayerLength(LAYER_LENGTH);
-		List<List<Node>> layers = testable.getLayers(g);
-		assertEquals(REAL_GRAPH_EXPECTED_LAYERS_COUNT, layers.size());
+		LayeredGraph<Node> layeredGraph = testable.getLayeredGraph(g);
+		assertEquals(REAL_GRAPH_EXPECTED_LAYERS_COUNT, layeredGraph.getLayers().size());
 	}
 
 

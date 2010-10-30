@@ -178,6 +178,7 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		}
 		return map;
 	}
+
 	private void performAndAssertPhase2(String dagFileName, int layerLength, HashMap<Node, Integer> labels) throws IOException, SAXException, ParserConfigurationException {
 		final List<List<Node>> layers = performPhase2(dagFileName, layerLength, labels);
 		List<Node> upperLayer = layers.get(layers.size()-1);
@@ -305,12 +306,12 @@ public class CoffmanGrahamLayeredGraphOrderTest {
 		}
 
 		@Override
-		public HashMap<Node, Integer> phase1(Graph<Node> g) {
+		public HashMap<Node, Integer> phase1(Graph<? extends Node> g) {
 			return super.phase1(g);
 		}
 
 		@Override
-		protected List<List<Node>> phase2(Graph<Node> g) {
+		protected List<List<Node>> phase2(Graph<? extends Node> g) {
 			return super.phase2(g);
 		}
 

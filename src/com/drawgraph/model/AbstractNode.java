@@ -57,6 +57,7 @@ public abstract class AbstractNode<T extends Node> implements Node<T> {
 		return isDummy;
 	}
 
+	@Override
 	public void setDummy(boolean dummy) {
 		this.isDummy = dummy;
 	}

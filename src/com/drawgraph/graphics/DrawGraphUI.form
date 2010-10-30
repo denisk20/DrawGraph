@@ -28,8 +28,7 @@
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
-    <colspec value="center:210px:grow"/>
-    <colspec value="left:d:grow"/>
+    <colspec value="center:d:grow"/>
     <constraints>
       <xy x="23" y="15" width="1120" height="598"/>
     </constraints>
@@ -47,7 +46,7 @@
         <colspec value="fill:max(d;4px):noGrow"/>
         <colspec value="center:d:grow"/>
         <constraints>
-          <grid row="6" column="2" row-span="1" col-span="20" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="2" row-span="1" col-span="19" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -214,7 +213,7 @@
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="20" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="2" row-span="1" col-span="19" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties>
@@ -248,7 +247,7 @@
               </component>
               <grid id="cf031" layout-manager="FormLayout">
                 <rowspec value="center:46px:noGrow"/>
-                <colspec value="fill:d:grow"/>
+                <colspec value="center:d:grow"/>
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
