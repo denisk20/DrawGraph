@@ -11,6 +11,7 @@ import com.drawgraph.model.PositionedNode;
 import com.drawgraph.model.PositionedNodeImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +51,9 @@ public class GraphScalerImpl implements GraphScaler {
 
 	@Override
 	public LayeredPositionedGraph scale(LayeredGraph<? extends Node> graphWithDummies) {
-		List<? extends List<? extends Node>> layers = graphWithDummies.getLayers();
+		List<? extends List<? extends Node>> layers = new ArrayList<List<? extends Node>>(graphWithDummies.getLayers());
+
+		Collections.reverse(layers);
 
 
 		HashSet<PositionedNode> positionedNodes = new HashSet<PositionedNode>();
@@ -81,7 +84,7 @@ public class GraphScalerImpl implements GraphScaler {
 //		int curX = leftOffset;
 		int curY = topOffset;
 		int curDummyX = dummiesEdge- minDistance;
-		for (int i = layers.size()-1; i>=0; i--) {
+		for (int i = 0; i<layers.size(); i++) {
 			List<? extends Node> layer = layers.get(i);
 
 			List<PositionedNode> positionedLayer = new ArrayList<PositionedNode>();
@@ -124,6 +127,7 @@ public class GraphScalerImpl implements GraphScaler {
 			curY += layerOffset;
 		}
 		assignSourcesSinks(graphWithDummies.getNodes(), positionedNodes);
+		Collections.reverse(positionedLayers);
 		LayeredPositionedGraph result = new LayeredPositionedGraphImpl(graphWithDummies.getId(), positionedLayers);
 
 		result.getNodes().addAll(positionedNodes);

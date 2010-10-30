@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="DrawGraph" basedir=".">
+<project name="DrawGraph" basedir="." default="compile">
 
 	<property name="dist.dir" value="dist"/>
 	<property name="src.dir" value="src"/>

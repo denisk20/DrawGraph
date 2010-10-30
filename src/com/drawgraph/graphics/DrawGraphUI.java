@@ -385,7 +385,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == dummyDisabledRadioButton) {
-			//			coffmanGrahamLayeringCheckBox.
+			if (!dummiesEnabled) {
+				return;
+			}
 			dummiesEnabled = false;
 			currentAssigner = noDummyAssigner;
 			try {
@@ -400,6 +402,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			scaleGraphAndCatchExceptions(layeredPositionedGraph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == dummyEnabledRadioButton) {
+			if (dummiesEnabled) {
+				return;
+			}
 			dummiesEnabled = true;
 			currentAssigner = simpleDummyAssigner;
 			scaleGraphAndCatchExceptions(layeredPositionedGraph);
@@ -491,7 +496,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		createUIComponents();
 		rootPanel = new JPanel();
 		rootPanel
-				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,center:196px:noGrow,left:4dlu:noGrow,center:52px:noGrow,left:4dlu:noGrow,left:4dlu:noGrow,fill:16px:noGrow,left:4dlu:noGrow,fill:191px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,center:d:grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:119px:noGrow,top:4dlu:noGrow,center:max(d;43px):noGrow,top:4dlu:noGrow,center:d:grow"));
+				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,center:196px:noGrow,left:4dlu:noGrow,center:74px:noGrow,left:4dlu:noGrow,left:4dlu:noGrow,fill:16px:noGrow,left:4dlu:noGrow,fill:191px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,center:d:grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:119px:noGrow,top:4dlu:noGrow,center:max(d;43px):noGrow,top:4dlu:noGrow,center:d:grow"));
 		mainPanel = new JPanel();
 		mainPanel
 				.setLayout(new FormLayout("center:190px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,center:d:grow", "center:d:grow,top:5dlu:noGrow,center:max(d;160px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
@@ -538,7 +543,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		optionsPane.add(layerOffsetSpin, cc.xy(5, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tweakPanel = new JPanel();
 		tweakPanel
-				.setLayout(new FormLayout("fill:d:noGrow,fill:197px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:70px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:14px:noGrow"));
+				.setLayout(new FormLayout("fill:d:noGrow,fill:213px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:70px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:14px:noGrow"));
 		tweakPanel.setBackground(new Color(-3342388));
 		rootPanel.add(tweakPanel, cc.xyw(3, 3, 18, CellConstraints.FILL, CellConstraints.FILL));
 		tweakPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
@@ -567,12 +572,12 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		layerLengthSlider.setValueIsAdjusting(true);
 		panel2.add(layerLengthSlider, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JPanel panel3 = new JPanel();
-		panel3.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+		panel3.setLayout(new FormLayout("fill:215px:grow", "center:d:grow"));
 		tweakPanel.add(panel3, cc.xy(2, 3));
 		panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
 		coffmanGrahamLayeringCheckBox = new JCheckBox();
 		coffmanGrahamLayeringCheckBox.setText("Coffman-Graham layering");
-		panel3.add(coffmanGrahamLayeringCheckBox, cc.xy(1, 1));
+		panel3.add(coffmanGrahamLayeringCheckBox, new CellConstraints(1, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(0, 0, 0, 3)));
 		final JPanel panel4 = new JPanel();
 		panel4.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
 		rootPanel.add(panel4, cc.xyw(3, 5, 4));
