@@ -36,12 +36,13 @@ public class GraphMLParser implements DocumentParser {
 
 		// Give the InputSource an absolute URL for the file, so that
 		// it can resolve relative URLs in a <!DOCTYPE> declaration, e.g.
-		String fileName = new File(inputFile).getAbsolutePath();
+		File file = new File(inputFile);
+		String fileName = file.getAbsolutePath();
 		input.setSystemId("file://" + fileName);
 
 		GraphMLHandler handler = new GraphMLHandler();
 		System.out.println("Parsing file: " + fileName);
-		sp.parse(input, handler);
+		sp.parse(file, handler);
 
 		return handler.getGraph();
 	}

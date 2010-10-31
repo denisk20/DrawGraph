@@ -543,7 +543,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		optionsPane.add(layerOffsetSpin, cc.xy(5, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tweakPanel = new JPanel();
 		tweakPanel
-				.setLayout(new FormLayout("fill:d:noGrow,fill:213px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:70px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:14px:noGrow"));
+				.setLayout(new FormLayout("fill:d:noGrow,fill:213px:noGrow,left:13dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:70px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:14px:noGrow"));
 		tweakPanel.setBackground(new Color(-3342388));
 		rootPanel.add(tweakPanel, cc.xyw(3, 3, 18, CellConstraints.FILL, CellConstraints.FILL));
 		tweakPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
@@ -572,12 +572,12 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		layerLengthSlider.setValueIsAdjusting(true);
 		panel2.add(layerLengthSlider, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JPanel panel3 = new JPanel();
-		panel3.setLayout(new FormLayout("fill:215px:grow", "center:d:grow"));
+		panel3.setLayout(new FormLayout("center:198px:noGrow", "center:d:grow"));
 		tweakPanel.add(panel3, cc.xy(2, 3));
 		panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
 		coffmanGrahamLayeringCheckBox = new JCheckBox();
 		coffmanGrahamLayeringCheckBox.setText("Coffman-Graham layering");
-		panel3.add(coffmanGrahamLayeringCheckBox, new CellConstraints(1, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(0, 0, 0, 3)));
+		panel3.add(coffmanGrahamLayeringCheckBox, new CellConstraints(1, 1, 1, 1, CellConstraints.CENTER, CellConstraints.DEFAULT, new Insets(0, 0, 0, 3)));
 		final JPanel panel4 = new JPanel();
 		panel4.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
 		rootPanel.add(panel4, cc.xyw(3, 5, 4));

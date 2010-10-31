@@ -28,6 +28,7 @@ public class GraphScalerImpl implements GraphScaler {
 
 	private int topOffset;
 	private int leftOffset;
+	private static final boolean REVERSE = true;
 
 	@Override
 	public void setMinDistance(int dist) {
@@ -53,8 +54,9 @@ public class GraphScalerImpl implements GraphScaler {
 	public LayeredPositionedGraph scale(LayeredGraph<? extends Node> graphWithDummies) {
 		List<? extends List<? extends Node>> layers = new ArrayList<List<? extends Node>>(graphWithDummies.getLayers());
 
-		Collections.reverse(layers);
-
+		if (REVERSE) {
+			Collections.reverse(layers);
+		}
 
 		HashSet<PositionedNode> positionedNodes = new HashSet<PositionedNode>();
 
@@ -81,7 +83,6 @@ public class GraphScalerImpl implements GraphScaler {
 		int dummiesEdge = leftOffset + maxDummiesCount*minDistance;
 
 		int curX = dummiesEdge;
-//		int curX = leftOffset;
 		int curY = topOffset;
 		int curDummyX = dummiesEdge- minDistance;
 		for (int i = 0; i<layers.size(); i++) {
@@ -127,7 +128,11 @@ public class GraphScalerImpl implements GraphScaler {
 			curY += layerOffset;
 		}
 		assignSourcesSinks(graphWithDummies.getNodes(), positionedNodes);
-		Collections.reverse(positionedLayers);
+
+		if (REVERSE) {
+			//put it back
+			Collections.reverse(positionedLayers);
+		}
 		LayeredPositionedGraph result = new LayeredPositionedGraphImpl(graphWithDummies.getId(), positionedLayers);
 
 		result.getNodes().addAll(positionedNodes);

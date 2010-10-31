@@ -25,11 +25,11 @@ import static org.junit.Assert.assertTrue;
  * @author denisk
  */
 public class GraphMLTestUtils {
-	public final static String FILE_NAME = "test.graphml";
-	public final static String PURE_SOURCE_FILE_NAME = "test-pureSource.graphml";
-	public final static String PURE_SOURCE_SINK_FILE_NAME = "test-pureSourcePureSink.graphml";
-	public final static String DAG_FILE_NAME = "test-DAG.graphml";
-	public final static String DIGRAPH_FILE_NAME = "test-digraph.graphml";
+	public final static String FILE_NAME = "test/test.graphml";
+	public final static String PURE_SOURCE_FILE_NAME = "test/test-pureSource.graphml";
+	public final static String PURE_SOURCE_SINK_FILE_NAME = "test/test-pureSourcePureSink.graphml";
+	public final static String DAG_FILE_NAME = "test/test-DAG.graphml";
+	public final static String DIGRAPH_FILE_NAME = "test/test-digraph.graphml";
 
 	public final static String DAGS_DIRECTORY = "data/dags";
 	public final static String DIGRAPHS_DIRECTORY = "data/digraphs";

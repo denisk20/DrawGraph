@@ -205,7 +205,7 @@
         <rowspec value="center:14px:noGrow"/>
         <colspec value="fill:d:noGrow"/>
         <colspec value="fill:213px:noGrow"/>
-        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="left:13dlu:noGrow"/>
         <colspec value="fill:185px:noGrow"/>
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:185px:noGrow"/>
@@ -281,7 +281,7 @@
           </grid>
           <grid id="b55cf" layout-manager="FormLayout">
             <rowspec value="center:d:grow"/>
-            <colspec value="fill:215px:grow"/>
+            <colspec value="center:198px:noGrow"/>
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -291,8 +291,8 @@
             <children>
               <component id="9ffe4" class="javax.swing.JCheckBox" binding="coffmanGrahamLayeringCheckBox" default-binding="true">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms top="0" left="0" bottom="0" right="3"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms top="0" left="0" bottom="0" right="3" defaultalign-horz="false"/>
                 </constraints>
                 <properties>
                   <text value="Coffman-Graham layering"/>
