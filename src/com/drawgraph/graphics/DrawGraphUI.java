@@ -90,7 +90,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private static final int INITIAL_RADIUS = 35;
 	private static final int MINIMUM_RADIUS = 1;
 	private static final int RADIUS_STEP_SIZE = 1;
-	private static final int MAXIMUM_OFFSET = 200;
+	private static final int MAXIMUM_TOP_OFFSET = 200;
+	private static final int MAXIMUM_LEFT_OFFSET = 400;
 	private static final int OFFSET_STEP_SIZE = 1;
 	private static final int INITIAL_LAYER_OFFSET = 50;
 	private static final int LAYER_OFFSET_STEP_SIZE = 1;
@@ -209,8 +210,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		SpinnerModel radiusModel = new SpinnerNumberModel(INITIAL_RADIUS, MINIMUM_RADIUS, MAXIMUM_RADIUS, RADIUS_STEP_SIZE);
 		radiusSpin.setModel(radiusModel);
 
-		SpinnerModel leftOffsetModel = new SpinnerNumberModel(INITIAL_LEFT_OFFSET, MINIMUM_OFFSET, MAXIMUM_OFFSET, OFFSET_STEP_SIZE);
-		SpinnerModel topOffsetModel = new SpinnerNumberModel(INITIAL_TOP_OFFSET, MINIMUM_OFFSET, MAXIMUM_OFFSET, OFFSET_STEP_SIZE);
+		SpinnerModel leftOffsetModel = new SpinnerNumberModel(INITIAL_LEFT_OFFSET, MINIMUM_OFFSET, MAXIMUM_LEFT_OFFSET, OFFSET_STEP_SIZE);
+		SpinnerModel topOffsetModel = new SpinnerNumberModel(INITIAL_TOP_OFFSET, MINIMUM_OFFSET, MAXIMUM_TOP_OFFSET, OFFSET_STEP_SIZE);
 		leftOffsetSpin.setModel(leftOffsetModel);
 		topOffsetSpin.setModel(topOffsetModel);
 
