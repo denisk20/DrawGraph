@@ -97,6 +97,8 @@
             <rowspec value="center:21px:noGrow"/>
             <rowspec value="top:2dlu:noGrow"/>
             <rowspec value="center:21px:noGrow"/>
+            <rowspec value="top:4dlu:noGrow"/>
+            <rowspec value="center:21px:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
             <colspec value="left:1dlu:noGrow"/>
             <colspec value="left:114px:noGrow"/>
@@ -158,6 +160,15 @@
                   <text value="Layer offset"/>
                 </properties>
               </component>
+              <component id="aeb16" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Layer shift"/>
+                </properties>
+              </component>
               <component id="d9d69" class="javax.swing.JSpinner" binding="distanceSpin">
                 <constraints>
                   <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -189,6 +200,13 @@
               <component id="e14e5" class="javax.swing.JSpinner" binding="layerOffsetSpin">
                 <constraints>
                   <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="ce76c" class="javax.swing.JSpinner" binding="shiftSpin">
+                <constraints>
+                  <grid row="12" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties/>

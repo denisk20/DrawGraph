@@ -1,8 +1,5 @@
 package com.drawgraph.graphics;
 
-import com.drawgraph.algorithms.DummyNodesAssigner;
-import com.drawgraph.algorithms.LayeredGraphOrder;
-import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.LayeredPositionedGraphImpl;
@@ -29,6 +26,7 @@ public class GraphScalerImpl implements GraphScaler {
 	private int topOffset;
 	private int leftOffset;
 	private static final boolean REVERSE = true;
+	private int shift;
 
 	@Override
 	public void setMinDistance(int dist) {
@@ -48,6 +46,11 @@ public class GraphScalerImpl implements GraphScaler {
 	@Override
 	public void setLeftOffset(int off) {
 		leftOffset = off;
+	}
+
+	@Override
+	public void setShift(int shift) {
+		this.shift = shift;
 	}
 
 	@Override
@@ -82,6 +85,7 @@ public class GraphScalerImpl implements GraphScaler {
 
 		int dummiesEdge = leftOffset + maxDummiesCount*minDistance;
 
+		int horizontalShift = shift;
 		int curX = dummiesEdge;
 		int curY = topOffset;
 		int curDummyX = dummiesEdge- minDistance;
@@ -123,8 +127,13 @@ public class GraphScalerImpl implements GraphScaler {
 				curDummyX -= minDistance;
 			}
 			positionedLayers.add(positionedLayer);
-			curX = dummiesEdge;
-			curDummyX = dummiesEdge- minDistance;
+
+			curX = dummiesEdge + horizontalShift;
+			curDummyX = dummiesEdge- minDistance + horizontalShift;
+
+			horizontalShift+= horizontalShift;
+
+			
 			curY += layerOffset;
 		}
 		assignSourcesSinks(graphWithDummies.getNodes(), positionedNodes);

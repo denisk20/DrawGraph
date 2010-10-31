@@ -22,6 +22,7 @@ public interface GraphScaler {
 
 	void setLayerOffset(int layerOffset);
 
+	void setShift(int horizOffset);
 
 	LayeredPositionedGraph scale(LayeredGraph<? extends Node> graphWithDummies);
 

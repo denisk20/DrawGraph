@@ -63,6 +63,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JRadioButton noneRadioButton;
 	private JRadioButton dummyEnabledRadioButton;
 	private JRadioButton dummyDisabledRadioButton;
+	private JSpinner shiftSpin;
 
 	private boolean dummiesEnabled = false;
 
@@ -129,6 +130,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private LayeredGraphOrder<Node> simpleOrder = new SimpleLayeredGraphOrder(0);
 	private LayeredGraphOrder<Node> coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
+	private static final int INITIAL_SHIFT = 10;
+	private static final int MINIMUM_SHIFT = -100;
+	private static final int MAXIMUM_SHIFT = 100;
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -210,6 +214,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		leftOffsetSpin.setModel(leftOffsetModel);
 		topOffsetSpin.setModel(topOffsetModel);
 
+		SpinnerModel shiftModel = new SpinnerNumberModel(INITIAL_SHIFT, MINIMUM_SHIFT, MAXIMUM_SHIFT, OFFSET_STEP_SIZE);
+		shiftSpin.setModel(shiftModel);
+
 		SpinnerModel layerOffsetModel = new SpinnerNumberModel(INITIAL_LAYER_OFFSET, MINIMUM_LAYER_OFFSET, MAXIMUM_LAYER_OFFSET, LAYER_OFFSET_STEP_SIZE);
 		layerOffsetSpin.setModel(layerOffsetModel);
 
@@ -234,6 +241,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		leftOffsetSpin.addChangeListener(this);
 		topOffsetSpin.addChangeListener(this);
 		layerOffsetSpin.addChangeListener(this);
+		shiftSpin.addChangeListener(this);
+
 		layerLengthSlider.addChangeListener(this);
 
 		directoryChooseButton.addActionListener(this);
@@ -260,6 +269,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		scaler.setLeftOffset((Integer) leftOffsetSpin.getValue());
 		scaler.setMinDistance((Integer) distanceSpin.getValue());
 		scaler.setTopOffset((Integer) topOffsetSpin.getValue());
+		scaler.setShift((Integer) shiftSpin.getValue());
 		LayeredPositionedGraph result = scaler.scale(source);
 		result.setRadius((Integer) radiusSpin.getValue());
 
@@ -512,7 +522,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		canvasScrollPane.setViewportView(canvasPanel);
 		optionsPane = new JPanel();
 		optionsPane
-				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:1dlu:noGrow,left:114px:noGrow,fill:6px:noGrow,center:50px:noGrow,center:22px:noGrow,center:44px:noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow"));
+				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:1dlu:noGrow,left:114px:noGrow,fill:6px:noGrow,center:50px:noGrow,center:22px:noGrow,center:44px:noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:2dlu:noGrow,center:21px:noGrow,top:4dlu:noGrow,center:21px:noGrow"));
 		optionsPane.setBackground(new Color(-10027060));
 		mainPanel.add(optionsPane, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
 		optionsPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), null));
@@ -531,6 +541,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		final JLabel label5 = new JLabel();
 		label5.setText("Layer offset");
 		optionsPane.add(label5, cc.xy(3, 11));
+		final JLabel label6 = new JLabel();
+		label6.setText("Layer shift");
+		optionsPane.add(label6, cc.xy(3, 13));
 		distanceSpin = new JSpinner();
 		optionsPane.add(distanceSpin, cc.xy(5, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
 		radiusSpin = new JSpinner();
@@ -541,6 +554,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		optionsPane.add(topOffsetSpin, cc.xy(5, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
 		layerOffsetSpin = new JSpinner();
 		optionsPane.add(layerOffsetSpin, cc.xy(5, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
+		shiftSpin = new JSpinner();
+		optionsPane.add(shiftSpin, cc.xy(5, 13, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tweakPanel = new JPanel();
 		tweakPanel
 				.setLayout(new FormLayout("fill:d:noGrow,center:279px:noGrow,center:13dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:185px:noGrow,left:4dlu:noGrow,fill:80px:noGrow,left:4dlu:noGrow,fill:d:grow", "center:70px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:14px:noGrow"));

@@ -35,6 +35,7 @@ public class GraphScalerTest {
 	private static final int TOP_OFF = 40;
 	private static final int LEFT_OFF = 30;
 	private static final int LAYER_OFFSET = 10;
+	private static final int LAYER_SHIFT= 10;
 	private static final int RADIUS = 5;
 
 	@Test
@@ -46,6 +47,7 @@ public class GraphScalerTest {
 		scaler.setLeftOffset(LEFT_OFF);
 		scaler.setTopOffset(TOP_OFF);
 		scaler.setMinDistance(DIST);
+		scaler.setShift(LAYER_SHIFT);
 
 		SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
 		LayeredGraph<Node> layeredGraph = layeredGraphOrder.getLayeredGraph(g);
