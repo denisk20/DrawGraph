@@ -131,7 +131,7 @@ public class GraphScalerImpl implements GraphScaler {
 			curX = dummiesEdge + horizontalShift;
 			curDummyX = dummiesEdge- minDistance + horizontalShift;
 
-			horizontalShift+= horizontalShift;
+			horizontalShift= horizontalShift + (horizontalShift/10);
 
 			
 			curY += layerOffset;
