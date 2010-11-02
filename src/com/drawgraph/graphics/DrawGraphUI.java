@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 /**
@@ -457,7 +458,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private void fillFileList(File currentDirectory) {
 		final DefaultListModel listModel = new DefaultListModel();
 		listModel.clear();
-		for (File f : currentDirectory.listFiles(graphMLFilenameFilter)) {
+		File[] files = currentDirectory.listFiles(graphMLFilenameFilter);
+		Arrays.sort(files);
+		for (File f : files) {
 			listModel.addElement(f.getName());
 		}
 

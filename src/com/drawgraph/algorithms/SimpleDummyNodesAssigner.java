@@ -76,6 +76,52 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 			}
 		}
 
+		for (int i = layeredGraph.getLayers().size() -3 ; i >=0; i--) {
+			List<Node> layer =layeredGraph.getLayers().get(i);
+			for (Node<Node> nodeFromLayer : layer) {
+				Set<Node> sinksCopyFromLayer = new HashSet<Node>(nodeFromLayer.getSinks());
+
+				for (Node<Node> sink : sinksCopyFromLayer) {
+					int indexOfSink = gu.getLayerIndexForNode(sink, layeredGraph.getLayers());
+					if (indexOfSink == -1) {
+						throw new IllegalStateException("No index for sink: " + sink);
+					}
+					int distance = indexOfSink - i;
+					if (distance > 1) {
+						int currentLayerSize = layer.size();
+						boolean right = layer.indexOf(nodeFromLayer) >= currentLayerSize /2;
+						sink.getSources().remove(nodeFromLayer);
+						nodeFromLayer.getSinks().remove(sink);
+						removeLine(layeredGraph.getLines(), nodeFromLayer, sink);
+
+						Node previous = nodeFromLayer;
+						for (int j = i + 1; j < indexOfSink; j++) {
+							SimpleNode dummy = new SimpleNode("dummy_" + dummyCount);
+							dummy.setDummy(true);
+							dummy.addSource(previous);
+							previous.addSink(dummy);
+
+							layeredGraph.getLines().add(new LineImpl(previous, dummy, previous.getId() + "->" + dummy.getId()));
+							layeredGraph.getNodes().add(dummy);
+							dummyCount++;
+							List<Node> layerToAddDummyTo = layeredGraph.getLayers().get(j);
+							if (right) {
+								layerToAddDummyTo.add(layerToAddDummyTo.size(), dummy);
+							} else {
+								layerToAddDummyTo.add(0, dummy);
+							}
+							previous=dummy;
+						}
+
+						layeredGraph.getLines().add(new LineImpl(previous, sink, previous.getId() + "->" + sink.getId()));
+
+						sink.getSources().add(previous);
+						previous.getSinks().add(sink);
+					}
+				}
+			}
+		}
+
 		return layeredGraph;
 	}
 

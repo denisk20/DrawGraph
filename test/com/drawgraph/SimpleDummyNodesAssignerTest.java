@@ -141,6 +141,30 @@ public class SimpleDummyNodesAssignerTest {
 			}
 		}
 
+		for (int i = layers.size() -3 ; i >=0; i--) {
+			List<Node> layer = layers.get(i);
+			for (Node<Node> n : layer) {
+				for (Node sink : n.getSinks()) {
+					int sinkIndex = gu.getLayerIndexForNode(sink, layers);
+					if (sinkIndex - i > 1) {
+						for (int j = i + 1; j < sinkIndex; j++) {
+							int value = result.get(j);
+							result.put(j, ++value);
+
+							HashSet<Node> dummyLines;
+							if (nodeDummyLines.containsKey(n)) {
+								dummyLines = nodeDummyLines.get(n);
+							} else {
+								dummyLines = new HashSet<Node>();
+								nodeDummyLines.put(n, dummyLines);
+							}
+							dummyLines.add(sink);
+						}
+					}
+				}
+			}
+		}
+
 		return result;
 	}
 

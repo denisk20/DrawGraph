@@ -145,7 +145,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			grapes.removeAll(youngestGrapes);
 			//just put the rest (the youngest ones) in the beginning of whiteGrapes!
 			//white grapes for grapes that are in the slot. Extras go first!
-			whiteGrapes = new ArrayList<Node>(youngestGrapes);
+			whiteGrapes.addAll(youngestGrapes);
 			ArrayList<Node> allWhiteGrapes = getWhiteGrapes(grapes);
 			whiteGrapes.addAll(allWhiteGrapes);
 			whiteGrapes.removeAll(addedNodes);
@@ -187,7 +187,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			slot.add(grape);
 		}
 
-		whiteGrapes.removeAll(grapes);
+		 whiteGrapes.removeAll(grapes);
 		addedNodes.addAll(grapes);
 
 		//remove grapes from the sack they were in...

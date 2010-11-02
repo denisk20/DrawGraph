@@ -332,7 +332,7 @@
           <forms/>
         </constraints>
         <properties/>
-        <border type="line" title="Crossing redunction method"/>
+        <border type="line" title="Crossing reduction method"/>
         <children>
           <component id="a9ff7" class="javax.swing.JRadioButton" binding="medianRadioButton">
             <constraints>
