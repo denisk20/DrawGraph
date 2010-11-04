@@ -30,6 +30,7 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 
 		GraphUtils gu = new GraphUtils();
 
+		//collect information on routes that go from top to bottom
 		for (int i = 2; i < layeredGraph.getLayers().size(); i++) {
 			List<Node> layer =layeredGraph.getLayers().get(i);
 			for (Node<Node> nodeFromLayer : layer) {
@@ -76,6 +77,7 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 			}
 		}
 
+		//collect information on routes that go from bottom to top
 		for (int i = layeredGraph.getLayers().size() -3 ; i >=0; i--) {
 			List<Node> layer =layeredGraph.getLayers().get(i);
 			for (Node<Node> nodeFromLayer : layer) {
