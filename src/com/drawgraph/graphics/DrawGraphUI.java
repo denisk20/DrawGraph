@@ -2,6 +2,7 @@ package com.drawgraph.graphics;
 
 import com.drawgraph.algorithms.BarycenterReducer;
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
+import com.drawgraph.algorithms.CoordinateAssignmentReducer;
 import com.drawgraph.algorithms.CrossingReducer;
 import com.drawgraph.algorithms.DummyNodesAssigner;
 import com.drawgraph.algorithms.LayeredGraphOrder;
@@ -66,6 +67,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JRadioButton dummyEnabledRadioButton;
 	private JRadioButton dummyDisabledRadioButton;
 	private JSpinner shiftSpin;
+	private JRadioButton coordinateAssignementRadioButton;
 
 	private boolean dummiesEnabled = false;
 
@@ -114,6 +116,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private static final int NO_REDUCTION_METHOD = 0;
 	private static final int MEDIAN_METHOD = 1;
 	private static final int BARYCENTER_METHOD = 2;
+	private static final int COORDINATE_ASSIGNMENT_METHOD = 3;
 	private int currentReductionMethod = NO_REDUCTION_METHOD;
 
 	private DummyNodesAssigner noDummyAssigner = new NoDummyNodesAssigner();
@@ -133,6 +136,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private static final String FILE_CHOOSER_TITLE = "Choose a directory to fetch resources from";
 	private CrossingReducer medianReducer = new MedianReducer();
 	private CrossingReducer barycenterReducer = new BarycenterReducer();
+	private CrossingReducer coordinateAssigner = new CoordinateAssignmentReducer();
 
 	private LayeredGraphOrder simpleOrder = new SimpleLayeredGraphOrder(0);
 	private LayeredGraphOrder coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
@@ -254,6 +258,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 		barycenterRadioButton.addActionListener(this);
 		medianRadioButton.addActionListener(this);
+		coordinateAssignementRadioButton.addActionListener(this);
 		noneRadioButton.addActionListener(this);
 		noneRadioButton.setSelected(true);
 
@@ -323,6 +328,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			case (BARYCENTER_METHOD):
 				result = barycenterReducer.reduce(graph);
 				break;
+			case (COORDINATE_ASSIGNMENT_METHOD):
+				result = coordinateAssigner.reduce(graph);
+				break;
 			default:
 				throw new IllegalStateException("Wrong reduction code passed: " + currentReductionMethod);
 		}
@@ -391,6 +399,10 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			canvasPanel.repaint();
 		} else if (e.getSource() == medianRadioButton) {
 			currentReductionMethod = MEDIAN_METHOD;
+			scaleGraphAndCatchExceptions(graph);
+			canvasPanel.repaint();
+		} else if (e.getSource() == coordinateAssignementRadioButton) {
+			currentReductionMethod = COORDINATE_ASSIGNMENT_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (e.getSource() == coffmanGrahamLayeringCheckBox) {

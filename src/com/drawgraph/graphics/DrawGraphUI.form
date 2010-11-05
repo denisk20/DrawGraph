@@ -13,7 +13,7 @@
     <colspec value="center:196px:noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="center:74px:noGrow"/>
-    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="left:96dlu:noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:16px:noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
@@ -327,6 +327,8 @@
         <colspec value="fill:max(d;4px):noGrow"/>
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
         <constraints>
           <grid row="4" column="2" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
@@ -359,6 +361,15 @@
             </constraints>
             <properties>
               <text value="none"/>
+            </properties>
+          </component>
+          <component id="1fe72" class="javax.swing.JRadioButton" binding="coordinateAssignementRadioButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Coordinate Assignement"/>
             </properties>
           </component>
         </children>
@@ -407,6 +418,7 @@
       <member id="efa0e"/>
       <member id="a9ff7"/>
       <member id="f3953"/>
+      <member id="1fe72"/>
     </group>
     <group name="dummyButtonGroup">
       <member id="99533"/>

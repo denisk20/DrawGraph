@@ -1,6 +1,7 @@
 package com.drawgraph;
 
 import com.drawgraph.algorithms.BarycenterReducer;
+import com.drawgraph.algorithms.CoordinateAssignmentReducer;
 import com.drawgraph.algorithms.MedianReducer;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.graphics.GraphScalerImpl;
@@ -57,14 +58,17 @@ public class AbstractCrossingReducerTest {
 	public void medianBarycenterTest() throws IOException, SAXException, ParserConfigurationException {
 		BarycenterReducer barycenterReducer = new BarycenterReducer();
 		MedianReducer medianReducer = new MedianReducer();
+		CoordinateAssignmentReducer coordinateAssignerReducer = new CoordinateAssignmentReducer();
 		ArrayList<LayeredPositionedGraph> positionedGraphs = getPositionedGraphs(GraphMLTestUtils.getFilesInDirectories(GraphMLTestUtils.DAGS_DIRECTORY, GraphMLTestUtils.DIGRAPHS_DIRECTORY));
 
 		for (LayeredPositionedGraph positionedGraph: positionedGraphs) {
 			LayeredPositionedGraph barycenterReducedGraph = barycenterReducer.reduce(positionedGraph);
 			LayeredPositionedGraph medianReducedGraph = medianReducer.reduce(positionedGraph);
+			LayeredPositionedGraph coordinateAssignmentReducedGraph = coordinateAssignerReducer.reduce(positionedGraph);
 
 			assertReducedGraph(positionedGraph, barycenterReducedGraph);
 			assertReducedGraph(positionedGraph, medianReducedGraph);
+			assertReducedGraph(positionedGraph, coordinateAssignmentReducedGraph);
 		}
 	}
 
