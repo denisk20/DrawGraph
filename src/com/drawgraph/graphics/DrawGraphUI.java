@@ -68,6 +68,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JRadioButton dummyDisabledRadioButton;
 	private JSpinner shiftSpin;
 	private JRadioButton coordinateAssignementRadioButton;
+	private JList list1;
+	private JButton button1;
+	private JPanel chooseFilePrefusePanel;
 
 	private boolean dummiesEnabled = false;
 
