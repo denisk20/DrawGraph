@@ -1,6 +1,5 @@
 package com.drawgraph.model;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +9,7 @@ import java.util.Set;
  *
  * @author denisk
  */
-public abstract class AbstractNode<T extends Node> implements Node<T> {
+public abstract class AbstractNode<T extends Node<T>> implements Node<T> {
 	private String id;
 	private HashSet<T> sources = new HashSet<T>();
 	private HashSet<T> sinks = new HashSet<T>();

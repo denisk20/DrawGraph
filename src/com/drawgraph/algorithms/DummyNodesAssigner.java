@@ -1,10 +1,7 @@
 package com.drawgraph.algorithms;
 
-import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.Node;
-
-import java.util.List;
 
 /**
  * Date: Oct 29, 2010
@@ -13,5 +10,5 @@ import java.util.List;
  * @author denisk
  */
 public interface DummyNodesAssigner {
-	LayeredGraph<Node> assignDummyNodes(LayeredGraph<Node> source);
+	<T extends Node<T>> LayeredGraph<T> assignDummyNodes(LayeredGraph<T> source);
 }

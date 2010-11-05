@@ -2,7 +2,7 @@ package com.drawgraph.parser.callbacks;
 
 import com.drawgraph.model.Line;
 import com.drawgraph.model.LineImpl;
-import com.drawgraph.model.Node;
+import com.drawgraph.model.SimpleNode;
 import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author denisk
  */
-public class LineCallback implements Callback {
+public class LineCallback implements Callback<SimpleNode> {
 	private GraphCallback parent;
 
 	private HashSet<LineSkeleton> skeletons = new HashSet<LineSkeleton>();
@@ -44,24 +44,24 @@ public class LineCallback implements Callback {
 
 	}
 
-	public Callback getChildCallback() {
+	public Callback<SimpleNode> getChildCallback() {
 		return null;
 	}
 
-	public Callback getParentCallback() {
+	public Callback<SimpleNode> getParentCallback() {
 		return parent;
 	}
 
-	public HashSet<Line> getLines(Map<String, Node<Node>> nodes) {
+	public HashSet<Line> getLines(Map<String, SimpleNode> nodes) {
 		HashSet<Line> lines = new HashSet<Line>();
 		for (LineSkeleton skeleton : skeletons) {
 			String sourceId = skeleton.getSource();
-			Node<Node> source = nodes.get(sourceId);
+			SimpleNode source = nodes.get(sourceId);
 			if (source == null) {
 				throw new IllegalStateException("can't create line - no node with id: " + sourceId);
 			}
 			String targetId = skeleton.getTarget();
-			Node<Node> target = nodes.get(targetId);
+			SimpleNode target = nodes.get(targetId);
 			if (target == null) {
 				throw new IllegalStateException("can't create line - no node with id: " + targetId);
 			}

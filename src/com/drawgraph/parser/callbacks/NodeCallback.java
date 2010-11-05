@@ -1,6 +1,5 @@
 package com.drawgraph.parser.callbacks;
 
-import com.drawgraph.model.Node;
 import com.drawgraph.model.SimpleNode;
 import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
@@ -13,9 +12,9 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public class NodeCallback implements Callback {
+public class NodeCallback implements Callback<SimpleNode> {
 	private GraphCallback parent;
-	private HashSet<Node<Node>> nodes = new HashSet<Node<Node>>();
+	private HashSet<SimpleNode> nodes = new HashSet<SimpleNode>();
 
 	private final static String ID = "id";
 
@@ -36,15 +35,15 @@ public class NodeCallback implements Callback {
 
 	}
 
-	public Callback getChildCallback() {
+	public Callback<SimpleNode> getChildCallback() {
 		return null;
 	}
 
-	public Callback getParentCallback() {
+	public Callback<SimpleNode> getParentCallback() {
 		return parent;
 	}
 
-	public HashSet<Node<Node>> getNodes() {
+	public HashSet<SimpleNode> getNodes() {
 		return nodes;
 	}
 

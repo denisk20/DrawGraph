@@ -8,6 +8,6 @@ import java.util.List;
  *
  * @author denisk
  */
-public interface LayeredGraph<T extends Node> extends Graph<T>{
+public interface LayeredGraph<T extends Node<T>> extends Graph<T>{
 	List<List<T>> getLayers();
 }

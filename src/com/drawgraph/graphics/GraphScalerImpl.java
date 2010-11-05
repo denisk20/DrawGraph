@@ -54,7 +54,7 @@ public class GraphScalerImpl implements GraphScaler {
 	}
 
 	@Override
-	public LayeredPositionedGraph scale(LayeredGraph<? extends Node> graphWithDummies) {
+	public <T extends Node<T>> LayeredPositionedGraph scale(LayeredGraph<T> graphWithDummies) {
 		List<? extends List<? extends Node>> layers = new ArrayList<List<? extends Node>>(graphWithDummies.getLayers());
 
 		if (REVERSE) {
@@ -136,7 +136,8 @@ public class GraphScalerImpl implements GraphScaler {
 			
 			curY += layerOffset;
 		}
-		assignSourcesSinks(graphWithDummies.getNodes(), positionedNodes);
+		HashSet<T> sourceNodes = graphWithDummies.getNodes();
+		assignSourcesSinks(sourceNodes, positionedNodes);
 
 		if (REVERSE) {
 			//put it back
@@ -150,22 +151,27 @@ public class GraphScalerImpl implements GraphScaler {
 		return result;
 	}
 
-	private void assignSourcesSinks(HashSet<? extends Node> nodes, HashSet<PositionedNode> destNodes) {
+	//todo think how to make this method more generic (eliminate PositionedNode)
+	private <T extends Node<T>> void assignSourcesSinks(HashSet<T> sourceNodes, HashSet<PositionedNode> destNodes) {
 		ArrayList<PositionedNode> positionedNodes = new ArrayList<PositionedNode>(destNodes);
-		for (Node<Node> n : nodes) {
-			int index = positionedNodes.indexOf(n);
+		for (T n : sourceNodes) {
+			int index = getNodeIndexInList(positionedNodes, n);
 			PositionedNode equalNode = positionedNodes.get(index);
-			for (Node source : n.getSources()) {
-				int sourceIndex = positionedNodes.indexOf(source);
+			for (T source : n.getSources()) {
+				int sourceIndex = getNodeIndexInList(positionedNodes, source);
 				PositionedNode positionedSource = positionedNodes.get(sourceIndex);
 				equalNode.addSource(positionedSource);
 			}
-			for (Node sink : n.getSinks()) {
-				int sinkIndex = positionedNodes.indexOf(sink);
+			for (T sink : n.getSinks()) {
+				int sinkIndex = getNodeIndexInList(positionedNodes, sink);
 				PositionedNode positionedSink = positionedNodes.get(sinkIndex);
 				equalNode.addSink(positionedSink);
 			}
 		}
+	}
+
+	private int getNodeIndexInList(List<? extends Node> positionedNodes, Node n) {
+		return positionedNodes.indexOf(n);
 	}
 
 	@Override

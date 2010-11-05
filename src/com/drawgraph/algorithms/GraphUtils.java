@@ -11,10 +11,10 @@ import java.util.List;
  * @author denisk
  */
 public class GraphUtils {
-	public int getLayerIndexForNode(Node n, List<List<Node>> layers) {
+	public int getLayerIndexForNode(Node n, List<? extends List<? extends Node>> layers) {
 		int index = -1;
 		for (int i = 0; i < layers.size(); i++) {
-			List<Node> layer = layers.get(i);
+			List<? extends Node> layer = layers.get(i);
 			if (layer.contains(n)) {
 				index = i;
 				break;
@@ -23,7 +23,7 @@ public class GraphUtils {
 		return index;
 	}
 
-	public int getDummiesCount(List<Node> layer) {
+	public int getDummiesCount(List<? extends Node> layer) {
 		int count = 0;
 		for (Node n : layer) {
 			if (n.isDummy()) {

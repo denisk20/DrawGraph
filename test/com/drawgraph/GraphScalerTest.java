@@ -1,7 +1,6 @@
 package com.drawgraph;
 
 import com.drawgraph.algorithms.DummyNodesAssigner;
-import com.drawgraph.algorithms.NoDummyNodesAssigner;
 import com.drawgraph.algorithms.SimpleDummyNodesAssigner;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.graphics.GraphScaler;
@@ -10,18 +9,18 @@ import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Line;
-import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedNode;
+import com.drawgraph.model.SimpleNode;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 /**
  * Date: Oct 23, 2010
  * Time: 9:30:51 PM
@@ -40,7 +39,7 @@ public class GraphScalerTest {
 
 	@Test
 	public void scale() throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g =GraphMLTestUtils.parseGraph(GraphMLTestUtils.DIGRAPH_FILE_NAME);
+		Graph<SimpleNode> g =GraphMLTestUtils.parseGraph(GraphMLTestUtils.DIGRAPH_FILE_NAME);
 
 		DummyNodesAssigner assigner = new SimpleDummyNodesAssigner() ;
 		scaler.setLayerOffset(LAYER_OFFSET);
@@ -50,15 +49,15 @@ public class GraphScalerTest {
 		scaler.setShift(LAYER_SHIFT);
 
 		SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
-		LayeredGraph<Node> layeredGraph = layeredGraphOrder.getLayeredGraph(g);
-		LayeredGraph<Node> layeredWithDummies = assigner.assignDummyNodes(layeredGraph);
+		LayeredGraph<SimpleNode> layeredGraph = layeredGraphOrder.getLayeredGraph(g);
+		LayeredGraph<SimpleNode> layeredWithDummies = assigner.assignDummyNodes(layeredGraph);
 		LayeredPositionedGraph positionedGraph = scaler.scale(layeredWithDummies);
 		positionedGraph.setRadius(RADIUS);
 
 		HashSet<PositionedNode> positionedNodes = positionedGraph.getNodes();
 		HashSet<Line> lines = positionedGraph.getLines();
 
-		HashSet<Node> initialNodes = layeredWithDummies.getNodes();
+		HashSet<SimpleNode> initialNodes = layeredWithDummies.getNodes();
 		int nodesCount = initialNodes.size();
 		assertEquals(nodesCount, positionedNodes.size());
 		for (PositionedNode n : positionedNodes) {

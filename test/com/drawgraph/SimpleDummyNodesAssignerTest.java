@@ -6,10 +6,11 @@ import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LineImpl;
-import com.drawgraph.model.Node;
+import com.drawgraph.model.SimpleNode;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +19,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 /**
  * Date: Oct 30, 2010
  * Time: 8:30:33 AM
@@ -32,32 +34,32 @@ public class SimpleDummyNodesAssignerTest {
 	private SimpleDummyNodesAssigner testable = new SimpleDummyNodesAssigner();
 	private static final int LAYER_LENGTH = 5;
 
-	private HashMap<Node, HashSet<Node>> nodeDummyLines = new HashMap<Node, HashSet<Node>>();
+	private HashMap<SimpleNode, HashSet<SimpleNode>> nodeDummyLines = new HashMap<SimpleNode, HashSet<SimpleNode>>();
 	@Test
 	public void testGetLayersWithDummiesAssigned() throws IOException, SAXException, ParserConfigurationException {
 		ArrayList<File> files = GraphMLTestUtils
 				.getFilesInDirectories(GraphMLTestUtils.DAGS_DIRECTORY, GraphMLTestUtils.DIGRAPHS_DIRECTORY);
 
 		for (File file: files) {
-			Graph<Node> graph = GraphMLTestUtils.parseGraph(file);
+			Graph<SimpleNode> graph = GraphMLTestUtils.parseGraph(file);
 			assertDummies(graph);
 			nodeDummyLines.clear();
 		}
 	}
 
-	private void assertDummies(Graph<Node> graph) throws IOException, SAXException, ParserConfigurationException {
+	private void assertDummies(Graph<SimpleNode> graph) throws IOException, SAXException, ParserConfigurationException {
 		SimpleLayeredGraphOrder graphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
 
-		LayeredGraph<Node> layeredGraph = graphOrder.getLayeredGraph(graph);
+		LayeredGraph<SimpleNode> layeredGraph = graphOrder.getLayeredGraph(graph);
 
-		List<List<Node>> initialLayers = layeredGraph.getLayers();
+		List<List<SimpleNode>> initialLayers = layeredGraph.getLayers();
 		HashMap<Integer, Integer> expectedDummiesCountMap = getExpectedDummiesCount(initialLayers);
 
-		LayeredGraph<Node> layeredWithDummies = testable.assignDummyNodes(layeredGraph);
-		List<List<Node>> layers = layeredWithDummies.getLayers();
+		LayeredGraph<SimpleNode> layeredWithDummies = testable.assignDummyNodes(layeredGraph);
+		List<List<SimpleNode>> layers = layeredWithDummies.getLayers();
 		GraphUtils gu = new GraphUtils();
 		for (int i = 0; i<layers.size(); i++) {
-			List<Node> layer = layers.get(i);
+			List<SimpleNode> layer = layers.get(i);
 
 			int expectedDummiesCount = expectedDummiesCountMap.get(i);
 			int actualDummiesCount = gu.getDummiesCount(layer);
@@ -65,29 +67,29 @@ public class SimpleDummyNodesAssignerTest {
 			assertEquals(expectedDummiesCount, actualDummiesCount);
 		}
 
-		for (Map.Entry<Node, HashSet<Node>> dummyLine : nodeDummyLines.entrySet()) {
-			Node mainSource = dummyLine.getKey();
-			HashSet<Node> sinks = dummyLine.getValue();
+		for (Map.Entry<SimpleNode, HashSet<SimpleNode>> dummyLine : nodeDummyLines.entrySet()) {
+			SimpleNode mainSource = dummyLine.getKey();
+			HashSet<SimpleNode> sinks = dummyLine.getValue();
 
-			for (Node sink : sinks) {
+			for (SimpleNode sink : sinks) {
 				assertFalse(mainSource.getSinks().contains(sink));
-				Set<Node> sources = sink.getSources();
+				Set<SimpleNode> sources = sink.getSources();
 				assertFalse(sources.contains(mainSource));
 
 				boolean success=false;
-				for (Node source : sources) {
+				for (SimpleNode source : sources) {
 					if (source.isDummy()) {
 
-						Node<Node> current = source;
-						Node<Node> previous = sink;
+						SimpleNode current = source;
+						SimpleNode previous = sink;
 
 						while (current.isDummy()) {
 							LineImpl line = new LineImpl(current, previous, current.getId() + "->" + previous.getId());
 							//todo this should be done as well
 							assertTrue(layeredWithDummies.getNodes().contains(current));
 							assertTrue(layeredWithDummies.getLines().contains(line));
-							Set<Node> dummiesSources = current.getSources();
-							Set<Node> dummiesSinks = current.getSinks();
+							Set<SimpleNode> dummiesSources = current.getSources();
+							Set<SimpleNode> dummiesSinks = current.getSinks();
 							assertTrue(dummiesSources.size() == 1);
 							assertTrue(dummiesSinks.size() == 1);
 							assertEquals(dummiesSinks.iterator().next(), previous);
@@ -110,7 +112,7 @@ public class SimpleDummyNodesAssignerTest {
 		
 	}
 
-	private HashMap<Integer, Integer> getExpectedDummiesCount(List<List<Node>> layers) {
+	private HashMap<Integer, Integer> getExpectedDummiesCount(List<List<SimpleNode>> layers) {
 		GraphUtils gu = new GraphUtils();
 		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 
@@ -118,20 +120,20 @@ public class SimpleDummyNodesAssignerTest {
 			result.put(i, 0);
 		}
 		for (int i = 2; i < layers.size(); i++) {
-			List<Node> layer = layers.get(i);
-			for (Node<Node> n : layer) {
-				for (Node sink : n.getSinks()) {
+			List<SimpleNode> layer = layers.get(i);
+			for (SimpleNode n : layer) {
+				for (SimpleNode sink : n.getSinks()) {
 					int sinkIndex = gu.getLayerIndexForNode(sink, layers);
 					if (i - sinkIndex > 1) {
 						for (int j = sinkIndex + 1; j < i; j++) {
 							int value = result.get(j);
 							result.put(j, ++value);
 
-							HashSet<Node> dummyLines;
+							HashSet<SimpleNode> dummyLines;
 							if (nodeDummyLines.containsKey(n)) {
 								dummyLines = nodeDummyLines.get(n);
 							} else {
-								dummyLines = new HashSet<Node>();
+								dummyLines = new HashSet<SimpleNode>();
 								nodeDummyLines.put(n, dummyLines);
 							}
 							dummyLines.add(sink);
@@ -142,20 +144,20 @@ public class SimpleDummyNodesAssignerTest {
 		}
 
 		for (int i = layers.size() -3 ; i >=0; i--) {
-			List<Node> layer = layers.get(i);
-			for (Node<Node> n : layer) {
-				for (Node sink : n.getSinks()) {
+			List<SimpleNode> layer = layers.get(i);
+			for (SimpleNode n : layer) {
+				for (SimpleNode sink : n.getSinks()) {
 					int sinkIndex = gu.getLayerIndexForNode(sink, layers);
 					if (sinkIndex - i > 1) {
 						for (int j = i + 1; j < sinkIndex; j++) {
 							int value = result.get(j);
 							result.put(j, ++value);
 
-							HashSet<Node> dummyLines;
+							HashSet<SimpleNode> dummyLines;
 							if (nodeDummyLines.containsKey(n)) {
 								dummyLines = nodeDummyLines.get(n);
 							} else {
-								dummyLines = new HashSet<Node>();
+								dummyLines = new HashSet<SimpleNode>();
 								nodeDummyLines.put(n, dummyLines);
 							}
 							dummyLines.add(sink);

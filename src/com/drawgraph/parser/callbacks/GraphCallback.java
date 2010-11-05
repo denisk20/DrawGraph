@@ -1,7 +1,7 @@
 package com.drawgraph.parser.callbacks;
 
 import com.drawgraph.model.Line;
-import com.drawgraph.model.Node;
+import com.drawgraph.model.SimpleNode;
 import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
@@ -14,7 +14,7 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public class GraphCallback implements Callback {
+public class GraphCallback implements Callback<SimpleNode> {
 	private final static String NODE = "node";
 	private final static String LINE = "edge";
 
@@ -22,7 +22,7 @@ public class GraphCallback implements Callback {
 	private NodeCallback nodeCallback;
 	private LineCallback lineCallback;
 
-	private Callback currentCallback;
+	private Callback<SimpleNode> currentCallback;
 
 	public GraphCallback(GraphMLCallback parent) {
 		nodeCallback = new NodeCallback(this);
@@ -44,16 +44,16 @@ public class GraphCallback implements Callback {
 	}
 
 	public void endElement(String name) {
-		HashSet<Node<Node>> nodes = nodeCallback.getNodes();
+		HashSet<SimpleNode> nodes = nodeCallback.getNodes();
 		parent.getGraph().getNodes().addAll(nodes);
-		HashMap<String, Node<Node>> nodesMap = getMapForNodes(nodes);
+		HashMap<String, SimpleNode> nodesMap = getMapForNodes(nodes);
 		HashSet<Line> lines = lineCallback.getLines(nodesMap);
 		parent.getGraph().getLines().addAll(lines);
 	}
 
-	private HashMap<String, Node<Node>> getMapForNodes(HashSet<Node<Node>> nodes) {
-		HashMap<String, Node<Node>> result = new HashMap<String, Node<Node>>();
-		for (Node<Node> node : nodes) {
+	private HashMap<String, SimpleNode> getMapForNodes(HashSet<SimpleNode> nodes) {
+		HashMap<String, SimpleNode> result = new HashMap<String, SimpleNode>();
+		for (SimpleNode node : nodes) {
 			result.put(node.getId(), node);
 		}
 
@@ -64,11 +64,11 @@ public class GraphCallback implements Callback {
 
 	}
 
-	public Callback getChildCallback() {
+	public Callback<SimpleNode> getChildCallback() {
 		return currentCallback;
 	}
 
-	public Callback getParentCallback() {
+	public Callback<SimpleNode> getParentCallback() {
 		return parent;
 	}
 

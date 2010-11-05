@@ -29,6 +29,7 @@
 	<target name="compile">
 		<mkdir dir="${dist.dir}"/>
 		<javac srcdir="${src.dir}" destdir="${dist.dir}">
+			<compilerarg value="-Xlint:unchecked" />
 			<classpath>
 				<path refid="compile.classpath"/>
 			</classpath>
@@ -38,6 +39,7 @@
 	<target name="compileTests">
 		<mkdir dir="${test.dist.dir}"/>
 		<javac srcdir="${test.src.dir}" destdir="${test.dist.dir}">
+			<compilerarg value="-Xlint:unchecked" />
 			<classpath>
 				<path refid="test.classpath"/>
 				<pathelement location="${dist.dir}"/>

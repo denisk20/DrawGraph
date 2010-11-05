@@ -1,8 +1,5 @@
 package com.drawgraph.graphics;
 
-import com.drawgraph.algorithms.DummyNodesAssigner;
-import com.drawgraph.algorithms.LayeredGraphOrder;
-import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;
@@ -24,7 +21,7 @@ public interface GraphScaler {
 
 	void setShift(int horizOffset);
 
-	LayeredPositionedGraph scale(LayeredGraph<? extends Node> graphWithDummies);
+	<T extends Node<T>> LayeredPositionedGraph scale(LayeredGraph<T> graphWithDummies);
 
 	int getMinDistance();
 

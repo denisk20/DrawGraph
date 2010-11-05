@@ -8,7 +8,7 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public interface Graph<T extends Node> {
+public interface Graph<T extends Node<T>> {
 	String getId();
 
 	HashSet<T> getNodes();

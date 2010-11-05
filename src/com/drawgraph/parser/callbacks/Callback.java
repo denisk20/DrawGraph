@@ -10,16 +10,16 @@ import org.xml.sax.Attributes;
  *
  * @author denisk
  */
-public interface Callback {
+public interface Callback <T extends Node<T>>{
 	void startElement(String name, Attributes atts);
 
 	void endElement(String name);
 
 	void characters(String chars);
 
-	Callback getChildCallback();
+	Callback<T> getChildCallback();
 
-	Callback getParentCallback();
+	Callback<T> getParentCallback();
 
-	void postEndElement(GraphAware<Node> graphAware);
+	void postEndElement(GraphAware<T> graphAware);
 }

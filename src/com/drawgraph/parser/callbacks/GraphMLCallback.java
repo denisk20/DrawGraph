@@ -2,7 +2,7 @@ package com.drawgraph.parser.callbacks;
 
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.GraphImpl;
-import com.drawgraph.model.Node;
+import com.drawgraph.model.SimpleNode;
 import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
@@ -12,11 +12,11 @@ import org.xml.sax.Attributes;
  *
  * @author denisk
  */
-public class GraphMLCallback implements Callback {
+public class GraphMLCallback implements Callback<SimpleNode> {
 	private GraphCallback graphCallback;
 	private RootCallback parent;
 
-	private Graph<Node> graph;
+	private Graph<SimpleNode> graph;
 
 	public GraphMLCallback(RootCallback parent) {
 		graphCallback = new GraphCallback(this);
@@ -35,19 +35,19 @@ public class GraphMLCallback implements Callback {
 
 	}
 
-	public Callback getChildCallback() {
+	public Callback<SimpleNode> getChildCallback() {
 		return graphCallback;
 	}
 
-	public Callback getParentCallback() {
+	public Callback<SimpleNode> getParentCallback() {
 		return parent;
 	}
 
-	public Graph<Node> getGraph() {
+	public Graph<SimpleNode> getGraph() {
 		return graph;
 	}
 
-	public void postEndElement(GraphAware<Node> graphAware) {
+	public void postEndElement(GraphAware<SimpleNode> graphAware) {
 		graphAware.setGraph(graph);
 	}
 }

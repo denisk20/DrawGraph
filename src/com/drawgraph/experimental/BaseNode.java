@@ -9,4 +9,6 @@ import java.util.Set;
  * @author denisk
  */
 public interface BaseNode extends Node<BaseNode> {
+	@Override
+	Set<BaseNode> getSources();
 }

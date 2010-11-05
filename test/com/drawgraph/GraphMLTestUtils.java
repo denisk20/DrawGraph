@@ -8,14 +8,14 @@ import com.drawgraph.parser.GraphMLParser;
 import com.drawgraph.parser.callbacks.LineCallback;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -81,14 +81,14 @@ public class GraphMLTestUtils {
 		return result;
 	}
 
-	public static Graph<Node> parseGraph() throws IOException, SAXException, ParserConfigurationException {
+	public static Graph<SimpleNode> parseGraph() throws IOException, SAXException, ParserConfigurationException {
 		return parser.buildGraph(FILE_NAME);
 	}
-	public static Graph<Node> parseGraph(String filename) throws IOException, SAXException, ParserConfigurationException {
+	public static Graph<SimpleNode> parseGraph(String filename) throws IOException, SAXException, ParserConfigurationException {
 		return parser.buildGraph(filename);
 	}
 
-	public static Graph<Node> parseGraph(File file) throws IOException, SAXException, ParserConfigurationException {
+	public static Graph<SimpleNode> parseGraph(File file) throws IOException, SAXException, ParserConfigurationException {
 		return parser.buildGraph(file);
 	}
 

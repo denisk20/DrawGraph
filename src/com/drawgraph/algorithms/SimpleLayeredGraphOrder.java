@@ -1,6 +1,5 @@
 package com.drawgraph.algorithms;
 
-import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredGraphImpl;
@@ -16,7 +15,7 @@ import java.util.Stack;
  *
  * @author denisk
  */
-public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node> {
+public class SimpleLayeredGraphOrder implements LayeredGraphOrder {
 	private int layerLength;
 	private int layersCount;
 
@@ -35,20 +34,20 @@ public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	}
 
 	@Override
-	public LayeredGraph<Node> getLayeredGraph(Graph<? extends Node> g) {
-		ArrayList<List<Node>> layers = new ArrayList<List<Node>>();
+	public <T extends Node<T>>LayeredGraph<T> getLayeredGraph(Graph<T> g) {
+		ArrayList<List<T>> layers = new ArrayList<List<T>>();
 
 		if (layerLength != 0) {
 
 			boolean moreNodes = true;
-			Stack<Node> nodeStack = new Stack<Node>();
+			Stack<T> nodeStack = new Stack<T>();
 			nodeStack.addAll(g.getNodes());
 
 			while (moreNodes) {
-				ArrayList<Node> layer = new ArrayList<Node>();
+				ArrayList<T> layer = new ArrayList<T>();
 				for (int j = 0; j < layerLength; j++) {
 					if (!nodeStack.isEmpty()) {
-						Node n = nodeStack.pop();
+						T n = nodeStack.pop();
 						layer.add(n);
 					} else {
 						break;
@@ -63,7 +62,7 @@ public class SimpleLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		}
 		layersCount = layers.size();
 
-		LayeredGraphImpl result = new LayeredGraphImpl(g.getId(), layers);
+		LayeredGraphImpl<T> result = new LayeredGraphImpl<T>(g.getId(), layers);
 		result.getLines().addAll(g.getLines());
 		result.getNodes().addAll(g.getNodes());
 

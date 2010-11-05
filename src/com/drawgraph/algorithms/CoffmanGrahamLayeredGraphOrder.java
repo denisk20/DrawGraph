@@ -22,14 +22,12 @@ import java.util.Set;
  *
  * @author denisk
  */
-public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
+public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder {
 	private int layerLength;
 
 	public static final int EQUAL = 0;
 	public static final int MORE = 1;
 	public static final int LESS = -1;
-
-	protected HashMap<Node, Integer> labels = new HashMap<Node, Integer>();
 
 	protected HashSet<Node> addedNodes = new HashSet<Node>();
 
@@ -43,12 +41,12 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	}
 
 	@Override
-	public LayeredGraph<Node> getLayeredGraph(Graph<? extends Node> g) {
-		labels = phase1(g);
+	public <T extends Node<T>>LayeredGraph<T> getLayeredGraph(Graph<T> g) {
+		HashMap<T, Integer> labels = phase1(g);
 
-		List<List<Node>> layers = phase2(g);
+		List<List<T>> layers = phase2(g, labels);
 
-		LayeredGraphImpl result = new LayeredGraphImpl(g.getId(), layers);
+		LayeredGraphImpl<T> result = new LayeredGraphImpl<T>(g.getId(), layers);
 		result.getLines().addAll(g.getLines());
 		result.getNodes().addAll(g.getNodes());
 		return result;
@@ -61,11 +59,11 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	 * @param g graph to analyze
 	 * @return map of signature <Node, Label>
 	 */
-	protected HashMap<Node, Integer> phase1(Graph<? extends Node> g) {
-		HashMap<Node, Integer> resultingLabels = new HashMap<Node, Integer>();
-		HashSet<Node> notSourcesNodes = new HashSet<Node>();
+	protected <T extends Node<T>> HashMap<T, Integer> phase1(Graph<T> g) {
+		HashMap<T, Integer> resultingLabels = new HashMap<T, Integer>();
+		HashSet<T> notSourcesNodes = new HashSet<T>();
 		int label = 1;
-		for (Node n : g.getNodes()) {
+		for (T n : g.getNodes()) {
 			if (n.getSources().isEmpty()) {
 				resultingLabels.put(n, label);
 				//label++;
@@ -77,10 +75,10 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		int uncheckedNodesCount = notSourcesNodes.size();
 
 		for (int i = 0; i < uncheckedNodesCount; i++) {
-			Node<Node> n = getNodeWithMinLexMarkedSources(resultingLabels, notSourcesNodes);
+			T n = getNodeWithMinLexMarkedSources(resultingLabels, notSourcesNodes);
 			if (n == null) {
 				//just get node with ANY sources (marked/unmarked)
-				n = getNodeWithMinimalLexSources(notSourcesNodes);
+				n = getNodeWithMinimalLexSources(notSourcesNodes, resultingLabels);
 			}
 			resultingLabels.put(n, ++label);
 			notSourcesNodes.remove(n);
@@ -89,22 +87,22 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return resultingLabels;
 	}
 
-	protected List<List<Node>> phase2(Graph<? extends Node> g) {
+	protected <T extends Node<T>> List<List<T>> phase2(Graph<T> g, HashMap<T, Integer> labels) {
 		addedNodes.clear();
 		if (labels.isEmpty()) {
 			throw new IllegalArgumentException("Labels are empty");
 		}
-		HashSet<Node> nodesWithoutSinks = getNodesWithoutSinks(g.getNodes());
+		HashSet<T> nodesWithoutSinks = getNodesWithoutSinks(g.getNodes());
 
-		HashSet<Node> allNodes = new HashSet<Node>(g.getNodes());
+		HashSet<T> allNodes = new HashSet<T>(g.getNodes());
 		allNodes.removeAll(nodesWithoutSinks);
-		List<List<Node>> result = putGrapesIntoSlots(allNodes, nodesWithoutSinks, null, layerLength, labels);
+		List<List<T>> result = putGrapesIntoSlots(allNodes, nodesWithoutSinks, null, layerLength, labels);
 		return result;
 	}
 
-	private HashSet<Node> getNodesWithoutSinks(Collection<? extends Node> nodes) {
-		HashSet<Node> nodesWithoutSinks = new HashSet<Node>();
-		for (Node n : nodes) {
+	private <T extends Node<T>> HashSet<T> getNodesWithoutSinks(Collection<T> nodes) {
+		HashSet<T> nodesWithoutSinks = new HashSet<T>();
+		for (T n : nodes) {
 			if (n.getSinks().isEmpty()) {
 				nodesWithoutSinks.add(n);
 			}
@@ -112,19 +110,19 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return nodesWithoutSinks;
 	}
 
-	protected List<List<Node>> putGrapesIntoSlots(Collection<Node> allRemainingGrapes, Collection<Node> grapes, List<List<Node>> boxOfGrapes, final int slotsLength, HashMap<Node, Integer> grapesAges) {
+	protected <T extends Node<T>> List<List<T>> putGrapesIntoSlots(Collection<T> allRemainingGrapes, Collection<T> grapes, List<List<T>> boxOfGrapes, final int slotsLength, HashMap<T, Integer> grapesAges) {
 		//this is our treasure - our box of grapes...
 		if (boxOfGrapes == null) {
-			boxOfGrapes = new ArrayList<List<Node>>();
+			boxOfGrapes = new ArrayList<List<T>>();
 		}
 		//creating new slot - cosy place for our grapes
-		ArrayList<Node> slot = new ArrayList<Node>(slotsLength);
+		ArrayList<T> slot = new ArrayList<T>(slotsLength);
 
-		List<Node> whiteGrapes = new ArrayList<Node>();
-		HashSet<Node> hangingNodes = getHangingNodes(grapes);
+		List<T> whiteGrapes = new ArrayList<T>();
+		HashSet<T> hangingNodes = getHangingNodes(grapes);
 		if (hangingNodes.size() > 0) {
 			//put only hanging grapes into the layer
-			HashSet<Node> remainingGrapes = new HashSet<Node>(grapes);
+			HashSet<T> remainingGrapes = new HashSet<T>(grapes);
 			remainingGrapes.removeAll(hangingNodes);
 
 			//just put the rest in white grapes. Goes the first
@@ -134,34 +132,34 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			grapes.removeAll(remainingGrapes);
 			//todo do I need these lines?
 			whiteGrapes.removeAll(addedNodes);
-			whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
+			whiteGrapes = new ArrayList<T>(new HashSet<T>(whiteGrapes));
 		}
 		if (grapes.size() > slotsLength) {
 			//ohhh, we've got so many grapes! Can't fit at a time!
-			ArrayList<Node> oldestGrapes = getOldestGrapes(grapes, slotsLength, grapesAges);
-			HashSet<Node> youngestGrapes = new HashSet<Node>(grapes);
+			ArrayList<T> oldestGrapes = getOldestGrapes(grapes, slotsLength, grapesAges);
+			HashSet<T> youngestGrapes = new HashSet<T>(grapes);
 			youngestGrapes.removeAll(oldestGrapes);
 
 			grapes.removeAll(youngestGrapes);
 			//just put the rest (the youngest ones) in the beginning of whiteGrapes!
 			//white grapes for grapes that are in the slot. Extras go first!
 			whiteGrapes.addAll(youngestGrapes);
-			ArrayList<Node> allWhiteGrapes = getWhiteGrapes(grapes);
+			ArrayList<T> allWhiteGrapes = getWhiteGrapes(grapes);
 			whiteGrapes.addAll(allWhiteGrapes);
 			whiteGrapes.removeAll(addedNodes);
 			//remove duplicates!
-			whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
+			whiteGrapes = new ArrayList<T>(new HashSet<T>(whiteGrapes));
 		} else {
 			//our slot will take all grapes! Coool!
 			grapes = getOldestGrapes(grapes, slotsLength, grapesAges);
 
 			
 			int extraSlots = slotsLength - grapes.size();
-			ArrayList<Node> allWhiteGrapes = getWhiteGrapes(grapes);
+			ArrayList<T> allWhiteGrapes = getWhiteGrapes(grapes);
 			whiteGrapes.addAll(allWhiteGrapes);
 			whiteGrapes.removeAll(addedNodes);
 			//this is where we'll look for extra grapes - in remaining grapes \ white grapes
-			HashSet<Node> grapesToLookForExtra = new HashSet<Node>(allRemainingGrapes);
+			HashSet<T> grapesToLookForExtra = new HashSet<T>(allRemainingGrapes);
 
 			//this is useful when we parse the last layer
 			grapes.removeAll(whiteGrapes);
@@ -169,21 +167,21 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			grapesToLookForExtra.removeAll(grapes);
 			if (hangingNodes.size() == 0) {
 				//hey, let's put extra grapes to fill the slot!
-				ArrayList<Node> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
+				ArrayList<T> grapesToFillTheSlot = getOldestGrapes(grapesToLookForExtra, extraSlots, grapesAges);
 				//OK, let's put them as well!
-				for (Node grapeToFillTheSlot : grapesToFillTheSlot) {
+				for (T grapeToFillTheSlot : grapesToFillTheSlot) {
 					grapes.add(grapeToFillTheSlot);
 				}
 
 				//get white grapes for extra grapes
-				ArrayList<Node> whiteGrapesForExtras = getWhiteGrapes(grapesToFillTheSlot);
+				ArrayList<T> whiteGrapesForExtras = getWhiteGrapes(grapesToFillTheSlot);
 				//make sure we don't look at previously added grapes
 				whiteGrapes.addAll(whiteGrapesForExtras);
 				whiteGrapes.removeAll(addedNodes);
-				whiteGrapes = new ArrayList<Node>(new HashSet<Node>(whiteGrapes));
+				whiteGrapes = new ArrayList<T>(new HashSet<T>(whiteGrapes));
 			}
 		}
-		for (Node grape : grapes) {
+		for (T grape : grapes) {
 			slot.add(grape);
 		}
 
@@ -208,9 +206,9 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 
 	}
 
-	private HashSet<Node> getHangingNodes(Collection<Node> grapes) {
-		HashSet<Node> result = new HashSet<Node>();
-		for (Node n : grapes) {
+	private <T extends Node<T>> HashSet<T> getHangingNodes(Collection<T> grapes) {
+		HashSet<T> result = new HashSet<T>();
+		for (T n : grapes) {
 			if (n.getSinks().size() == 0) {
 				result.add(n);
 			}
@@ -234,15 +232,15 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 	 * This method returns MAXIMUM slotsLength oldest grapes (which has biggest label)
 	 * from grapes
 	 */
-	protected ArrayList<Node> getOldestGrapes(Collection<Node> grapes, int slotsLength, HashMap<Node, Integer> grapesAges) {
-		HashMap<Node, Integer> ages = new HashMap<Node, Integer>(grapesAges);
-		Set<Node> interestedGrapes = ages.keySet();
+	protected <T extends Node<T>> ArrayList<T> getOldestGrapes(Collection<T> grapes, int slotsLength, HashMap<T, Integer> grapesAges) {
+		HashMap<T, Integer> ages = new HashMap<T, Integer>(grapesAges);
+		Set<T> interestedGrapes = ages.keySet();
 		interestedGrapes.retainAll(grapes);
 
-		ArrayList<Node> result = new ArrayList<Node>();
+		ArrayList<T> result = new ArrayList<T>();
 		int checkedNodesCount = 0;
 		while (checkedNodesCount < slotsLength) {
-			Node n = getNodeWithMaxLabel(ages);
+			T n = getNodeWithMaxLabel(ages);
 			if (n != null) {
 				if (n.getSinks().size()==0  || addedNodes.containsAll(n.getSinks())) {
 					result.add(n);
@@ -257,21 +255,21 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		return result;
 	}
 
-	private ArrayList<Node> getWhiteGrapes(Collection<Node> grapes) {
-		HashSet<Node> whiteGrapes = new HashSet<Node>();
+	private<T extends Node<T>> ArrayList<T> getWhiteGrapes(Collection<T> grapes) {
+		HashSet<T> whiteGrapes = new HashSet<T>();
 
-		for (Node grape : grapes) {
+		for (T grape : grapes) {
 			whiteGrapes.addAll(grape.getSources());
 		}
 
-		return new ArrayList<Node>(whiteGrapes);
+		return new ArrayList<T>(whiteGrapes);
 	}
 
-	private Node getNodeWithMaxLabel(HashMap<Node, Integer> nodesToCheck) {
-		Map.Entry<Node, Integer> result =
-				new AbstractMap.SimpleImmutableEntry<Node, Integer>(null, 0);
+	private <T extends Node<T>> T getNodeWithMaxLabel(HashMap<T, Integer> nodesToCheck) {
+		Map.Entry<T, Integer> result =
+				new AbstractMap.SimpleImmutableEntry<T, Integer>(null, 0);
 
-		for (Map.Entry<Node, Integer> entry : nodesToCheck.entrySet()) {
+		for (Map.Entry<T, Integer> entry : nodesToCheck.entrySet()) {
 			if (entry.getValue() > result.getValue()) {
 				result = entry;
 			}
@@ -285,7 +283,7 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		this.layerLength = layerLength;
 	}
 
-	protected int lexicalComparison(Set<Node> first, Set<Node> second) {
+	protected <T extends Node<T>> int lexicalComparison(Set<T> first, Set<T> second, HashMap<T, Integer> labels) {
 		final int firstSize = first.size();
 		final int secondSize = second.size();
 
@@ -297,30 +295,30 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 		} else if (firstSize == 0 && secondSize == 0) {
 			result = EQUAL;
 		} else {
-			Map.Entry<Node, Integer> maxFirstLabel = getLabelWithMaxValue(labels, first);
-			Map.Entry<Node, Integer> maxSecondLabel = getLabelWithMaxValue(labels, second);
+			Map.Entry<T, Integer> maxFirstLabel = getLabelWithMaxValue(labels, first);
+			Map.Entry<T, Integer> maxSecondLabel = getLabelWithMaxValue(labels, second);
 			if (maxFirstLabel.getValue() > maxSecondLabel.getValue()) {
 				result = MORE;
 			} else if (maxFirstLabel.getValue() < maxSecondLabel.getValue()) {
 				result = LESS;
 			} else {
-				HashSet<Node> newFirstSet = new HashSet<Node>(first);
-				HashSet<Node> newSecondSet = new HashSet<Node>(second);
+				HashSet<T> newFirstSet = new HashSet<T>(first);
+				HashSet<T> newSecondSet = new HashSet<T>(second);
 
 				newFirstSet.remove(maxFirstLabel.getKey());
 				newSecondSet.remove(maxSecondLabel.getKey());
-				result = lexicalComparison(newFirstSet, newSecondSet);
+				result = lexicalComparison(newFirstSet, newSecondSet, labels);
 			}
 		}
 
 		return result;
 	}
 
-	private Map.Entry<Node, Integer> getLabelWithMaxValue(HashMap<Node, Integer> labels, Set<Node> nodes) {
+	private <T extends Node<T>> Map.Entry<T, Integer> getLabelWithMaxValue(HashMap<T, Integer> labels, Set<T> nodes) {
 		int label = 0;
 		//take the very first node
-		Node<Node> n = nodes.iterator().next();
-		for (Node<Node> thisNode : nodes) {
+		T n = nodes.iterator().next();
+		for (T thisNode : nodes) {
 			int thisLabel = 0;
 			if (labels.containsKey(thisNode)) {
 				thisLabel = labels.get(thisNode);
@@ -331,16 +329,16 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 			}
 		}
 
-		return new AbstractMap.SimpleImmutableEntry<Node, java.lang.Integer>(n, label);
+		return new AbstractMap.SimpleImmutableEntry<T, java.lang.Integer>(n, label);
 	}
 
-	private Node<Node> getNodeWithMinLexMarkedSources(HashMap<Node, Integer> labels, Set<Node> nodes) {
-		HashSet<Node> nodesWithMarkedSources = new HashSet<Node>();
+	private <T extends Node<T>> T getNodeWithMinLexMarkedSources(HashMap<T, Integer> labels, Set<T> nodes) {
+		HashSet<T> nodesWithMarkedSources = new HashSet<T>();
 
-		for (Node<Node> thisNode : nodes) {
+		for (T thisNode : nodes) {
 			boolean sourcesLabeled = true;
-			Set<Node> sources = thisNode.getSources();
-			for (Node source : sources) {
+			Set<T> sources = thisNode.getSources();
+			for (T source : sources) {
 				if (!labels.containsKey(source)) {
 					sourcesLabeled = false;
 					break;
@@ -350,20 +348,20 @@ public class CoffmanGrahamLayeredGraphOrder implements LayeredGraphOrder<Node> {
 				nodesWithMarkedSources.add(thisNode);
 			}
 		}
-		Node<Node> result = null;
+		T result = null;
 		if (!nodesWithMarkedSources.isEmpty()) {
-			result = getNodeWithMinimalLexSources(nodesWithMarkedSources);
+			result = getNodeWithMinimalLexSources(nodesWithMarkedSources, labels);
 		}
 
 		return result;
 	}
 
-	private Node<Node> getNodeWithMinimalLexSources(HashSet<Node> nodesWithUnmarkesSources) {
-		ArrayList<Node> list = new ArrayList<Node>(nodesWithUnmarkesSources);
-		Node<Node> result = Collections.max(list, new Comparator<Node>() {
+	private <T extends Node<T>> T getNodeWithMinimalLexSources(HashSet<T> nodesWithUnmarkedSources, final HashMap<T, Integer> labels) {
+		ArrayList<T> list = new ArrayList<T>(nodesWithUnmarkedSources);
+		T result = Collections.max(list, new Comparator<T>() {
 			@Override
-			public int compare(Node o1, Node o2) {
-				return lexicalComparison(o1.getSources(), o2.getSources());
+			public int compare(T o1, T o2) {
+				return lexicalComparison(o1.getSources(), o2.getSources(), labels);
 			}
 		});
 

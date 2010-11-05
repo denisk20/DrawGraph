@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * @author denisk
  */
-public interface Node<T extends Node> {
+public interface Node<T extends Node<T>> {
 	String getId();
 
 	/**
@@ -32,4 +32,6 @@ public interface Node<T extends Node> {
 	boolean isDummy();
 
 	void setDummy(boolean dummy);
+
+	T newInstance(String id);
 }

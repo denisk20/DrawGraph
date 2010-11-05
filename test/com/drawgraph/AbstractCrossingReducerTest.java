@@ -7,12 +7,13 @@ import com.drawgraph.graphics.GraphScalerImpl;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
-import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedNode;
 import com.drawgraph.model.PositionedNodeImpl;
+import com.drawgraph.model.SimpleNode;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -21,10 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Date: Oct 29, 2010
@@ -72,7 +71,7 @@ public class AbstractCrossingReducerTest {
 	private ArrayList<LayeredPositionedGraph> getPositionedGraphs(ArrayList<File> files) throws IOException, SAXException, ParserConfigurationException {
 		ArrayList<LayeredPositionedGraph> result = new ArrayList<LayeredPositionedGraph>(files.size());
 		for (File file: files) {
-			Graph<Node> graph = GraphMLTestUtils.parseGraph(file);
+			Graph<SimpleNode> graph = GraphMLTestUtils.parseGraph(file);
 
 			GraphScalerImpl scaler = new GraphScalerImpl();
 			scaler.setLayerOffset(20);
@@ -81,7 +80,7 @@ public class AbstractCrossingReducerTest {
 			scaler.setTopOffset(30);
 
 			SimpleLayeredGraphOrder layeredGraphOrder = new SimpleLayeredGraphOrder(LAYER_LENGTH);
-			LayeredGraph<Node> layeredGraph = layeredGraphOrder.getLayeredGraph(graph);
+			LayeredGraph<SimpleNode> layeredGraph = layeredGraphOrder.getLayeredGraph(graph);
 
 					LayeredPositionedGraph positionedGraph = scaler.scale(layeredGraph);
 			result.add(positionedGraph);

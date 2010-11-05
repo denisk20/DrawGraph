@@ -1,6 +1,5 @@
 package com.drawgraph.algorithms;
 
-import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.PositionedNode;
 
 import java.util.AbstractMap;

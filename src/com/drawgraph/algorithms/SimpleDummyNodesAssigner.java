@@ -1,12 +1,10 @@
 package com.drawgraph.algorithms;
 
-import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredGraphImpl;
 import com.drawgraph.model.Line;
 import com.drawgraph.model.LineImpl;
 import com.drawgraph.model.Node;
-import com.drawgraph.model.SimpleNode;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,10 +19,10 @@ import java.util.Set;
 public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 
 	@Override
-	public LayeredGraph<Node> assignDummyNodes(LayeredGraph<Node> source) {
+	public <T extends Node<T>> LayeredGraph<T> assignDummyNodes(LayeredGraph<T> source) {
 		int dummyCount = 0;
 		
-		LayeredGraphImpl layeredGraph = new LayeredGraphImpl(source.getId(), source.getLayers());
+		LayeredGraphImpl<T> layeredGraph = new LayeredGraphImpl<T>(source.getId(), source.getLayers());
 		layeredGraph.getLines().addAll(source.getLines());
 		layeredGraph.getNodes().addAll(source.getNodes());
 
@@ -32,11 +30,11 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 
 		//collect information on routes that go from top to bottom
 		for (int i = 2; i < layeredGraph.getLayers().size(); i++) {
-			List<Node> layer =layeredGraph.getLayers().get(i);
-			for (Node<Node> nodeFromLayer : layer) {
-				Set<Node> sinksCopyFromLayer = new HashSet<Node>(nodeFromLayer.getSinks());
+			List<T> layer =layeredGraph.getLayers().get(i);
+			for (T nodeFromLayer : layer) {
+				Set<T> sinksCopyFromLayer = new HashSet<T>(nodeFromLayer.getSinks());
 
-				for (Node<Node> sink : sinksCopyFromLayer) {
+				for (T sink : sinksCopyFromLayer) {
 					int indexOfSink = gu.getLayerIndexForNode(sink, layeredGraph.getLayers());
 					if (indexOfSink == -1) {
 						throw new IllegalStateException("No index for sink: " + sink);
@@ -49,9 +47,10 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 						nodeFromLayer.getSinks().remove(sink);
 						removeLine(layeredGraph.getLines(), nodeFromLayer, sink);
 
-						Node previous = sink;
+						T previous = sink;
 						for (int j = indexOfSink + 1; j < i; j++) {
-							SimpleNode dummy = new SimpleNode("dummy_" + dummyCount);
+							T dummy = previous.newInstance("dummy_" + dummyCount);
+
 							dummy.setDummy(true);
 							dummy.addSink(previous);
 							previous.addSource(dummy);
@@ -59,13 +58,13 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 							layeredGraph.getLines().add(new LineImpl(dummy, previous, dummy.getId() + "->" + previous.getId()));
 							layeredGraph.getNodes().add(dummy);
 							dummyCount++;
-							List<Node> layerToAddDummyTo = layeredGraph.getLayers().get(j);
+							List<T> layerToAddDummyTo = layeredGraph.getLayers().get(j);
 							if (right) {
 								layerToAddDummyTo.add(layerToAddDummyTo.size(), dummy);
 							} else {
 								layerToAddDummyTo.add(0, dummy);
 							}
-							previous=dummy;
+							previous = dummy;
 						}
 
 						layeredGraph.getLines().add(new LineImpl(nodeFromLayer, previous, nodeFromLayer.getId() + "->" + previous.getId()));
@@ -79,11 +78,11 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 
 		//collect information on routes that go from bottom to top
 		for (int i = layeredGraph.getLayers().size() -3 ; i >=0; i--) {
-			List<Node> layer =layeredGraph.getLayers().get(i);
-			for (Node<Node> nodeFromLayer : layer) {
-				Set<Node> sinksCopyFromLayer = new HashSet<Node>(nodeFromLayer.getSinks());
+			List<T> layer =layeredGraph.getLayers().get(i);
+			for (T nodeFromLayer : layer) {
+				Set<T> sinksCopyFromLayer = new HashSet<T>(nodeFromLayer.getSinks());
 
-				for (Node<Node> sink : sinksCopyFromLayer) {
+				for (T sink : sinksCopyFromLayer) {
 					int indexOfSink = gu.getLayerIndexForNode(sink, layeredGraph.getLayers());
 					if (indexOfSink == -1) {
 						throw new IllegalStateException("No index for sink: " + sink);
@@ -96,9 +95,9 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 						nodeFromLayer.getSinks().remove(sink);
 						removeLine(layeredGraph.getLines(), nodeFromLayer, sink);
 
-						Node previous = nodeFromLayer;
+						T previous = nodeFromLayer;
 						for (int j = i + 1; j < indexOfSink; j++) {
-							SimpleNode dummy = new SimpleNode("dummy_" + dummyCount);
+							T dummy = previous.newInstance("dummy_" + dummyCount);
 							dummy.setDummy(true);
 							dummy.addSource(previous);
 							previous.addSink(dummy);
@@ -106,7 +105,7 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 							layeredGraph.getLines().add(new LineImpl(previous, dummy, previous.getId() + "->" + dummy.getId()));
 							layeredGraph.getNodes().add(dummy);
 							dummyCount++;
-							List<Node> layerToAddDummyTo = layeredGraph.getLayers().get(j);
+							List<T> layerToAddDummyTo = layeredGraph.getLayers().get(j);
 							if (right) {
 								layerToAddDummyTo.add(layerToAddDummyTo.size(), dummy);
 							} else {
@@ -127,7 +126,7 @@ public class SimpleDummyNodesAssigner implements DummyNodesAssigner {
 		return layeredGraph;
 	}
 
-	private void removeLine(HashSet<Line> lines, Node<Node> nodeFromLayer, Node<Node> sink) {
+	private <T extends Node<T>> void removeLine(HashSet<Line> lines, T nodeFromLayer, T sink) {
 		LineImpl lineToRemove = new LineImpl(nodeFromLayer, sink, "to remove");
 		boolean removed = lines.remove(lineToRemove);
 

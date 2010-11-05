@@ -21,4 +21,8 @@ public class Polygon {
 		lgo.getLayeredGraph(layeredPositionedGraph);
 	}
 
+//	public static <T extends Node<T>> Node<T> getNodes(Node<T> n) {
+//		T t = n.getSources().iterator().next();
+//	//	t.
+//	}
 }

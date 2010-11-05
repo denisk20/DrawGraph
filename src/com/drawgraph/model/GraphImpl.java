@@ -6,14 +6,14 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public class GraphImpl extends AbstractGraph<Node> {
+public class GraphImpl extends AbstractGraph<SimpleNode> {
 	public GraphImpl(String id) {
 		super(id);
 	}
 
 	@Override
-	public Graph<Node> copy() {
-		Graph<Node> copy = new GraphImpl(getId());
+	public Graph<SimpleNode> copy() {
+		Graph<SimpleNode> copy = new GraphImpl(getId());
 		for (Node node : getNodes()) {
 			SimpleNode copyNode = new SimpleNode(node.getId());
 			copy.getNodes().add(copyNode);

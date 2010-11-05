@@ -38,4 +38,9 @@ public class PositionedNodeImpl extends AbstractNode<PositionedNode> implements 
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	@Override
+	public PositionedNode newInstance(String id) {
+		return new PositionedNodeImpl(id);
+	}
 }

@@ -6,8 +6,15 @@ package com.drawgraph.model;
  *
  * @author denisk
  */
-public class SimpleNode extends AbstractNode<Node> {
+public class SimpleNode extends AbstractNode<SimpleNode> {
 	public SimpleNode(String id) {
 		super(id);
+	}
+
+	@Override
+	public SimpleNode newInstance(String s) {
+		SimpleNode node = new SimpleNode(s);
+
+		return node;
 	}
 }

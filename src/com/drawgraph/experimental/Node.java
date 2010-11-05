@@ -8,6 +8,6 @@ import java.util.Set;
  *
  * @author denisk
  */
-public interface Node <T extends Node<? super T>> {
+public interface Node<T extends Node<T>> {
 	Set<T> getSources();
 }

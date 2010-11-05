@@ -8,7 +8,7 @@ import java.util.HashSet;
  *
  * @author denisk
  */
-public abstract class AbstractGraph<T extends Node> implements Graph<T> {
+public abstract class AbstractGraph<T extends Node<T>> implements Graph<T> {
 	private String id;
 	private HashSet<T> nodes = new HashSet<T>();
 	private HashSet<Line> lines = new HashSet<Line>();
@@ -40,14 +40,14 @@ public abstract class AbstractGraph<T extends Node> implements Graph<T> {
 	}
 
 	protected void addSourcesSinksLines(Graph<T> copy) {
-		for (Node<Node> node : getNodes()) {
-			Node copyNode = copy.getNodeById(node.getId());
-			for (Node source : node.getSources()) {
-				Node copySource = copy.getNodeById(source.getId());
+		for (Node<T> node : getNodes()) {
+			Node<T> copyNode = copy.getNodeById(node.getId());
+			for (Node<T> source : node.getSources()) {
+				T copySource = copy.getNodeById(source.getId());
 				copyNode.getSources().add(copySource);
 			}
 			for (Node sink : node.getSinks()) {
-				Node copySink = copy.getNodeById(sink.getId());
+				T copySink = copy.getNodeById(sink.getId());
 				copyNode.getSinks().add(copySink);
 			}
 		}

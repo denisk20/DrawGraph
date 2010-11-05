@@ -1,5 +1,6 @@
 package com.drawgraph.parser.callbacks;
 
+import com.drawgraph.model.SimpleNode;
 import com.drawgraph.parser.GraphAware;
 import org.xml.sax.Attributes;
 
@@ -9,7 +10,7 @@ import org.xml.sax.Attributes;
  *
  * @author denisk
  */
-public class RootCallback implements Callback {
+public class RootCallback implements Callback<SimpleNode> {
 	private GraphMLCallback graphMLCallback;
 
 	public RootCallback() {
@@ -17,26 +18,26 @@ public class RootCallback implements Callback {
 	}
 
 	public void startElement(String name, Attributes atts) {
-		//To change body of implemented methods use File | Settings | File Templates.
+
 	}
 
 	public void endElement(String name) {
-		//To change body of implemented methods use File | Settings | File Templates.
+
 	}
 
 	public void characters(String chars) {
-		//To change body of implemented methods use File | Settings | File Templates.
+
 	}
 
-	public Callback getChildCallback() {
+	public Callback<SimpleNode> getChildCallback() {
 		return graphMLCallback;
 	}
 
-	public Callback getParentCallback() {
-		return null;  //To change body of implemented methods use File | Settings | File Templates.
+	public Callback<SimpleNode> getParentCallback() {
+		return null;
 	}
 
-	public void postEndElement(GraphAware graphAware) {
+	public void postEndElement(GraphAware<SimpleNode> graphAware) {
 
 	}
 }

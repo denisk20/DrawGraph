@@ -14,6 +14,7 @@ import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.Node;
+import com.drawgraph.model.SimpleNode;
 import com.drawgraph.parser.GraphMLParser;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -69,7 +70,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private boolean dummiesEnabled = false;
 
 	private final String DIGRAPHS = "data/digraphs";
-	private Graph<Node> graph;
+	private Graph<SimpleNode> graph;
 	private LayeredPositionedGraph layeredPositionedGraph;
 	private SimpleGraphDrawer drawer;
 
@@ -98,6 +99,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private static final int LAYER_OFFSET_STEP_SIZE = 1;
 	private static final int INITIAL_LAYERS_COUNT = 3;
 	private static final int MAXIMUM_LAYERS_COUNT = 50;
+	private static final int INITIAL_SHIFT = 10;
+	private static final int MINIMUM_SHIFT = -200;
+	private static final int MAXIMUM_SHIFT = 200;
 	private static final int MAJOR_TICK_SPACING = 10;
 	private static final int MINOR_TICK_SPACING = 1;
 
@@ -130,11 +134,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private CrossingReducer medianReducer = new MedianReducer();
 	private CrossingReducer barycenterReducer = new BarycenterReducer();
 
-	private LayeredGraphOrder<Node> simpleOrder = new SimpleLayeredGraphOrder(0);
-	private LayeredGraphOrder<Node> coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
-	private static final int INITIAL_SHIFT = 10;
-	private static final int MINIMUM_SHIFT = -100;
-	private static final int MAXIMUM_SHIFT = 100;
+	private LayeredGraphOrder simpleOrder = new SimpleLayeredGraphOrder(0);
+	private LayeredGraphOrder coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -199,7 +200,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		String path = currentDirectory + File.separator + selectedFile;
 
 		currentFilePath = path;
-		Graph<Node> g = parser.buildGraph(currentFilePath);
+		Graph<SimpleNode> g = parser.buildGraph(currentFilePath);
 		graph = g;
 		layeredPositionedGraph = transformGraph(g);
 	}
@@ -230,7 +231,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		final Hashtable<Integer, JLabel> hashtable = new Hashtable<Integer, JLabel>();
 		for (int i = MINIMUM_LAYERS_COUNT; i <= MAXIMUM_LAYERS_COUNT; i++) {
 			if (i % 10 == 0) {
-				hashtable.put(new Integer(i), new JLabel(Integer.toString(i)));
+				hashtable.put(i, new JLabel(Integer.toString(i)));
 			}
 		}
 		layerLengthSlider.setLabelTable(hashtable);
@@ -278,12 +279,12 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		return result;
 	}
 
-	private LayeredPositionedGraph transformGraph(Graph<? extends Node> graph) throws IOException, SAXException, ParserConfigurationException {
+	private<T extends Node<T>> LayeredPositionedGraph transformGraph(Graph<T> graph) throws IOException, SAXException, ParserConfigurationException {
 
 		graph = graph.copy();
 		int layerLength = layerLengthSlider.getValue();
-		LayeredGraphOrder<Node> layeredGraphOrder = getLayeredGraphOrder(layerLength);
-		LayeredGraph<Node> layeredGraph;
+		LayeredGraphOrder layeredGraphOrder = getLayeredGraphOrder(layerLength);
+		LayeredGraph<T> layeredGraph;
 		try {
 			layeredGraph = layeredGraphOrder.getLayeredGraph(graph);
 		} catch (UnexpectedCycledGraphException e) {
@@ -292,19 +293,19 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			layeredGraph = handleAsynkGraphError(graph, layerLength);
 		}
 
-		LayeredGraph<Node> graphWithDummies = currentAssigner.assignDummyNodes(layeredGraph);
+		LayeredGraph<T> graphWithDummies = currentAssigner.assignDummyNodes(layeredGraph);
 		LayeredPositionedGraph scaledGraph = scaleGraph(graphWithDummies);
 		LayeredPositionedGraph reducedGraph = reduceCrossings(scaledGraph);
 
 		return reducedGraph;
 	}
 
-	private LayeredGraph<Node> handleAsynkGraphError(Graph<? extends Node> graph, int layerLength) {
+	private <T extends Node<T>> LayeredGraph<T> handleAsynkGraphError(Graph<T> graph, int layerLength) {
 		JOptionPane
 				.showMessageDialog(frame, "Cycled graph detected, Coffman-Graham algo is not applicable. " + "Reordering using simple layout", "Error", JOptionPane.ERROR_MESSAGE);
 
 		simpleOrder.setLayerLength(layerLength);
-		LayeredGraph<Node> layeredGraph = simpleOrder.getLayeredGraph(graph);
+		LayeredGraph<T> layeredGraph = simpleOrder.getLayeredGraph(graph);
 		coffmanGrahamLayeringCheckBox.setSelected(false);
 		useGrahamLayering = false;
 		return layeredGraph;
@@ -329,8 +330,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		return result;
 	}
 
-	private LayeredGraphOrder<Node> getLayeredGraphOrder(int layerLength) {
-		LayeredGraphOrder<Node> result;
+	private LayeredGraphOrder getLayeredGraphOrder(int layerLength) {
+		LayeredGraphOrder result;
 		if (useGrahamLayering) {
 			result = coffmanGrahamOrder;
 			result.setLayerLength(layerLength);
@@ -428,11 +429,11 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		try {
 			layeredPositionedGraph = transformGraph(graph);
 		} catch (IOException e1) {
-			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			e1.printStackTrace();
 		} catch (SAXException e1) {
-			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			e1.printStackTrace();
 		} catch (ParserConfigurationException e1) {
-			e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			e1.printStackTrace();
 		}
 	}
 
@@ -445,11 +446,11 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 					parseFileFromList();
 					canvasPanel.repaint();
 				} catch (IOException e1) {
-					e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+					e1.printStackTrace();
 				} catch (SAXException e1) {
-					e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+					e1.printStackTrace();
 				} catch (ParserConfigurationException e1) {
-					e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+					e1.printStackTrace();
 				}
 			}
 		}

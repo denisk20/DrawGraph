@@ -1,12 +1,12 @@
 package com.drawgraph.parser;
 
 import com.drawgraph.model.Graph;
-import com.drawgraph.model.Node;
+import com.drawgraph.model.SimpleNode;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Date: Oct 21, 2010
@@ -15,7 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * @author denisk
  */
 public interface DocumentParser {
-	Graph<Node> buildGraph(String inputFile) throws IOException, SAXException, ParserConfigurationException;
+	Graph<SimpleNode> buildGraph(String inputFile) throws IOException, SAXException, ParserConfigurationException;
 
-	Graph<Node> buildGraph(File inputFile) throws IOException, SAXException, ParserConfigurationException;
+	Graph<SimpleNode> buildGraph(File inputFile) throws IOException, SAXException, ParserConfigurationException;
 }

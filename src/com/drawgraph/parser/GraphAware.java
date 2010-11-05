@@ -9,7 +9,7 @@ import com.drawgraph.model.Node;
  *
  * @author denisk
  */
-public interface GraphAware<T extends Node> {
+public interface GraphAware<T extends Node<T>> {
 	Graph<T> getGraph();
 
 	void setGraph(Graph<T> g);

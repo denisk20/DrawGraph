@@ -9,25 +9,24 @@ import java.util.List;
  *
  * @author denisk
  */
-public class LayeredGraphImpl extends AbstractGraph<Node> implements LayeredGraph<Node>{
-	private List<List<Node>> layers = new ArrayList<List<Node>>();
+public class LayeredGraphImpl<T extends Node<T>> extends AbstractGraph<T> implements LayeredGraph<T>{
+	private List<List<T>> layers = new ArrayList<List<T>>();
 
-	public LayeredGraphImpl(String id, List<List<Node>> layers) {
+	public LayeredGraphImpl(String id, List<List<T>> layers) {
 		super(id);
 		this.layers.addAll(layers);
 	}
 
 	@Override
-	public List<List<Node>> getLayers() {
+	public List<List<T>> getLayers() {
 		return layers;
 	}
 
 	@Override
-	public Graph<Node> copy() {
-		Graph<Node> copy = new GraphImpl(getId());
-		for (Node node : getNodes()) {
-			SimpleNode copyNode = new SimpleNode(node.getId());
-			copy.getNodes().add(copyNode);
+	public Graph<T> copy() {
+		LayeredGraphImpl<T> copy = new LayeredGraphImpl<T>(getId(), new ArrayList<List<T>>(layers));
+		for (T node : getNodes()) {
+			copy.getNodes().add(node.newInstance(node.getId()));
 		}
 
 		addSourcesSinksLines(copy);

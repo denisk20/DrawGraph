@@ -4,15 +4,13 @@ import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.GraphImpl;
 import com.drawgraph.model.LayeredGraph;
-import com.drawgraph.model.Node;
 import com.drawgraph.model.SimpleNode;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,26 +38,26 @@ public class LayeredGraphOrderTest {
 		createGraphAndGetLayers(NODES_COUNT, NODES_COUNT -1 , 2);
 	}
 	private void createGraphAndGetLayers(int nodesCount, int layerLength, int expectedLayersCount) {
-		Graph<Node> g = new GraphImpl("test graph");
+		Graph<SimpleNode> g = new GraphImpl("test graph");
 		g.getNodes().addAll(createNodes(nodesCount));
 
 		testable.setLayerLength(layerLength);
 
-		LayeredGraph<Node> layeredGraph = testable.getLayeredGraph(g);
+		LayeredGraph<SimpleNode> layeredGraph = testable.getLayeredGraph(g);
 		assertEquals(expectedLayersCount, layeredGraph.getLayers().size());
 	}
 
 	@Test
 	public void realGraph() throws IOException, SAXException, ParserConfigurationException {
-		Graph<Node> g = GraphMLTestUtils.parseGraph();
+		Graph<SimpleNode> g = GraphMLTestUtils.parseGraph();
 		testable.setLayerLength(LAYER_LENGTH);
-		LayeredGraph<Node> layeredGraph = testable.getLayeredGraph(g);
+		LayeredGraph<SimpleNode> layeredGraph = testable.getLayeredGraph(g);
 		assertEquals(REAL_GRAPH_EXPECTED_LAYERS_COUNT, layeredGraph.getLayers().size());
 	}
 
 
-	private ArrayList<Node> createNodes(int count) {
-		ArrayList<Node> result = new ArrayList<Node>();
+	private ArrayList<SimpleNode> createNodes(int count) {
+		ArrayList<SimpleNode> result = new ArrayList<SimpleNode>();
 		for (int i = 0; i < count; i++) {
 			SimpleNode node = new SimpleNode("_test_" + i);
 			result.add(node);
