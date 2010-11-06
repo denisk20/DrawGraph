@@ -83,7 +83,6 @@ public class SimpleGraphDrawer implements GraphDrawer<PositionedGraph> {
         double x2 = p2.x + (dia/2)*Math.cos(theta);
         double y2 = p2.y + (dia/2)*Math.sin(theta);
         g2.setPaint(Color.green.darker());
-//        g2.draw(new Line2D.Double(x1, y1, x2, y2));
         double x = x2 + barb*Math.cos(theta+phi);
         double y = y2 + barb*Math.sin(theta+phi);
         g2.draw(new Line2D.Double(x2, y2, x, y));
