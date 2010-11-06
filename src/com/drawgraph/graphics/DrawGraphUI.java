@@ -71,6 +71,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JList list1;
 	private JButton button1;
 	private JPanel chooseFilePrefusePanel;
+	private JPanel prefuseFileChoosePanel;
+	private JPanel prefuseCanvasPanel;
+	private JTabbedPane mainTabbedPanel;
 
 	private boolean dummiesEnabled = false;
 
@@ -168,7 +171,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		double screenHeight = screenSize.getHeight();
 		frame = new JFrame("DrawGraphUI");
 		DrawGraphUI ui = new DrawGraphUI();
-		frame.setContentPane(ui.rootPanel);
+		frame.setContentPane(ui.$$$getRootComponent$$$());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		ui.initSpinners();
@@ -287,7 +290,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		return result;
 	}
 
-	private<T extends Node<T>> LayeredPositionedGraph transformGraph(Graph<T> graph) throws IOException, SAXException, ParserConfigurationException {
+	private <T extends Node<T>> LayeredPositionedGraph transformGraph(Graph<T> graph) throws IOException, SAXException, ParserConfigurationException {
 
 		graph = graph.copy();
 		int layerLength = layerLengthSlider.getValue();
@@ -524,13 +527,20 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	 */
 	private void $$$setupUI$$$() {
 		createUIComponents();
+		mainTabbedPanel = new JTabbedPane();
+		mainTabbedPanel.setEnabled(true);
+		mainTabbedPanel.setTabPlacement(1);
+		final JPanel panel1 = new JPanel();
+		panel1.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+		mainTabbedPanel.addTab("Algorithms", panel1);
 		rootPanel = new JPanel();
 		rootPanel
-				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,center:196px:noGrow,left:4dlu:noGrow,center:74px:noGrow,left:4dlu:noGrow,left:4dlu:noGrow,fill:16px:noGrow,left:4dlu:noGrow,fill:191px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,center:d:grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:119px:noGrow,top:4dlu:noGrow,center:max(d;43px):noGrow,top:4dlu:noGrow,center:d:grow"));
+				.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,center:196px:noGrow,left:4dlu:noGrow,center:74px:noGrow,left:96dlu:noGrow,left:4dlu:noGrow,fill:16px:noGrow,left:4dlu:noGrow,fill:191px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,center:d:grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:119px:noGrow,top:4dlu:noGrow,center:max(d;43px):noGrow,top:4dlu:noGrow,center:d:grow"));
+		CellConstraints cc = new CellConstraints();
+		panel1.add(rootPanel, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		mainPanel = new JPanel();
 		mainPanel
 				.setLayout(new FormLayout("center:190px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,center:d:grow", "center:d:grow,top:5dlu:noGrow,center:max(d;160px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
-		CellConstraints cc = new CellConstraints();
 		rootPanel.add(mainPanel, cc.xyw(3, 7, 18, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileScrollPanel = new JScrollPane();
 		mainPanel.add(chooseFileScrollPanel, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
@@ -582,19 +592,19 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		tweakPanel.setBackground(new Color(-3342388));
 		rootPanel.add(tweakPanel, cc.xyw(3, 3, 18, CellConstraints.FILL, CellConstraints.FILL));
 		tweakPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
-		final JPanel panel1 = new JPanel();
-		panel1.setLayout(new FormLayout("fill:143px:noGrow,left:4dlu:noGrow,center:d:grow", "center:67px:noGrow"));
-		panel1.setBackground(new Color(-3355393));
-		panel1.setOpaque(false);
-		tweakPanel.add(panel1, cc.xyw(2, 1, 9, CellConstraints.DEFAULT, CellConstraints.FILL));
+		final JPanel panel2 = new JPanel();
+		panel2.setLayout(new FormLayout("fill:143px:noGrow,left:4dlu:noGrow,center:d:grow", "center:67px:noGrow"));
+		panel2.setBackground(new Color(-3355393));
+		panel2.setOpaque(false);
+		tweakPanel.add(panel2, cc.xyw(2, 1, 9, CellConstraints.DEFAULT, CellConstraints.FILL));
 		directoryChooseButton = new JButton();
 		directoryChooseButton.setText("Choose Folder:");
-		panel1.add(directoryChooseButton, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
-		final JPanel panel2 = new JPanel();
-		panel2.setLayout(new FormLayout("center:d:grow", "center:46px:noGrow"));
-		panel2.setOpaque(false);
-		panel1.add(panel2, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Layer length"));
+		panel2.add(directoryChooseButton, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
+		final JPanel panel3 = new JPanel();
+		panel3.setLayout(new FormLayout("center:d:grow", "center:46px:noGrow"));
+		panel3.setOpaque(false);
+		panel2.add(panel3, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Layer length"));
 		layerLengthSlider = new JSlider();
 		layerLengthSlider.setMajorTickSpacing(1);
 		layerLengthSlider.setMaximum(50);
@@ -605,42 +615,68 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		layerLengthSlider.setPaintTrack(false);
 		layerLengthSlider.setValue(10);
 		layerLengthSlider.setValueIsAdjusting(true);
-		panel2.add(layerLengthSlider, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final JPanel panel3 = new JPanel();
-		panel3.setLayout(new FormLayout("center:232px:noGrow", "center:d:grow"));
-		tweakPanel.add(panel3, cc.xy(2, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
-		panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
+		panel3.add(layerLengthSlider, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final JPanel panel4 = new JPanel();
+		panel4.setLayout(new FormLayout("center:232px:noGrow", "center:d:grow"));
+		tweakPanel.add(panel4, cc.xy(2, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
 		coffmanGrahamLayeringCheckBox = new JCheckBox();
 		coffmanGrahamLayeringCheckBox.setText("Coffman-Graham layering");
-		panel3.add(coffmanGrahamLayeringCheckBox, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
-		final JPanel panel4 = new JPanel();
-		panel4.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
-		rootPanel.add(panel4, cc.xyw(3, 5, 4));
-		panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Crossing redunction method"));
+		panel4.add(coffmanGrahamLayeringCheckBox, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		final JPanel panel5 = new JPanel();
+		panel5.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
+		rootPanel.add(panel5, cc.xyw(3, 5, 4));
+		panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Crossing reduction method"));
 		medianRadioButton = new JRadioButton();
 		medianRadioButton.setText("Median");
-		panel4.add(medianRadioButton, cc.xy(3, 1));
+		panel5.add(medianRadioButton, cc.xy(3, 1));
 		barycenterRadioButton = new JRadioButton();
 		barycenterRadioButton.setText("Barycenter");
-		panel4.add(barycenterRadioButton, cc.xy(5, 1));
+		panel5.add(barycenterRadioButton, cc.xy(5, 1));
 		noneRadioButton = new JRadioButton();
 		noneRadioButton.setText("none");
-		panel4.add(noneRadioButton, cc.xy(1, 1));
-		final JPanel panel5 = new JPanel();
-		panel5.setLayout(new FormLayout("fill:95px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
-		rootPanel.add(panel5, cc.xyw(10, 5, 5));
-		panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Dummy nodes"));
+		panel5.add(noneRadioButton, cc.xy(1, 1));
+		coordinateAssignementRadioButton = new JRadioButton();
+		coordinateAssignementRadioButton.setText("Coordinate Assignement");
+		panel5.add(coordinateAssignementRadioButton, cc.xy(7, 1));
+		final JPanel panel6 = new JPanel();
+		panel6.setLayout(new FormLayout("fill:95px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:26px:noGrow"));
+		rootPanel.add(panel6, cc.xyw(10, 5, 5));
+		panel6.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Dummy nodes"));
 		dummyEnabledRadioButton = new JRadioButton();
 		dummyEnabledRadioButton.setText("enabled");
-		panel5.add(dummyEnabledRadioButton, cc.xy(3, 1));
+		panel6.add(dummyEnabledRadioButton, cc.xy(3, 1));
 		dummyDisabledRadioButton = new JRadioButton();
 		dummyDisabledRadioButton.setText("disabled");
-		panel5.add(dummyDisabledRadioButton, cc.xy(1, 1));
+		panel6.add(dummyDisabledRadioButton, cc.xy(1, 1));
+		final JPanel panel7 = new JPanel();
+		panel7.setLayout(new FormLayout("center:244px:noGrow,left:15px:noGrow,left:4dlu:noGrow,fill:629px:noGrow", "center:575px:noGrow"));
+		mainTabbedPanel.addTab("PrefUse", panel7);
+		prefuseFileChoosePanel = new JPanel();
+		prefuseFileChoosePanel.setLayout(new FormLayout("fill:d:grow", "center:578px:grow"));
+		panel7.add(prefuseFileChoosePanel, cc.xyw(1, 1, 2, CellConstraints.FILL, CellConstraints.FILL));
+		chooseFilePrefusePanel = new JPanel();
+		chooseFilePrefusePanel
+				.setLayout(new FormLayout("fill:236px:noGrow", "center:94px:noGrow,top:6dlu:noGrow,center:475px:grow"));
+		prefuseFileChoosePanel.add(chooseFilePrefusePanel, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.FILL));
+		button1 = new JButton();
+		button1.setText("Button");
+		chooseFilePrefusePanel.add(button1, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
+		final JScrollPane scrollPane1 = new JScrollPane();
+		chooseFilePrefusePanel.add(scrollPane1, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
+		list1 = new JList();
+		scrollPane1.setViewportView(list1);
+		final JScrollPane scrollPane2 = new JScrollPane();
+		panel7.add(scrollPane2, cc.xy(4, 1, CellConstraints.FILL, CellConstraints.FILL));
+		prefuseCanvasPanel = new JPanel();
+		prefuseCanvasPanel.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+		scrollPane2.setViewportView(prefuseCanvasPanel);
 		ButtonGroup buttonGroup;
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(noneRadioButton);
 		buttonGroup.add(medianRadioButton);
 		buttonGroup.add(barycenterRadioButton);
+		buttonGroup.add(coordinateAssignementRadioButton);
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(dummyEnabledRadioButton);
 		buttonGroup.add(dummyDisabledRadioButton);
@@ -648,6 +684,6 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	/** @noinspection ALL */
 	public JComponent $$$getRootComponent$$$() {
-		return rootPanel;
+		return mainTabbedPanel;
 	}
 }
