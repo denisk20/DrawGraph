@@ -21,12 +21,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import org.xml.sax.SAXException;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +29,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Date: Oct 24, 2010
@@ -68,10 +68,6 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JRadioButton dummyDisabledRadioButton;
 	private JSpinner shiftSpin;
 	private JRadioButton coordinateAssignementRadioButton;
-	private JList list1;
-	private JButton button1;
-	private JPanel chooseFilePrefusePanel;
-	private JPanel prefuseFileChoosePanel;
 	private JPanel prefuseCanvasPanel;
 	private JTabbedPane mainTabbedPanel;
 	private JPanel mainRoot;
@@ -147,6 +143,11 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private LayeredGraphOrder simpleOrder = new SimpleLayeredGraphOrder(0);
 	private LayeredGraphOrder coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
+
+	private static final int ALGO_TAB_INDEX = 0;
+	private static final int PREFUSE_TAB_INDEX = 1;
+
+	private int currentTab = ALGO_TAB_INDEX;
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -276,6 +277,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		dummyDisabledRadioButton.addActionListener(this);
 		dummyDisabledRadioButton.setSelected(true);
 		dummyEnabledRadioButton.addActionListener(this);
+
+		mainTabbedPanel.addChangeListener(this);
 	}
 
 	private LayeredPositionedGraph scaleGraph(LayeredGraph<? extends Node> source) {
@@ -366,6 +369,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			}
 			try {
 				layeredPositionedGraph = transformGraph(graph);
+				canvasPanel.repaint();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} catch (SAXException e1) {
@@ -373,10 +377,20 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			} catch (ParserConfigurationException e1) {
 				e1.printStackTrace();
 			}
+		} else if (e.getSource() == mainTabbedPanel) {
+			int index = mainTabbedPanel.getSelectedIndex();
+			if (index == 0) {
+				// algo tab
+				currentTab = ALGO_TAB_INDEX;
+			} else if (index == 1) {
+				//prefuse tab
+				currentTab = PREFUSE_TAB_INDEX;
+
+			}
 		} else {
 			layeredPositionedGraph = scaleGraph(layeredPositionedGraph);
+			canvasPanel.repaint();
 		}
-		canvasPanel.repaint();
 	}
 
 	@Override
@@ -503,8 +517,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 					//					.showMessageDialog(frame, "Coffman-Graham algo is not applicable. "
 					//							+ "Choose another graph or uncheck layering", "Error", JOptionPane.ERROR_MESSAGE);
 					//					throw e;
-					System.out.println("Error - it seems that you're trying to apply algorithm for cycled graph: " + chooseFileList
-							.getSelectedValue());
+					System.out
+							.println("Error - it seems that you're trying to apply algorithm for cycled graph: " + chooseFileList
+									.getSelectedValue());
 				}
 
 				setPreferredSize(new Dimension(layeredPositionedGraph.getWidth(), layeredPositionedGraph.getHeight()));
@@ -650,27 +665,13 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		layerLengthSlider.setValueIsAdjusting(true);
 		panel6.add(layerLengthSlider, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JPanel panel7 = new JPanel();
-		panel7.setLayout(new FormLayout("center:244px:noGrow,left:15px:noGrow,left:4dlu:noGrow,fill:629px:noGrow", "center:575px:noGrow"));
+		panel7.setLayout(new FormLayout("left:15px:noGrow,left:4dlu:noGrow,fill:629px:noGrow", "center:575px:noGrow"));
 		mainTabbedPanel.addTab("PrefUse", panel7);
-		prefuseFileChoosePanel = new JPanel();
-		prefuseFileChoosePanel.setLayout(new FormLayout("fill:d:grow", "center:578px:grow"));
-		panel7.add(prefuseFileChoosePanel, cc.xyw(1, 1, 2, CellConstraints.FILL, CellConstraints.FILL));
-		chooseFilePrefusePanel = new JPanel();
-		chooseFilePrefusePanel
-				.setLayout(new FormLayout("fill:236px:noGrow", "center:94px:noGrow,top:6dlu:noGrow,center:475px:grow"));
-		prefuseFileChoosePanel.add(chooseFilePrefusePanel, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.FILL));
-		button1 = new JButton();
-		button1.setText("Button");
-		chooseFilePrefusePanel.add(button1, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final JScrollPane scrollPane1 = new JScrollPane();
-		chooseFilePrefusePanel.add(scrollPane1, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
-		list1 = new JList();
-		scrollPane1.setViewportView(list1);
-		final JScrollPane scrollPane2 = new JScrollPane();
-		panel7.add(scrollPane2, cc.xy(4, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panel7.add(scrollPane1, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.FILL));
 		prefuseCanvasPanel = new JPanel();
 		prefuseCanvasPanel.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
-		scrollPane2.setViewportView(prefuseCanvasPanel);
+		scrollPane1.setViewportView(prefuseCanvasPanel);
 		final JPanel panel8 = new JPanel();
 		panel8.setLayout(new FormLayout("fill:d:grow", "center:62px:noGrow,top:4dlu:noGrow,center:535px:noGrow"));
 		mainRoot.add(panel8, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.FILL));

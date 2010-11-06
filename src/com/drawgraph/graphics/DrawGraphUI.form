@@ -422,7 +422,6 @@
           </grid>
           <grid id="92b2e" layout-manager="FormLayout">
             <rowspec value="center:575px:noGrow"/>
-            <colspec value="center:244px:noGrow"/>
             <colspec value="left:15px:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:629px:noGrow"/>
@@ -432,58 +431,9 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="8f9bb" binding="prefuseFileChoosePanel" layout-manager="FormLayout">
-                <rowspec value="center:578px:grow"/>
-                <colspec value="fill:d:grow"/>
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <grid id="8f346" binding="chooseFilePrefusePanel" layout-manager="FormLayout">
-                    <rowspec value="center:94px:noGrow"/>
-                    <rowspec value="top:6dlu:noGrow"/>
-                    <rowspec value="center:475px:grow"/>
-                    <colspec value="fill:236px:noGrow"/>
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
-                      <forms defaultalign-horz="false" defaultalign-vert="false"/>
-                    </constraints>
-                    <properties/>
-                    <border type="none"/>
-                    <children>
-                      <component id="60512" class="javax.swing.JButton" binding="button1" default-binding="true">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                          <forms defaultalign-vert="false"/>
-                        </constraints>
-                        <properties>
-                          <text value="Button"/>
-                        </properties>
-                      </component>
-                      <scrollpane id="f9054">
-                        <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                          <forms defaultalign-vert="false"/>
-                        </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="23548" class="javax.swing.JList" binding="list1" default-binding="true">
-                            <constraints/>
-                            <properties/>
-                          </component>
-                        </children>
-                      </scrollpane>
-                    </children>
-                  </grid>
-                </children>
-              </grid>
               <scrollpane id="771d7">
                 <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties/>
