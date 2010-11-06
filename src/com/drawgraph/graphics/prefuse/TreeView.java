@@ -46,7 +46,6 @@ import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
 import prefuse.data.io.AbstractGraphReader;
 import prefuse.data.io.GraphMLReader;
-import prefuse.data.io.TreeMLReader;
 import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
@@ -68,7 +67,7 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  * @version 1.0
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class TreeView extends Display {
+public class TreeView extends Display implements PreFuseCanvas {
 
     public static final String TREE_CHI = "/media/Windows_data/work/swisslabs/g.100.8.graphml";
 	private static AbstractGraphReader reader = new GraphMLReader();
@@ -86,8 +85,25 @@ public class TreeView extends Display {
 	private static String m_label = "id";
 	private int m_orientation = Constants.ORIENT_LEFT_RIGHT;
 
+	private Graph g;
+
+	@Override
+	public JComponent getCanvas() {
+				if (g == null) {
+			throw new IllegalStateException("No graph defined");
+		}
+
+		return this;
+	}
+
+	@Override
+	public void setGraph(Graph g) {
+		this.g = g;
+	}
+
 	public TreeView(Graph t, String label) {
         super(new Visualization());
+		this.g=t;
         m_label = label;
 
         m_vis.add(tree, t);
@@ -283,13 +299,9 @@ public class TreeView extends Display {
     public static JComponent demo() {
         return demo(TREE_CHI, m_label, reader);
     }
-    
-    public static JComponent demo(String datafile, final String label, AbstractGraphReader treeMLReader) {
-        Color BACKGROUND = Color.WHITE;
-        Color FOREGROUND = Color.BLACK;
-        
-//        Graph t = null;
-        Graph t = null;
+
+	public static JComponent demo(String datafile, final String label, AbstractGraphReader treeMLReader) {
+		        Graph t = null;
         try {
 //            t = new GraphMLReader().readGraph(datafile);
             t = treeMLReader.readGraph(datafile);
@@ -297,7 +309,16 @@ public class TreeView extends Display {
             e.printStackTrace();
             System.exit(1);
         }
+
+		return getPanel(label, t);
+	}
+
+	public static JComponent getPanel(final String label, Graph t) {
+        Color BACKGROUND = Color.WHITE;
+        Color FOREGROUND = Color.BLACK;
         
+//        Graph t = null;
+
         // create a new treemap
         final TreeView tview = new TreeView(t, label);
         tview.setBackground(BACKGROUND);

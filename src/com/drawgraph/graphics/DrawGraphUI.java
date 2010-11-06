@@ -11,6 +11,10 @@ import com.drawgraph.algorithms.NoDummyNodesAssigner;
 import com.drawgraph.algorithms.SimpleDummyNodesAssigner;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.algorithms.UnexpectedCycledGraphException;
+import com.drawgraph.graphics.prefuse.InfrastructureView;
+import com.drawgraph.graphics.prefuse.PreFuseCanvas;
+import com.drawgraph.graphics.prefuse.RadialGraphView;
+import com.drawgraph.graphics.prefuse.TreeView;
 import com.drawgraph.model.Graph;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
@@ -20,6 +24,8 @@ import com.drawgraph.parser.GraphMLParser;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import org.xml.sax.SAXException;
+import prefuse.data.io.DataIOException;
+import prefuse.data.io.GraphMLReader;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -71,6 +77,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JPanel prefuseCanvasPanel;
 	private JTabbedPane mainTabbedPanel;
 	private JPanel mainRoot;
+	private JRadioButton treeLayoutPrefuseRadiobutton;
+	private JRadioButton radialLayoutPrefuseRadiobutton;
+	private JRadioButton infrastructureLayoutPrefuseRadiobutton;
 
 	private boolean dummiesEnabled = false;
 
@@ -149,6 +158,13 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private int currentTab = ALGO_TAB_INDEX;
 
+	private prefuse.data.Graph currentPrefuseGraph;
+	private GraphMLReader graphReaderPrefuse = new GraphMLReader();
+	private int currentPreFuseLayout = TREE_LAYOUT_PREFUSE;
+	private static final int TREE_LAYOUT_PREFUSE = 0;
+	private static final int RADIAL_LAYOUT_PREFUSE = 1;
+	private static final int INFRASTRUCTURE_LAYOUT_PREFUSE = 2;
+
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -203,6 +219,15 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	}
 
 	private void parseFileFromList() throws IOException, SAXException, ParserConfigurationException {
+		String path = getSelectedFilePath();
+
+		currentFilePath = path;
+		Graph<SimpleNode> g = parser.buildGraph(currentFilePath);
+		graph = g;
+		layeredPositionedGraph = transformGraph(g);
+	}
+
+	private String getSelectedFilePath() {
 		int selectedIndex = chooseFileList.getSelectedIndex();
 		if (selectedIndex == -1) {
 			selectedIndex = 0;
@@ -210,11 +235,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		DefaultListModel listModel = (DefaultListModel) chooseFileList.getModel();
 		String selectedFile = (String) listModel.get(selectedIndex);
 		String path = currentDirectory + File.separator + selectedFile;
-
-		currentFilePath = path;
-		Graph<SimpleNode> g = parser.buildGraph(currentFilePath);
-		graph = g;
-		layeredPositionedGraph = transformGraph(g);
+		return path;
 	}
 
 	private void initSpinners() {
@@ -279,6 +300,11 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		dummyEnabledRadioButton.addActionListener(this);
 
 		mainTabbedPanel.addChangeListener(this);
+
+		treeLayoutPrefuseRadiobutton.addActionListener(this);
+		treeLayoutPrefuseRadiobutton.setSelected(true);
+		radialLayoutPrefuseRadiobutton.addActionListener(this);
+		infrastructureLayoutPrefuseRadiobutton.addActionListener(this);
 	}
 
 	private LayeredPositionedGraph scaleGraph(LayeredGraph<? extends Node> source) {
@@ -382,10 +408,10 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			if (index == 0) {
 				// algo tab
 				currentTab = ALGO_TAB_INDEX;
+				processFileFromList();
 			} else if (index == 1) {
-				//prefuse tab
+				renderPrefuseCanvas();
 				currentTab = PREFUSE_TAB_INDEX;
-
 			}
 		} else {
 			layeredPositionedGraph = scaleGraph(layeredPositionedGraph);
@@ -393,9 +419,50 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		}
 	}
 
+	private void renderPrefuseCanvas() {
+		try {
+			currentPrefuseGraph = graphReaderPrefuse.readGraph(getSelectedFilePath());
+		} catch (DataIOException e1) {
+			e1.printStackTrace();
+		}
+		renderPrefuseContent();
+	}
+
+	private void renderPrefuseContent() {
+		PreFuseCanvas preFuseCanvas = getPreFuseCanvas();
+		prefuseCanvasPanel.removeAll();
+		CellConstraints cc = new CellConstraints();
+		JComponent canvas = preFuseCanvas.getCanvas();
+
+		prefuseCanvasPanel.add(canvas, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		prefuseCanvasPanel.revalidate();
+		prefuseCanvasPanel.repaint();
+	}
+
+	private PreFuseCanvas getPreFuseCanvas() {
+		PreFuseCanvas canvas;
+		switch (currentPreFuseLayout) {
+			case TREE_LAYOUT_PREFUSE:
+				canvas = new TreeView(currentPrefuseGraph, "id");
+				break;
+			case RADIAL_LAYOUT_PREFUSE:
+				canvas = new RadialGraphView(currentPrefuseGraph, "id");
+				break;
+			case INFRASTRUCTURE_LAYOUT_PREFUSE:
+				canvas = new InfrastructureView(currentPrefuseGraph, "id");
+				break;
+
+			default:
+				throw new IllegalStateException("Unknown prefuse layout: " + currentPreFuseLayout);
+		}
+
+		return canvas;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == directoryChooseButton) {
+		Object source = e.getSource();
+		if (source == directoryChooseButton) {
 			final JFileChooser fc = new JFileChooser();
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -411,27 +478,27 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 				chooseFileList.setSelectedIndex(0);
 				frame.setTitle(currentDirectory.getAbsolutePath());
 			}
-		} else if (e.getSource() == noneRadioButton) {
+		} else if (source == noneRadioButton) {
 			currentReductionMethod = NO_REDUCTION_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
-		} else if (e.getSource() == barycenterRadioButton) {
+		} else if (source == barycenterRadioButton) {
 			currentReductionMethod = BARYCENTER_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
-		} else if (e.getSource() == medianRadioButton) {
+		} else if (source == medianRadioButton) {
 			currentReductionMethod = MEDIAN_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
-		} else if (e.getSource() == coordinateAssignementRadioButton) {
+		} else if (source == coordinateAssignementRadioButton) {
 			currentReductionMethod = COORDINATE_ASSIGNMENT_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
-		} else if (e.getSource() == coffmanGrahamLayeringCheckBox) {
+		} else if (source == coffmanGrahamLayeringCheckBox) {
 			useGrahamLayering = coffmanGrahamLayeringCheckBox.isSelected();
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
-		} else if (e.getSource() == dummyDisabledRadioButton) {
+		} else if (source == dummyDisabledRadioButton) {
 			if (!dummiesEnabled) {
 				return;
 			}
@@ -448,7 +515,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			}
 			scaleGraphAndCatchExceptions(layeredPositionedGraph);
 			canvasPanel.repaint();
-		} else if (e.getSource() == dummyEnabledRadioButton) {
+		} else if (source == dummyEnabledRadioButton) {
 			if (dummiesEnabled) {
 				return;
 			}
@@ -456,6 +523,15 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			currentAssigner = simpleDummyAssigner;
 			scaleGraphAndCatchExceptions(layeredPositionedGraph);
 			canvasPanel.repaint();
+		} else if (source == treeLayoutPrefuseRadiobutton) {
+			currentPreFuseLayout = TREE_LAYOUT_PREFUSE;
+			renderPrefuseContent();
+		} else if (source == radialLayoutPrefuseRadiobutton) {
+			currentPreFuseLayout = RADIAL_LAYOUT_PREFUSE;
+			renderPrefuseContent();
+		} else if (source == infrastructureLayoutPrefuseRadiobutton) {
+			currentPreFuseLayout = INFRASTRUCTURE_LAYOUT_PREFUSE;
+			renderPrefuseContent();
 		}
 	}
 
@@ -474,18 +550,28 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getSource() == chooseFileList && !e.getValueIsAdjusting()) {
-			//this is done to avoid firing the method when chooseFileList.setModel is called
-			if (chooseFileList.getSelectedIndex() != -1) {
-				try {
-					parseFileFromList();
-					canvasPanel.repaint();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (SAXException e1) {
-					e1.printStackTrace();
-				} catch (ParserConfigurationException e1) {
-					e1.printStackTrace();
-				}
+			if (currentTab == ALGO_TAB_INDEX) {
+				processFileFromList();
+			} else if (currentTab == PREFUSE_TAB_INDEX) {
+				renderPrefuseCanvas();
+			} else {
+				throw new IllegalStateException("Wrong tab index: " + currentTab);
+			}
+		}
+	}
+
+	private void processFileFromList() {
+		//this is done to avoid firing the method when chooseFileList.setModel is called
+		if (chooseFileList.getSelectedIndex() != -1) {
+			try {
+				parseFileFromList();
+				canvasPanel.repaint();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} catch (SAXException e1) {
+				e1.printStackTrace();
+			} catch (ParserConfigurationException e1) {
+				e1.printStackTrace();
 			}
 		}
 	}
@@ -665,21 +751,33 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		layerLengthSlider.setValueIsAdjusting(true);
 		panel6.add(layerLengthSlider, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JPanel panel7 = new JPanel();
-		panel7.setLayout(new FormLayout("left:15px:noGrow,left:4dlu:noGrow,fill:629px:noGrow", "center:575px:noGrow"));
+		panel7.setLayout(new FormLayout("left:15px:noGrow,left:4dlu:noGrow,center:d:grow", "center:59px:noGrow,top:4dlu:noGrow,center:d:grow"));
 		mainTabbedPanel.addTab("PrefUse", panel7);
 		final JScrollPane scrollPane1 = new JScrollPane();
-		panel7.add(scrollPane1, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panel7.add(scrollPane1, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.FILL));
 		prefuseCanvasPanel = new JPanel();
 		prefuseCanvasPanel.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
 		scrollPane1.setViewportView(prefuseCanvasPanel);
 		final JPanel panel8 = new JPanel();
-		panel8.setLayout(new FormLayout("fill:d:grow", "center:62px:noGrow,top:4dlu:noGrow,center:535px:noGrow"));
-		mainRoot.add(panel8, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
+		panel8.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:grow"));
+		panel7.add(panel8, cc.xy(3, 1, CellConstraints.LEFT, CellConstraints.FILL));
+		treeLayoutPrefuseRadiobutton = new JRadioButton();
+		treeLayoutPrefuseRadiobutton.setText("Tree");
+		panel8.add(treeLayoutPrefuseRadiobutton, cc.xy(1, 1));
+		radialLayoutPrefuseRadiobutton = new JRadioButton();
+		radialLayoutPrefuseRadiobutton.setText("Radial");
+		panel8.add(radialLayoutPrefuseRadiobutton, cc.xy(3, 1));
+		infrastructureLayoutPrefuseRadiobutton = new JRadioButton();
+		infrastructureLayoutPrefuseRadiobutton.setText("Infrastructure");
+		panel8.add(infrastructureLayoutPrefuseRadiobutton, cc.xy(5, 1));
+		final JPanel panel9 = new JPanel();
+		panel9.setLayout(new FormLayout("fill:d:grow", "center:62px:noGrow,top:4dlu:noGrow,center:535px:noGrow"));
+		mainRoot.add(panel9, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
 		directoryChooseButton = new JButton();
 		directoryChooseButton.setText("Choose Folder:");
-		panel8.add(directoryChooseButton, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
+		panel9.add(directoryChooseButton, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		chooseFileScrollPanel = new JScrollPane();
-		panel8.add(chooseFileScrollPanel, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
+		panel9.add(chooseFileScrollPanel, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
 		chooseFileList = new JList();
 		chooseFileScrollPanel.setViewportView(chooseFileList);
 		ButtonGroup buttonGroup;
@@ -691,6 +789,11 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(dummyEnabledRadioButton);
 		buttonGroup.add(dummyDisabledRadioButton);
+		buttonGroup = new ButtonGroup();
+		buttonGroup.add(radialLayoutPrefuseRadiobutton);
+		buttonGroup.add(radialLayoutPrefuseRadiobutton);
+		buttonGroup.add(infrastructureLayoutPrefuseRadiobutton);
+		buttonGroup.add(treeLayoutPrefuseRadiobutton);
 	}
 
 	/** @noinspection ALL */

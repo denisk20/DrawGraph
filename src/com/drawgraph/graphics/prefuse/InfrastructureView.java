@@ -10,22 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -70,17 +55,32 @@ import prefuse.visual.VisualItem;
 /**
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class GraphView extends JPanel {
+public class InfrastructureView extends JPanel implements PreFuseCanvas {
 
     private static final String graph = "graph";
     private static final String nodes = "graph.nodes";
     private static final String edges = "graph.edges";
 
     private Visualization m_vis;
-    
-    public GraphView(Graph g, String label) {
+
+	private Graph g;
+
+	@Override
+	public JComponent getCanvas() {
+		if (g == null) {
+			throw new IllegalStateException("No graph defined");
+		}
+		return this;
+	}
+
+	@Override
+	public void setGraph(Graph g) {
+		this.g=g;
+	}
+
+	public InfrastructureView(Graph g, String label) {
     	super(new BorderLayout());
-    	
+    	this.g = g;
         // create a new, empty visualization for our data
         m_vis = new Visualization();
         
@@ -170,7 +170,7 @@ public class GraphView extends JPanel {
         display.addControlListener(new NeighborHighlightControl());
 
         // overview display
-//        Display overview = new Display(vis);
+//        Display overview = new Display(m_vis);
 //        overview.setSize(290,290);
 //        overview.addItemBoundsListener(new FitOverviewListener());
         
@@ -183,7 +183,7 @@ public class GraphView extends JPanel {
         // create a panel for editing force values
         ForceSimulator fsim = ((ForceDirectedLayout)animate.get(0)).getForceSimulator();
         JForcePanel fpanel = new JForcePanel(fsim);
-        
+
 //        JPanel opanel = new JPanel();
 //        opanel.setBorder(BorderFactory.createTitledBorder("Overview"));
 //        opanel.setBackground(Color.WHITE);
@@ -199,22 +199,24 @@ public class GraphView extends JPanel {
         slider.setBackground(Color.WHITE);
         slider.setPreferredSize(new Dimension(300,30));
         slider.setMaximumSize(new Dimension(300,30));
-        
+
+//		fpanel.setLayout(new BorderLayout() );
         Box cf = new Box(BoxLayout.Y_AXIS);
         cf.add(slider);
         cf.setBorder(BorderFactory.createTitledBorder("Connectivity Filter"));
-        fpanel.add(cf);
+        fpanel.add(cf, BorderLayout.CENTER);
 
-        //fpanel.add(opanel);
-        
-        fpanel.add(Box.createVerticalGlue());
+//        fpanel.add(opanel);
+
+		Component glue = Box.createVerticalGlue();
+		fpanel.add(glue);
         
         // create a new JSplitPane to present the interface
         JSplitPane split = new JSplitPane();
         split.setLeftComponent(display);
         split.setRightComponent(fpanel);
         split.setOneTouchExpandable(true);
-        split.setContinuousLayout(false);
+        split.setContinuousLayout(true);
         split.setDividerLocation(700);
         
         // now we run our action list
@@ -277,7 +279,7 @@ public class GraphView extends JPanel {
     }
     
     public static JFrame demo(Graph g, String label) {
-        final GraphView view = new GraphView(g, label);
+        final InfrastructureView view = new InfrastructureView(g, label);
         
         // set up menu
         JMenu dataMenu = new JMenu("Data");
@@ -336,8 +338,8 @@ public class GraphView extends JPanel {
      * Swing menu action that loads a graph into the graph viewer.
      */
     public abstract static class GraphMenuAction extends AbstractAction {
-        private GraphView m_view;
-        public GraphMenuAction(String name, String accel, GraphView view) {
+        private InfrastructureView m_view;
+        public GraphMenuAction(String name, String accel, InfrastructureView view) {
             m_view = view;
             this.putValue(AbstractAction.NAME, name);
             this.putValue(AbstractAction.ACCELERATOR_KEY,
@@ -350,9 +352,9 @@ public class GraphView extends JPanel {
     }
     
     public static class OpenGraphAction extends AbstractAction {
-        private GraphView m_view;
+        private InfrastructureView m_view;
 
-        public OpenGraphAction(GraphView view) {
+        public OpenGraphAction(InfrastructureView view) {
             m_view = view;
             this.putValue(AbstractAction.NAME, "Open File...");
             this.putValue(AbstractAction.ACCELERATOR_KEY,

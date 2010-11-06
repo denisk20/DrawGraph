@@ -7,12 +7,7 @@ import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import prefuse.Constants;
 import prefuse.Display;
@@ -68,7 +63,7 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  * @version 1.0
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class RadialGraphView extends Display {
+public class RadialGraphView extends Display implements PreFuseCanvas{
 
     public static final String DATA_FILE = "/media/Windows_data/work/swisslabs/g.100.8.graphml";
     
@@ -81,9 +76,25 @@ public class RadialGraphView extends Display {
     private EdgeRenderer m_edgeRenderer;
     
     private String m_label = "label";
-    
-    public RadialGraphView(Graph g, String label) {
+
+	private Graph g;
+
+	@Override
+	public JComponent getCanvas() {
+		if (g == null) {
+			throw new IllegalStateException("No graph defined");
+		}
+		return getPanel(g, "id");
+	}
+
+	@Override
+	public void setGraph(Graph g) {
+		this.g = g;
+	}
+
+	public RadialGraphView(Graph g, String label) {
         super(new Visualization());
+		this.g = g;
         m_label = label;
 
         // -- set up visualization --
@@ -238,10 +249,10 @@ public class RadialGraphView extends Display {
             e.printStackTrace();
             System.exit(1);
         }
-        return demo(g, label);
+        return getPanel(g, label);
     }
     
-    public static JPanel demo(Graph g, final String label) {        
+    public static JPanel getPanel(Graph g, final String label) {        
         // create a new radial tree view
         final RadialGraphView gview = new RadialGraphView(g, label);
         Visualization vis = gview.getVisualization();
