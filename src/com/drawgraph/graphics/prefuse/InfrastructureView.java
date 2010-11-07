@@ -198,7 +198,7 @@ public class InfrastructureView extends JPanel implements PreFuseCanvas {
         });
         slider.setBackground(Color.WHITE);
         slider.setPreferredSize(new Dimension(300,30));
-        slider.setMaximumSize(new Dimension(300,30));
+        slider.setMaximumSize(new Dimension(700,30));
 
 //		fpanel.setLayout(new BorderLayout() );
         Box cf = new Box(BoxLayout.Y_AXIS);
@@ -217,7 +217,7 @@ public class InfrastructureView extends JPanel implements PreFuseCanvas {
         split.setRightComponent(fpanel);
         split.setOneTouchExpandable(true);
         split.setContinuousLayout(true);
-        split.setDividerLocation(700);
+        split.setDividerLocation(500);
         
         // now we run our action list
         m_vis.run("draw");

@@ -196,7 +196,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		ui.initCanvas();
 
 		frame.pack();
-		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+//		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setLocation((int) screenWidth / 2 - frame.getWidth() / 2, (int) screenHeight / 2 - frame.getHeight() / 2);
 		frame.setVisible(true);
 	}
