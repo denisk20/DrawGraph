@@ -1,4 +1,5 @@
 CLASSPATH=./lib/jgoodies-forms.jar
+CLASSPATH=$CLASSPATH:./lib/prefuse.jar
 CLASSPATH=$CLASSPATH:./dist
 
 export CLASSPATH

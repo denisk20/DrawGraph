@@ -11,6 +11,7 @@
 	<path id="compile.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="jgoodies-forms.jar" />
+			<include name="prefuse.jar" />
 		</fileset>
 	</path>
 
