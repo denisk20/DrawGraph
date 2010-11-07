@@ -501,7 +501,7 @@
       <grid id="156a2" layout-manager="FormLayout">
         <rowspec value="center:62px:noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:535px:noGrow"/>
+        <rowspec value="center:535px:grow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>

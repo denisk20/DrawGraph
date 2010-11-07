@@ -196,7 +196,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		ui.initCanvas();
 
 		frame.pack();
-//		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		//		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setLocation((int) screenWidth / 2 - frame.getWidth() / 2, (int) screenHeight / 2 - frame.getHeight() / 2);
 		frame.setVisible(true);
@@ -772,7 +772,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		infrastructureLayoutPrefuseRadiobutton.setText("Infrastructure");
 		panel8.add(infrastructureLayoutPrefuseRadiobutton, cc.xy(5, 1));
 		final JPanel panel9 = new JPanel();
-		panel9.setLayout(new FormLayout("fill:d:grow", "center:62px:noGrow,top:4dlu:noGrow,center:535px:noGrow"));
+		panel9.setLayout(new FormLayout("fill:d:grow", "center:62px:noGrow,top:4dlu:noGrow,center:535px:grow"));
 		mainRoot.add(panel9, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
 		directoryChooseButton = new JButton();
 		directoryChooseButton.setText("Choose Folder:");
