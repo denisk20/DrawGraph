@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author denisk
  */
-public class MedianReducer extends AbstractCrossingReducer{
+public class MedianReducer extends AbstractCrossingReducer {
 	@Override
 	protected List<Map.Entry<PositionedNode, Integer>> getNodeWeights(List<PositionedNode> currentLayer) {
 		List<Map.Entry<PositionedNode, Integer>> result = new ArrayList<Map.Entry<PositionedNode, Integer>>();

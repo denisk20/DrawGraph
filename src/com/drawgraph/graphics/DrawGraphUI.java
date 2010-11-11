@@ -3,7 +3,7 @@ package com.drawgraph.graphics;
 import com.drawgraph.algorithms.BarycenterReducer;
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
 import com.drawgraph.algorithms.CoordinateAssignmentReducer;
-import com.drawgraph.algorithms.CrossingReducer;
+import com.drawgraph.algorithms.PositionedGraphTransformer;
 import com.drawgraph.algorithms.DummyNodesAssigner;
 import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.algorithms.MedianReducer;
@@ -147,9 +147,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		}
 	};
 	private static final String FILE_CHOOSER_TITLE = "Choose a directory to fetch resources from";
-	private CrossingReducer medianReducer = new MedianReducer();
-	private CrossingReducer barycenterReducer = new BarycenterReducer();
-	private CrossingReducer coordinateAssigner = new CoordinateAssignmentReducer();
+	private PositionedGraphTransformer medianReducer = new MedianReducer();
+	private PositionedGraphTransformer barycenterReducer = new BarycenterReducer();
+	private PositionedGraphTransformer coordinateAssigner = new CoordinateAssignmentReducer();
 
 	private LayeredGraphOrder simpleOrder = new SimpleLayeredGraphOrder(0);
 	private LayeredGraphOrder coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
@@ -291,7 +291,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 		barycenterRadioButton.addActionListener(this);
 		medianRadioButton.addActionListener(this);
-		coordinateAssignementRadioButton.addActionListener(this);
+//		coordinateAssignementRadioButton.addActionListener(this);
 		noneRadioButton.addActionListener(this);
 		noneRadioButton.setSelected(true);
 
@@ -346,7 +346,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		LayeredPositionedGraph reducedGraph = reduceCrossings(scaledGraph);
 
 		if (useCoordinateAssignment) {
-			reducedGraph = coordinateAssigner.reduce(reducedGraph);
+			reducedGraph = coordinateAssigner.transform(reducedGraph);
 		}
 		return reducedGraph;
 	}
@@ -369,13 +369,13 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 				result = graph;
 				break;
 			case (MEDIAN_METHOD):
-				result = medianReducer.reduce(graph);
+				result = medianReducer.transform(graph);
 				break;
 			case (BARYCENTER_METHOD):
-				result = barycenterReducer.reduce(graph);
+				result = barycenterReducer.transform(graph);
 				break;
 //			case (COORDINATE_ASSIGNMENT_METHOD):
-//				result = coordinateAssigner.reduce(graph);
+//				result = coordinateAssigner.transform(graph);
 //				break;
 			default:
 				throw new IllegalStateException("Wrong reduction code passed: " + currentReductionMethod);

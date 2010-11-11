@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Date: Oct 23, 2010
@@ -89,6 +90,9 @@ public class GraphScalerImpl implements GraphScaler {
 		int curX = dummiesEdge;
 		int curY = topOffset;
 		int curDummyX = dummiesEdge- minDistance;
+
+		HashSet<PositionedNode> leadingDummiesSet = new HashSet<PositionedNode>();
+
 		for (int i = 0; i<layers.size(); i++) {
 			List<? extends Node> layer = layers.get(i);
 
@@ -110,6 +114,7 @@ public class GraphScalerImpl implements GraphScaler {
 
 				curX += minDistance;
 			}
+
 			for (int j = currentLeadingDummies.size() - 1; j >= 0; j--) {
 				Node n = currentLeadingDummies.get(j);
 				if (!n.isDummy()) {
@@ -121,7 +126,7 @@ public class GraphScalerImpl implements GraphScaler {
 				PositionedNode positionedNode = new PositionedNodeImpl(n.getId(), x, y);
 				positionedNode.setDummy(true);
 				positionedNodes.add(positionedNode);
-
+				leadingDummiesSet.add(positionedNode);
 				positionedLayer.add(0, positionedNode);
 
 				curDummyX -= minDistance;
@@ -139,6 +144,7 @@ public class GraphScalerImpl implements GraphScaler {
 		HashSet<T> sourceNodes = graphWithDummies.getNodes();
 		assignSourcesSinks(sourceNodes, positionedNodes);
 
+		stretchDummyLines(positionedNodes, leadingDummiesSet);
 		if (REVERSE) {
 			//put it back
 			Collections.reverse(positionedLayers);
@@ -152,6 +158,7 @@ public class GraphScalerImpl implements GraphScaler {
 	}
 
 	//todo think how to make this method more generic (eliminate PositionedNode)
+
 	private <T extends Node<T>> void assignSourcesSinks(HashSet<T> sourceNodes, HashSet<PositionedNode> destNodes) {
 		ArrayList<PositionedNode> positionedNodes = new ArrayList<PositionedNode>(destNodes);
 		for (T n : sourceNodes) {
@@ -169,9 +176,101 @@ public class GraphScalerImpl implements GraphScaler {
 			}
 		}
 	}
-
 	private int getNodeIndexInList(List<? extends Node> positionedNodes, Node n) {
 		return positionedNodes.indexOf(n);
+	}
+
+	private void stretchDummyLines(HashSet<PositionedNode> positionedNodes, HashSet<PositionedNode> leadingDummies) {
+		HashSet<PositionedNode> checkedNodes = new HashSet<PositionedNode>();
+		for (PositionedNode node : positionedNodes) {
+			if (node.isDummy()) {
+				Set<PositionedNode> sources = node.getSources();
+				Set<PositionedNode> sinks = node.getSinks();
+
+				if (sources.size() == 1 && !sources.iterator().next().isDummy()) {
+					HashSet<PositionedNode> dummyChain = new HashSet<PositionedNode>();
+					dummyChain.add(node);
+					if (leadingDummies.contains(node)) {
+						//right
+						int minX = node.getX();
+						while (node.isDummy()) {
+							Set<PositionedNode> localSinks = node.getSinks();
+							if (localSinks.size() != 1) {
+								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
+							}
+							node = localSinks.iterator().next();
+							if (node.isDummy()) {
+								dummyChain.add(node);
+								int x = node.getX();
+								if (x < minX) {
+									minX = x;
+								}
+							}
+						}
+						assignX(dummyChain, minX);
+					} else {
+						//left
+						int maxX = node.getX();
+						while (node.isDummy()) {
+							Set<PositionedNode> localSinks = node.getSinks();
+							if (localSinks.size() != 1) {
+								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
+							}
+							node = localSinks.iterator().next();
+							if (node.isDummy()) {
+								dummyChain.add(node);
+								int x = node.getX();
+								if (x > maxX) {
+									maxX = x;
+								}
+							}
+						}
+						assignX(dummyChain, maxX);
+					}
+				}
+//				else if (sinks.size() == 1 && !sinks.iterator().next().isDummy()) {
+//					if (leadingDummies.contains(node)) {
+//						//right
+//						int minX = node.getX();
+//						while (node.isDummy()) {
+//							Set<PositionedNode> localSinks = node.getSinks();
+//							if (localSinks.size() != 1) {
+//								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
+//							}
+//							node = localSinks.iterator().next();
+//							if (node.isDummy()) {
+//								int x = node.getX();
+//								if (x < minX) {
+//									minX = x;
+//								}
+//							}
+//						}
+//					} else {
+//						//left
+//						int maxX = node.getX();
+//						while (node.isDummy()) {
+//							Set<PositionedNode> localSinks = node.getSinks();
+//							if (localSinks.size() != 1) {
+//								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
+//							}
+//							node = localSinks.iterator().next();
+//							if (node.isDummy()) {
+//								int x = node.getX();
+//								if (x > maxX) {
+//									maxX = x;
+//								}
+//							}
+//						}
+//					}
+//				}
+			}
+		}
+	}
+
+	private void assignX(HashSet<PositionedNode> dummyChain, int x) {
+		for (PositionedNode node : dummyChain) {
+			node.setX(x);
+		}
 	}
 
 	@Override

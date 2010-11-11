@@ -62,9 +62,9 @@ public class AbstractCrossingReducerTest {
 		ArrayList<LayeredPositionedGraph> positionedGraphs = getPositionedGraphs(GraphMLTestUtils.getFilesInDirectories(GraphMLTestUtils.DAGS_DIRECTORY, GraphMLTestUtils.DIGRAPHS_DIRECTORY));
 
 		for (LayeredPositionedGraph positionedGraph: positionedGraphs) {
-			LayeredPositionedGraph barycenterReducedGraph = barycenterReducer.reduce(positionedGraph);
-			LayeredPositionedGraph medianReducedGraph = medianReducer.reduce(positionedGraph);
-			LayeredPositionedGraph coordinateAssignmentReducedGraph = coordinateAssignerReducer.reduce(positionedGraph);
+			LayeredPositionedGraph barycenterReducedGraph = barycenterReducer.transform(positionedGraph);
+			LayeredPositionedGraph medianReducedGraph = medianReducer.transform(positionedGraph);
+			LayeredPositionedGraph coordinateAssignmentReducedGraph = coordinateAssignerReducer.transform(positionedGraph);
 
 			assertReducedGraph(positionedGraph, barycenterReducedGraph);
 			assertReducedGraph(positionedGraph, medianReducedGraph);

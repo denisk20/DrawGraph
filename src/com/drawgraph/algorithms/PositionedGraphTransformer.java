@@ -8,6 +8,6 @@ import com.drawgraph.model.LayeredPositionedGraph;
  *
  * @author denisk
  */
-public interface CrossingReducer {
-	LayeredPositionedGraph reduce(LayeredPositionedGraph source);
+public interface PositionedGraphTransformer {
+	LayeredPositionedGraph transform(LayeredPositionedGraph source);
 }

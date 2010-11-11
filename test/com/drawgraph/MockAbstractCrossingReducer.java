@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * @author denisk
  */
-public class MockAbstractCrossingReducer  extends AbstractCrossingReducer {
+public class MockAbstractCrossingReducer extends AbstractCrossingReducer {
 			@Override
 		public List<PositionedNode> reorder(List<Map.Entry<PositionedNode, Integer>> positions) {
 			return super.reorder(positions);

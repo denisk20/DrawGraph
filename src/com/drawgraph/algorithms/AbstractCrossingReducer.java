@@ -15,9 +15,9 @@ import java.util.Map;
  *
  * @author denisk
  */
-public abstract class AbstractCrossingReducer implements CrossingReducer{
+public abstract class AbstractCrossingReducer implements PositionedGraphTransformer {
 	@Override
-	public LayeredPositionedGraph reduce(LayeredPositionedGraph source) {
+	public LayeredPositionedGraph transform(LayeredPositionedGraph source) {
 		List<List<PositionedNode>> layers = source.getLayers();
 		List<List<PositionedNode>> resultingLayers = new ArrayList<List<PositionedNode>>();
 		int layersCount = layers.size();
