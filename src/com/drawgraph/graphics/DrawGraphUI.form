@@ -75,7 +75,7 @@
                     <rowspec value="top:4dlu:noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
                     <rowspec value="top:4dlu:noGrow"/>
-                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="center:max(d;11px):noGrow"/>
                     <rowspec value="top:4dlu:noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
