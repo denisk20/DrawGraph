@@ -74,6 +74,10 @@
                     <rowspec value="center:max(d;4px):noGrow"/>
                     <rowspec value="top:4dlu:noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="top:4dlu:noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
+                    <rowspec value="top:4dlu:noGrow"/>
+                    <rowspec value="center:max(d;4px):noGrow"/>
                     <rowspec value="center:max(d;4px):noGrow"/>
                     <rowspec value="center:max(d;160px):grow"/>
                     <rowspec value="top:4dlu:noGrow"/>
@@ -91,7 +95,7 @@
                     <children>
                       <scrollpane id="4b37b" binding="canvasScrollPane">
                         <constraints>
-                          <grid row="0" column="3" row-span="7" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="3" row-span="11" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                           <forms defaultalign-horz="false" defaultalign-vert="false"/>
                         </constraints>
                         <properties/>
@@ -131,7 +135,7 @@
                         <colspec value="center:23px:noGrow"/>
                         <colspec value="center:44px:noGrow"/>
                         <constraints>
-                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                           <forms defaultalign-horz="false" defaultalign-vert="false"/>
                         </constraints>
                         <properties>
@@ -243,7 +247,7 @@
                         <colspec value="left:4dlu:noGrow"/>
                         <colspec value="fill:max(d;4px):noGrow"/>
                         <constraints>
-                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                           <forms defaultalign-horz="false"/>
                         </constraints>
                         <properties/>
@@ -277,7 +281,7 @@
                         <colspec value="left:4dlu:noGrow"/>
                         <colspec value="fill:max(d;4px):noGrow"/>
                         <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                           <forms defaultalign-horz="false" defaultalign-vert="false"/>
                         </constraints>
                         <properties/>
@@ -298,6 +302,7 @@
                               <forms/>
                             </constraints>
                             <properties>
+                              <enabled value="false"/>
                               <text value="Coordinate Assignement"/>
                             </properties>
                           </component>
@@ -338,6 +343,27 @@
                             </constraints>
                             <properties>
                               <text value="Coffman-Graham layering"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <grid id="358e" layout-manager="FormLayout">
+                        <rowspec value="center:d:grow"/>
+                        <colspec value="fill:d:grow"/>
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                          <forms defaultalign-horz="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="line"/>
+                        <children>
+                          <component id="2af1e" class="javax.swing.JCheckBox" binding="coordinateAssignmentCheckBox">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <forms/>
+                            </constraints>
+                            <properties>
+                              <text value="Coordinate Assignment"/>
                             </properties>
                           </component>
                         </children>

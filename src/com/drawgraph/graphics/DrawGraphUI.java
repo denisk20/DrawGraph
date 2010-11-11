@@ -80,6 +80,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private JRadioButton treeLayoutPrefuseRadiobutton;
 	private JRadioButton radialLayoutPrefuseRadiobutton;
 	private JRadioButton infrastructureLayoutPrefuseRadiobutton;
+	private JCheckBox coordinateAssignmentCheckBox;
 
 	private boolean dummiesEnabled = false;
 
@@ -152,6 +153,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 	private LayeredGraphOrder simpleOrder = new SimpleLayeredGraphOrder(0);
 	private LayeredGraphOrder coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
+	private boolean useCoordinateAssignment = false;
 
 	private static final int ALGO_TAB_INDEX = 0;
 	private static final int PREFUSE_TAB_INDEX = 1;
@@ -306,6 +308,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		treeLayoutPrefuseRadiobutton.setSelected(true);
 		radialLayoutPrefuseRadiobutton.addActionListener(this);
 		infrastructureLayoutPrefuseRadiobutton.addActionListener(this);
+		coordinateAssignmentCheckBox.addActionListener(this);
+		coordinateAssignmentCheckBox.setEnabled(false);
+
 	}
 
 	private LayeredPositionedGraph scaleGraph(LayeredGraph<? extends Node> source) {
@@ -340,6 +345,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		LayeredPositionedGraph scaledGraph = scaleGraph(graphWithDummies);
 		LayeredPositionedGraph reducedGraph = reduceCrossings(scaledGraph);
 
+		if (useCoordinateAssignment) {
+			reducedGraph = coordinateAssigner.reduce(reducedGraph);
+		}
 		return reducedGraph;
 	}
 
@@ -366,9 +374,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 			case (BARYCENTER_METHOD):
 				result = barycenterReducer.reduce(graph);
 				break;
-			case (COORDINATE_ASSIGNMENT_METHOD):
-				result = coordinateAssigner.reduce(graph);
-				break;
+//			case (COORDINATE_ASSIGNMENT_METHOD):
+//				result = coordinateAssigner.reduce(graph);
+//				break;
 			default:
 				throw new IllegalStateException("Wrong reduction code passed: " + currentReductionMethod);
 		}
@@ -480,19 +488,27 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 				frame.setTitle(currentDirectory.getAbsolutePath());
 			}
 		} else if (source == noneRadioButton) {
+			coordinateAssignmentCheckBox.setEnabled(false);
 			currentReductionMethod = NO_REDUCTION_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (source == barycenterRadioButton) {
+			coordinateAssignmentCheckBox.setEnabled(true);
 			currentReductionMethod = BARYCENTER_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (source == medianRadioButton) {
+			coordinateAssignmentCheckBox.setEnabled(true);
 			currentReductionMethod = MEDIAN_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (source == coordinateAssignementRadioButton) {
 			currentReductionMethod = COORDINATE_ASSIGNMENT_METHOD;
+			scaleGraphAndCatchExceptions(graph);
+			canvasPanel.repaint();
+		} else if (e.getSource() == coordinateAssignmentCheckBox) {
+			useCoordinateAssignment = coordinateAssignmentCheckBox.isSelected();
+//			currentReductionMethod = COORDINATE_ASSIGNMENT_METHOD;
 			scaleGraphAndCatchExceptions(graph);
 			canvasPanel.repaint();
 		} else if (source == coffmanGrahamLayeringCheckBox) {
