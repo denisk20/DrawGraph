@@ -2,6 +2,7 @@ package com.drawgraph.algorithms;
 
 import com.drawgraph.model.Node;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -11,13 +12,20 @@ import java.util.List;
  * @author denisk
  */
 public class GraphUtils {
+	private HashMap<Node, Integer> cachedNodes = new HashMap<Node, Integer>();
+
 	public int getLayerIndexForNode(Node n, List<? extends List<? extends Node>> layers) {
 		int index = -1;
-		for (int i = 0; i < layers.size(); i++) {
-			List<? extends Node> layer = layers.get(i);
-			if (layer.contains(n)) {
-				index = i;
-				break;
+		if (cachedNodes.containsKey(n)) {
+			index = cachedNodes.get(n);
+		} else {
+			for (int i = 0; i < layers.size(); i++) {
+				List<? extends Node> layer = layers.get(i);
+				if (layer.contains(n)) {
+					index = i;
+					cachedNodes.put(n, index);
+					break;
+				}
 			}
 		}
 		return index;

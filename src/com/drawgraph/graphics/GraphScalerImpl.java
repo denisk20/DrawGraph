@@ -1,5 +1,6 @@
 package com.drawgraph.graphics;
 
+import com.drawgraph.algorithms.GraphUtils;
 import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.LayeredPositionedGraphImpl;
@@ -28,6 +29,7 @@ public class GraphScalerImpl implements GraphScaler {
 	private int leftOffset;
 	private static final boolean REVERSE = true;
 	private int shift;
+	private static final int DELTA = 10;
 
 	@Override
 	public void setMinDistance(int dist) {
@@ -144,7 +146,7 @@ public class GraphScalerImpl implements GraphScaler {
 		HashSet<T> sourceNodes = graphWithDummies.getNodes();
 		assignSourcesSinks(sourceNodes, positionedNodes);
 
-		stretchDummyLines(positionedNodes, leadingDummiesSet);
+		stretchDummyLines(positionedNodes, leadingDummiesSet, positionedLayers);
 		if (REVERSE) {
 			//put it back
 			Collections.reverse(positionedLayers);
@@ -180,8 +182,19 @@ public class GraphScalerImpl implements GraphScaler {
 		return positionedNodes.indexOf(n);
 	}
 
-	private void stretchDummyLines(HashSet<PositionedNode> positionedNodes, HashSet<PositionedNode> leadingDummies) {
-		HashSet<PositionedNode> checkedNodes = new HashSet<PositionedNode>();
+	//todo this method should be moved into separate PositionedGraphTransformer and covered with unit test
+	private void stretchDummyLines(HashSet<PositionedNode> positionedNodes,
+								   HashSet<PositionedNode> leadingDummies,
+								   List<? extends List<? extends Node>> layers) {
+		HashSet<PositionedNode> trailingDummies = new HashSet<PositionedNode>();
+		HashSet<PositionedNode> temp = new HashSet<PositionedNode>(positionedNodes);
+		temp.remove(leadingDummies);
+		for (PositionedNode node : temp) {
+			if (node.isDummy()) {
+				trailingDummies.add(node);
+			}
+		}
+		GraphUtils gu = new GraphUtils();
 		for (PositionedNode node : positionedNodes) {
 			if (node.isDummy()) {
 				Set<PositionedNode> sources = node.getSources();
@@ -190,6 +203,7 @@ public class GraphScalerImpl implements GraphScaler {
 				if (sources.size() == 1 && !sources.iterator().next().isDummy()) {
 					HashSet<PositionedNode> dummyChain = new HashSet<PositionedNode>();
 					dummyChain.add(node);
+					int layer0 = gu.getLayerIndexForNode(node, layers);
 					if (leadingDummies.contains(node)) {
 						//right
 						int minX = node.getX();
@@ -207,7 +221,8 @@ public class GraphScalerImpl implements GraphScaler {
 								}
 							}
 						}
-						assignX(dummyChain, minX);
+						int layer1 = gu.getLayerIndexForNode(node, layers);
+						assignX(dummyChain, leadingDummies, DELTA, minX, layers, layer0, layer1, gu);
 					} else {
 						//left
 						int maxX = node.getX();
@@ -225,7 +240,8 @@ public class GraphScalerImpl implements GraphScaler {
 								}
 							}
 						}
-						assignX(dummyChain, maxX);
+						int layer1 = gu.getLayerIndexForNode(node, layers);
+						assignX(dummyChain, trailingDummies, -DELTA, maxX, layers, layer0, layer1, gu);
 					}
 				}
 //				else if (sinks.size() == 1 && !sinks.iterator().next().isDummy()) {
@@ -267,10 +283,38 @@ public class GraphScalerImpl implements GraphScaler {
 		}
 	}
 
-	private void assignX(HashSet<PositionedNode> dummyChain, int x) {
+	private void assignX(HashSet<PositionedNode> dummyChain,
+						 HashSet<PositionedNode> allNodes,
+						 int delta,
+						 int x,
+						 List<? extends List<? extends Node>> layers, int layer0, int layer1, GraphUtils gu) {
+		x = makeComfortable(x, layer0, layer1, allNodes, delta, layers, gu);
+
 		for (PositionedNode node : dummyChain) {
 			node.setX(x);
 		}
+	}
+
+	//todo this method should be rethought
+	private int makeComfortable(int x,
+								int layer0,
+								int layer1,
+								HashSet<PositionedNode> allNodes,
+								int delta,
+								List<? extends List<? extends Node>> layers, GraphUtils gu) {
+		for (PositionedNode node : allNodes) {
+			if (node.isDummy()) {
+				int layerIndex = gu.getLayerIndexForNode(node, layers);
+				if ((layerIndex >= layer0 && layerIndex <= layer1) || (layerIndex <= layer0 && layerIndex >= layer1)) {
+					int nodeX = node.getX();
+					if (Math.abs(Math.abs(x) - nodeX) < Math.abs(delta)) {
+						return makeComfortable(x + delta, layer0, layer1, allNodes, delta, layers, gu);
+					}
+				}
+			}
+		}
+
+		return x;
 	}
 
 	@Override
