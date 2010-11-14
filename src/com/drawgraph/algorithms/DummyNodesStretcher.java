@@ -1,12 +1,11 @@
 package com.drawgraph.algorithms;
 
 import com.drawgraph.model.LayeredPositionedGraph;
+import com.drawgraph.model.LayeredPositionedGraphImpl;
+import com.drawgraph.model.Node;
 import com.drawgraph.model.PositionedNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -16,89 +15,123 @@ import java.util.Set;
  *
  * @author denisk
  */
-public class DummyNodesStretcher implements PositionedGraphTransformer{
+public class DummyNodesStretcher implements PositionedGraphTransformer {
+	private static final int DELTA = 30;
+
 	@Override
 	public LayeredPositionedGraph transform(LayeredPositionedGraph graph) {
-		HashMap<Integer, List<PositionedNode>> leadingDummies = getLeadingDummies(graph);
-		HashMap<Integer, List<PositionedNode>> trailingDummies = getTrailingDummies(graph);
-
-		HashMap<PositionedNode, Integer> shifts = getLeadingShifts(leadingDummies);
-		return null;
+		LayeredPositionedGraphImpl copy = graph.copy();
+		stretchDummyLines(copy.getNodes(), copy.getLayers());
+		return copy;
 	}
 
-	private HashMap<PositionedNode, Integer> getLeadingShifts(HashMap<Integer, List<PositionedNode>> leadingDummies) {
-		Set<Integer> layerIndexes = leadingDummies.keySet();
-		for (Integer layerIndex : layerIndexes) {
-			List<PositionedNode> layer = leadingDummies.get(layerIndex);
-			int size = layer.size();
-			for (int i = 0; i < size; i++) {
-				PositionedNode node = layer.get(i);
+	private void stretchDummyLines(HashSet<PositionedNode> positionedNodes,
+								   List<? extends List<PositionedNode>> layers) {
+		GraphUtils gu = new GraphUtils();
+		HashSet<PositionedNode> trailingDummies = new HashSet<PositionedNode>();
+		HashSet<PositionedNode> leadingDummies = new HashSet<PositionedNode>();
+		for (List<PositionedNode> layer : layers) {
+			int layerSize = layer.size();
+			for (PositionedNode n : layer) {
+				if (n.isDummy()) {
+					int index = gu.getLayerIndexForNode(n, layers);
+					if (index <= layerSize / 2) {
+						leadingDummies.add(n);
+					} else {
+						trailingDummies.add(n);
+					}
+				}
+			}
+		}
 
+		for (PositionedNode node : positionedNodes) {
+			if (node.isDummy()) {
 				Set<PositionedNode> sources = node.getSources();
-				Set<PositionedNode> sinks = node.getSinks();
 
 				if (sources.size() == 1 && !sources.iterator().next().isDummy()) {
 					HashSet<PositionedNode> dummyChain = new HashSet<PositionedNode>();
 					dummyChain.add(node);
-					//left
-					int minX = node.getX();
-					while (node.isDummy()) {
-						Set<PositionedNode> localSinks = node.getSinks();
-						if (localSinks.size() != 1) {
-							throw new IllegalStateException("Multiple sinks for dummy node  " + node);
-						}
-						node = localSinks.iterator().next();
-						if (node.isDummy()) {
-							int x = node.getX();
-							if (x < minX) {
-								minX = x;
+					int layer0 = gu.getLayerIndexForNode(node, layers);
+					if (leadingDummies.contains(node)) {
+						//right
+						int minX = node.getX();
+						while (node.isDummy()) {
+							Set<PositionedNode> localSinks = node.getSinks();
+							if (localSinks.size() != 1) {
+								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
+							}
+							node = localSinks.iterator().next();
+							if (node.isDummy()) {
+								dummyChain.add(node);
+								int x = node.getX();
+								if (x < minX) {
+									minX = x;
+								}
 							}
 						}
+						int layer1 = gu.getLayerIndexForNode(node, layers);
+						assignX(dummyChain, leadingDummies, DELTA, minX, layers, layer0, layer1, gu);
+					} else {
+						//left
+						int maxX = node.getX();
+						while (node.isDummy()) {
+							Set<PositionedNode> localSinks = node.getSinks();
+							if (localSinks.size() != 1) {
+								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
+							}
+							node = localSinks.iterator().next();
+							if (node.isDummy()) {
+								dummyChain.add(node);
+								int x = node.getX();
+								if (x > maxX) {
+									maxX = x;
+								}
+							}
+						}
+						int layer1 = gu.getLayerIndexForNode(node, layers);
+						assignX(dummyChain, trailingDummies, -DELTA, maxX, layers, layer0, layer1, gu);
 					}
-//					assignX(dummyChain, minX);
 				}
-
 			}
 		}
-		return null;
 	}
 
-	private HashMap<Integer, List<PositionedNode>> getLeadingDummies(LayeredPositionedGraph source) {
-		HashMap<Integer, List<PositionedNode>> leadingDummies = new HashMap<Integer, List<PositionedNode>>();
-		List<List<PositionedNode>> layers = source.getLayers();
-		for (int i = 0; i < layers.size(); i++) {
-			List<PositionedNode> layer = layers.get(i);
-			ArrayList<PositionedNode> currentLeadingDummies = new ArrayList<PositionedNode>();
-			Iterator<PositionedNode> iterator = layer.iterator();
-			PositionedNode leadingNode = iterator.next();
-			while (leadingNode.isDummy()) {
-				currentLeadingDummies.add(leadingNode);
-				leadingNode = iterator.next();
-			}
+	private void assignX(HashSet<PositionedNode> dummyChain,
+						 HashSet<PositionedNode> allNodes,
+						 int delta,
+						 int x,
+						 List<? extends List<? extends Node>> layers,
+						 int layer0,
+						 int layer1,
+						 GraphUtils gu) {
+//		x = makeComfortable(x, layer0, layer1, allNodes, delta, layers, gu);
 
-			leadingDummies.put(i, currentLeadingDummies);
+		for (PositionedNode node : dummyChain) {
+			node.setX(x);
 		}
-
-		return leadingDummies;
 	}
 
-	private HashMap<Integer, List<PositionedNode>> getTrailingDummies(LayeredPositionedGraph source) {
-		HashMap<Integer, List<PositionedNode>> trailingDummies = new HashMap<Integer, List<PositionedNode>>();
-		List<List<PositionedNode>> layers = source.getLayers();
-		for (int i = 0; i < layers.size(); i++) {
-			List<PositionedNode> layer = layers.get(i);
-			int index = layer.size() - 1;
-			PositionedNode trailingNode = layer.get(index);
-			ArrayList<PositionedNode> currentTrailingDummies = new ArrayList<PositionedNode>();
-			while (trailingNode.isDummy()) {
-				currentTrailingDummies.add(trailingNode);
-				index--;
-				trailingNode = layer.get(index);
-			}
+	//todo this method should be rethought
 
-			trailingDummies.put(i, currentTrailingDummies);
+	private int makeComfortable(int x,
+								int layer0,
+								int layer1,
+								HashSet<PositionedNode> allNodes,
+								int delta,
+								List<? extends List<? extends Node>> layers,
+								GraphUtils gu) {
+		for (PositionedNode node : allNodes) {
+			if (node.isDummy()) {
+				int layerIndex = gu.getLayerIndexForNode(node, layers);
+				if ((layerIndex >= layer0 && layerIndex <= layer1) || (layerIndex <= layer0 && layerIndex >= layer1)) {
+					int nodeX = node.getX();
+					if (Math.abs(Math.abs(x) - nodeX) < Math.abs(delta)) {
+						return makeComfortable(x + delta, layer0, layer1, allNodes, delta, layers, gu);
+					}
+				}
+			}
 		}
 
-		return trailingDummies;
+		return x;
 	}
 }

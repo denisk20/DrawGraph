@@ -3,6 +3,7 @@ package com.drawgraph.graphics;
 import com.drawgraph.algorithms.BarycenterReducer;
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
 import com.drawgraph.algorithms.CoordinateAssignmentReducer;
+import com.drawgraph.algorithms.DummyNodesStretcher;
 import com.drawgraph.algorithms.PositionedGraphTransformer;
 import com.drawgraph.algorithms.DummyNodesAssigner;
 import com.drawgraph.algorithms.LayeredGraphOrder;
@@ -150,6 +151,7 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private PositionedGraphTransformer medianReducer = new MedianReducer();
 	private PositionedGraphTransformer barycenterReducer = new BarycenterReducer();
 	private PositionedGraphTransformer coordinateAssigner = new CoordinateAssignmentReducer();
+	private PositionedGraphTransformer dummyNodesStretcher = new DummyNodesStretcher();
 
 	private LayeredGraphOrder simpleOrder = new SimpleLayeredGraphOrder(0);
 	private LayeredGraphOrder coffmanGrahamOrder = new CoffmanGrahamLayeredGraphOrder(0);
@@ -166,6 +168,8 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 	private static final int TREE_LAYOUT_PREFUSE = 0;
 	private static final int RADIAL_LAYOUT_PREFUSE = 1;
 	private static final int INFRASTRUCTURE_LAYOUT_PREFUSE = 2;
+	//todo this can be turned on from UI
+	private final boolean stretchDummyNodes = true;
 
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -348,6 +352,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 		if (useCoordinateAssignment) {
 			reducedGraph = coordinateAssigner.transform(reducedGraph);
+		}
+		if (stretchDummyNodes) {
+			reducedGraph = dummyNodesStretcher.transform(reducedGraph);
 		}
 		return reducedGraph;
 	}

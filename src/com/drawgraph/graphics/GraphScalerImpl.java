@@ -29,7 +29,7 @@ public class GraphScalerImpl implements GraphScaler {
 	private int leftOffset;
 	private static final boolean REVERSE = true;
 	private int shift;
-	private static final int DELTA = 10;
+	private static final int DELTA = 30;
 
 	@Override
 	public void setMinDistance(int dist) {
@@ -146,7 +146,7 @@ public class GraphScalerImpl implements GraphScaler {
 		HashSet<T> sourceNodes = graphWithDummies.getNodes();
 		assignSourcesSinks(sourceNodes, positionedNodes);
 
-		stretchDummyLines(positionedNodes, leadingDummiesSet, positionedLayers);
+//		stretchDummyLines(positionedNodes, positionedLayers, leadingDummiesSet);
 		if (REVERSE) {
 			//put it back
 			Collections.reverse(positionedLayers);
@@ -184,21 +184,37 @@ public class GraphScalerImpl implements GraphScaler {
 
 	//todo this method should be moved into separate PositionedGraphTransformer and covered with unit test
 	private void stretchDummyLines(HashSet<PositionedNode> positionedNodes,
-								   HashSet<PositionedNode> leadingDummies,
-								   List<? extends List<? extends Node>> layers) {
+								   List<? extends List<PositionedNode>> layers, HashSet<PositionedNode> leadingDummies) {
+		GraphUtils gu = new GraphUtils();
+//		HashSet<PositionedNode> trailingDummies = new HashSet<PositionedNode>();
+//		HashSet<PositionedNode> leadingDummies = new HashSet<PositionedNode>();
+//		for (List<PositionedNode> layer : layers) {
+//			int layerSize = layer.size();
+//			for (PositionedNode n : layer) {
+//				if (n.isDummy()) {
+//					int index = gu.getLayerIndexForNode(n, layers);
+//					if (index <= layerSize / 2) {
+//						leadingDummies.add(n);
+//					} else {
+//						trailingDummies.add(n);
+//					}
+//				}
+//			}
+//		}
+//
+
 		HashSet<PositionedNode> trailingDummies = new HashSet<PositionedNode>();
 		HashSet<PositionedNode> temp = new HashSet<PositionedNode>(positionedNodes);
-		temp.remove(leadingDummies);
+//		temp.removeAll(leadingDummies);
 		for (PositionedNode node : temp) {
 			if (node.isDummy()) {
 				trailingDummies.add(node);
 			}
 		}
-		GraphUtils gu = new GraphUtils();
+
 		for (PositionedNode node : positionedNodes) {
 			if (node.isDummy()) {
 				Set<PositionedNode> sources = node.getSources();
-				Set<PositionedNode> sinks = node.getSinks();
 
 				if (sources.size() == 1 && !sources.iterator().next().isDummy()) {
 					HashSet<PositionedNode> dummyChain = new HashSet<PositionedNode>();
@@ -244,41 +260,6 @@ public class GraphScalerImpl implements GraphScaler {
 						assignX(dummyChain, trailingDummies, -DELTA, maxX, layers, layer0, layer1, gu);
 					}
 				}
-//				else if (sinks.size() == 1 && !sinks.iterator().next().isDummy()) {
-//					if (leadingDummies.contains(node)) {
-//						//right
-//						int minX = node.getX();
-//						while (node.isDummy()) {
-//							Set<PositionedNode> localSinks = node.getSinks();
-//							if (localSinks.size() != 1) {
-//								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
-//							}
-//							node = localSinks.iterator().next();
-//							if (node.isDummy()) {
-//								int x = node.getX();
-//								if (x < minX) {
-//									minX = x;
-//								}
-//							}
-//						}
-//					} else {
-//						//left
-//						int maxX = node.getX();
-//						while (node.isDummy()) {
-//							Set<PositionedNode> localSinks = node.getSinks();
-//							if (localSinks.size() != 1) {
-//								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
-//							}
-//							node = localSinks.iterator().next();
-//							if (node.isDummy()) {
-//								int x = node.getX();
-//								if (x > maxX) {
-//									maxX = x;
-//								}
-//							}
-//						}
-//					}
-//				}
 			}
 		}
 	}

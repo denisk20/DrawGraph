@@ -7,4 +7,5 @@ package com.drawgraph.model;
  * @author denisk
  */
 public interface LayeredPositionedGraph extends PositionedGraph, LayeredGraph<PositionedNode> {
+	LayeredPositionedGraphImpl copy();
 }

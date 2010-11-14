@@ -26,7 +26,9 @@ public class LayeredGraphImpl<T extends Node<T>> extends AbstractGraph<T> implem
 	public Graph<T> copy() {
 		LayeredGraphImpl<T> copy = new LayeredGraphImpl<T>(getId(), new ArrayList<List<T>>(layers));
 		for (T node : getNodes()) {
-			copy.getNodes().add(node.newInstance(node.getId()));
+			T copyNode = node.newInstance(node.getId());
+			copyNode.setDummy(node.isDummy());
+			copy.getNodes().add(copyNode);
 		}
 
 		addSourcesSinksLines(copy);

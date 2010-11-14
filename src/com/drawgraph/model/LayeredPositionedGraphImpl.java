@@ -1,5 +1,6 @@
 package com.drawgraph.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,5 +24,18 @@ public class LayeredPositionedGraphImpl extends PositionedGraphImpl implements L
 	@Override
 	public List<List<PositionedNode>> getLayers() {
 		return layers;
+	}
+
+	@Override
+	public LayeredPositionedGraphImpl copy() {
+		PositionedGraphImpl positionedGraphCopy = super.copy();
+		List<List<PositionedNode>> layersCopy = new ArrayList<List<PositionedNode>>();
+		layersCopy.addAll(layers);
+		LayeredPositionedGraphImpl copy = new LayeredPositionedGraphImpl(getId(), layersCopy);
+		copy.getNodes().addAll(positionedGraphCopy.getNodes());
+		copy.getLines().addAll(positionedGraphCopy.getLines());
+		copy.setRadius(getRadius());
+
+		return copy;
 	}
 }

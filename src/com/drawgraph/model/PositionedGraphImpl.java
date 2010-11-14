@@ -50,12 +50,13 @@ public class PositionedGraphImpl extends AbstractGraph<PositionedNode> implement
 	}
 
 	@Override
-	public Graph<PositionedNode> copy() {
+	public PositionedGraphImpl copy() {
 		PositionedGraphImpl copy = new PositionedGraphImpl(getId());
 		copy.setRadius(nodeRadius);
 		for (PositionedNode node : getNodes()) {
 			PositionedNodeImpl copyNode = new PositionedNodeImpl(node.getId(), node.getX(), node.getY());
-
+			copyNode.setDummy(node.isDummy());
+			
 			copy.getNodes().add(copyNode);
 		}
 
