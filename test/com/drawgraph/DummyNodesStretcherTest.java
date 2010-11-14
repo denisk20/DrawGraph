@@ -13,6 +13,7 @@ import com.drawgraph.model.LayeredGraph;
 import com.drawgraph.model.LayeredPositionedGraph;
 import com.drawgraph.model.LayeredPositionedGraphImpl;
 import com.drawgraph.model.PositionedNode;
+import com.drawgraph.model.PositionedNodeImpl;
 import com.drawgraph.model.SimpleNode;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,9 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -46,7 +50,7 @@ public class DummyNodesStretcherTest {
 		scaler.setTopOffset(20);
 	}
 	@Test
-	public void testStretchCopies() throws IOException, SAXException, ParserConfigurationException {
+	public void testStretch() throws IOException, SAXException, ParserConfigurationException {
 		ArrayList<File> files = GraphMLTestUtils
 				.getFilesInDirectories(GraphMLTestUtils.DAGS_DIRECTORY, GraphMLTestUtils.DIGRAPHS_DIRECTORY);
 
@@ -55,42 +59,87 @@ public class DummyNodesStretcherTest {
 		}
 	}
 
-	@Test
-	public void testSimpleFile() throws IOException, SAXException, ParserConfigurationException {
-		assertStretcher(new File("/media/Windows_data/work/swisslabs/DrawGraph/data/digraphs/g.10.3.graphml"));
-	}
 	private void assertStretcher(File file) throws IOException, SAXException, ParserConfigurationException {
 		Graph<SimpleNode> graph = GraphMLTestUtils.parseGraph(file);
 		LayeredGraph<SimpleNode> layeredGraph = order.getLayeredGraph(graph);
 		LayeredGraph<SimpleNode> layeredWithDummies = dummyNodesAssigner.assignDummyNodes(layeredGraph);
 		LayeredPositionedGraph layeredPositionedGraph = scaler.scale(layeredWithDummies);
-		LayeredPositionedGraphImpl copy = layeredPositionedGraph.copy();
 
 		LayeredPositionedGraph stretched = stretcher.transform(layeredPositionedGraph);
-		LayeredPositionedGraph copyStretched = stretcher.transform(copy);
 
-//		assertEquals(stretched.getNodes(), copyStretched.getNodes());
-		final String id = "dummy_1";
-		PositionedNode origDummy1 = null;
-		PositionedNode copyDummy1 = null;
-		for (PositionedNode n : stretched.getNodes()) {
-			if (n.getId().equals(id)) {
-				origDummy1 = n;
-			}
-			if (!copyStretched.getNodes().contains(n)) {
-				System.out.println("Node is not in set: " + n);
+		assertEquals(stretched.getNodes(), layeredPositionedGraph.getNodes());
+		List<List<PositionedNode>> layers = stretched.getLayers();
+		assertEquals(layers, layeredPositionedGraph.getLayers());
+
+//		assertNodesDistance(layers, DummyNodesStretcher.DELTA);
+		assertDummyChainsAreVertical(stretched);
+	}
+
+	private void assertDummyChainsAreVertical(LayeredPositionedGraph stretched) {
+		HashSet<Set<PositionedNode>> dummyChains = new HashSet<Set<PositionedNode>>();
+		for (PositionedNode node : stretched.getNodes()) {
+			if (node.isDummy()) {
+				Set<PositionedNode> sources = node.getSources();
+				if (sources.size() == 1 && !sources.iterator().next().isDummy()) {
+					HashSet<PositionedNode> dummyChain = new HashSet<PositionedNode>();
+					dummyChain.add(node);
+					while (node.isDummy()) {
+							Set<PositionedNode> localSinks = node.getSinks();
+							if (localSinks.size() != 1) {
+								throw new IllegalStateException("Multiple sinks for dummy node  " + node);
+							}
+							node = localSinks.iterator().next();
+							if (node.isDummy()) {
+								dummyChain.add(node);
+							}
+					}
+					dummyChains.add(dummyChain);
+				}
 			}
 		}
 
-		for (PositionedNode n : copy.getNodes()) {
-			if (n.getId().equals(id)) {
-				copyDummy1 = n;
+		for (Set<PositionedNode> chain : dummyChains) {
+			int x = chain.iterator().next().getX();
+			for (PositionedNode dummy : chain) {
+				assertEquals(x, dummy.getX());
 			}
 		}
-		System.out.println("Dummy1 VS OrigDummy1: " + origDummy1.equals(copyDummy1));
-		ArrayList<PositionedNode> orig = new ArrayList<PositionedNode>(stretched.getNodes());
-		ArrayList<PositionedNode> copied = new ArrayList<PositionedNode>(copy.getNodes());
-//		assertEquals(orig, copied);
-		assertEquals(stretched.getLayers(), copyStretched.getLayers());
+	}
+
+	private void assertNodesDistance(List<List<PositionedNode>> layers, int delta) {
+		for (List<PositionedNode> layer : layers) {
+			PositionedNode previous = null;
+			PositionedNode next = layer.get(1);
+			int layerSize = layer.size();
+			for (int i = 0; i < layerSize; i++) {
+				PositionedNode node = layer.get(i);
+				if (node.isDummy()) {
+					if (previous != null) {
+						if (previous.isDummy()) {
+							assertTrue(node.getX() - previous.getX() >= delta);
+						}
+					}
+					if (next != null) {
+						if (next.isDummy()) {
+							assertTrue("Distance was " + (next.getX() - node.getX()), next.getX() - node.getX() >= delta);
+						}
+					}
+
+					previous = node;
+					if (i < layerSize-1) {
+						next = layer.get(i + 1);
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	public void testHashCode() {
+		PositionedNode n = new PositionedNodeImpl("someId", 1,2);
+		HashSet<PositionedNode> set = new HashSet<PositionedNode>();
+		set.add(n);
+		n.setX(n.getX()+1);
+		assertTrue(set.contains(n));
 	}
 }

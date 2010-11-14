@@ -21,11 +21,7 @@ public class DummyNodesStretcher implements PositionedGraphTransformer {
 	@Override
 	public LayeredPositionedGraph transform(LayeredPositionedGraph graph) {
 		LayeredPositionedGraphImpl copy = graph.copy();
-//		System.out.println("Nodes are equals before stretch: " + copy.getNodes().equals(graph.getNodes()));
 		stretchDummyLines(copy.getNodes(), copy.getLayers());
-//		stretchDummyLines(graph.getNodes(), graph.getLayers());
-
-//		System.out.println("Nodes are equals after stretch: " + copy.getNodes().equals(graph.getNodes()));
 		return copy;
 	}
 
@@ -58,6 +54,11 @@ public class DummyNodesStretcher implements PositionedGraphTransformer {
 					int layer0 = gu.getLayerIndexForNode(node, layers);
 					if (leadingDummies.contains(node)) {
 						//right
+						//todo X coordinate should be replaced with horizontal index - the whole process
+						//todo of stretching should not be using any coordinate information. The
+						//todo place for node should be obtained using so-called "fillers", which
+						//todo are not rendered themselves and whose purpose is just to obtain
+						//todo some space on the screen.
 						int minX = node.getX();
 						while (node.isDummy()) {
 							Set<PositionedNode> localSinks = node.getSinks();
@@ -108,7 +109,7 @@ public class DummyNodesStretcher implements PositionedGraphTransformer {
 						 int layer0,
 						 int layer1,
 						 GraphUtils gu) {
-		x = makeComfortable(x, layer0, layer1, allNodes, delta, layers, gu);
+//		x = makeComfortable(x, layer0, layer1, allNodes, delta, layers, gu);
 
 		for (PositionedNode node : dummyChain) {
 			node.setX(x);

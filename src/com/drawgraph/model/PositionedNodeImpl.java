@@ -45,38 +45,6 @@ public class PositionedNodeImpl extends AbstractNode<PositionedNode> implements 
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (!(o instanceof PositionedNodeImpl)) {
-			return false;
-		}
-		if (!super.equals(o)) {
-			return false;
-		}
-
-		final PositionedNodeImpl that = (PositionedNodeImpl) o;
-
-		if (x != that.x) {
-			return false;
-		}
-		if (y != that.y) {
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = super.hashCode();
-		result = 31 * result + x;
-		result = 31 * result + y;
-		return result;
-	}
-
-	@Override
 	public String toString() {
 		return super.toString() + "PositionedNodeImpl{" + "x=" + x + ", y=" + y + '}';
 	}

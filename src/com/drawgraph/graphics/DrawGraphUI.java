@@ -3,12 +3,12 @@ package com.drawgraph.graphics;
 import com.drawgraph.algorithms.BarycenterReducer;
 import com.drawgraph.algorithms.CoffmanGrahamLayeredGraphOrder;
 import com.drawgraph.algorithms.CoordinateAssignmentReducer;
-import com.drawgraph.algorithms.DummyNodesStretcher;
-import com.drawgraph.algorithms.PositionedGraphTransformer;
 import com.drawgraph.algorithms.DummyNodesAssigner;
+import com.drawgraph.algorithms.DummyNodesStretcher;
 import com.drawgraph.algorithms.LayeredGraphOrder;
 import com.drawgraph.algorithms.MedianReducer;
 import com.drawgraph.algorithms.NoDummyNodesAssigner;
+import com.drawgraph.algorithms.PositionedGraphTransformer;
 import com.drawgraph.algorithms.SimpleDummyNodesAssigner;
 import com.drawgraph.algorithms.SimpleLayeredGraphOrder;
 import com.drawgraph.algorithms.UnexpectedCycledGraphException;
@@ -326,6 +326,9 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 		scaler.setShift((Integer) shiftSpin.getValue());
 		long time = System.currentTimeMillis();
 		LayeredPositionedGraph result = scaler.scale(source);
+		if (stretchDummyNodes) {
+			result = dummyNodesStretcher.transform(result);
+		}
 		System.out.println("Scaled graph in: " + (System.currentTimeMillis() - time));
 		result.setRadius((Integer) radiusSpin.getValue());
 
@@ -352,9 +355,6 @@ public class DrawGraphUI implements ChangeListener, ActionListener, ListSelectio
 
 		if (useCoordinateAssignment) {
 			reducedGraph = coordinateAssigner.transform(reducedGraph);
-		}
-		if (stretchDummyNodes) {
-			reducedGraph = dummyNodesStretcher.transform(reducedGraph);
 		}
 		return reducedGraph;
 	}
