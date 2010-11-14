@@ -48,7 +48,7 @@ public class SimpleGraphDrawer implements GraphDrawer<PositionedGraph> {
 				canvas.setPaint(Color.YELLOW);
 				canvas.fill(shape);
 				canvas.setPaint(Color.BLACK);
-				canvas.drawString(node.getId(), node.getX(), node.getY() +6);
+//				canvas.drawString(node.getId(), node.getX(), node.getY() +6);
 
 			} else {
 				shape = new Ellipse2D.Double(node.getX() - radius / 2, node.getY() - radius / 2, radius, radius);

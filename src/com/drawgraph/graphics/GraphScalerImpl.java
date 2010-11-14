@@ -179,7 +179,14 @@ public class GraphScalerImpl implements GraphScaler {
 		}
 	}
 	private int getNodeIndexInList(List<? extends Node> positionedNodes, Node n) {
-		return positionedNodes.indexOf(n);
+		for (int i = 0; i < positionedNodes.size(); i++) {
+			Node currentNode = positionedNodes.get(i);
+			if (currentNode.getId().equals(n.getId())) {
+				return i;
+			}
+		}
+		throw new IllegalArgumentException("No node " + n + " in list " + positionedNodes);
+		//		return positionedNodes.indexOf(n);
 	}
 
 	//todo this method should be moved into separate PositionedGraphTransformer and covered with unit test

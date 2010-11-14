@@ -29,11 +29,14 @@ public class LayeredPositionedGraphImpl extends PositionedGraphImpl implements L
 	@Override
 	public LayeredPositionedGraphImpl copy() {
 		PositionedGraphImpl positionedGraphCopy = super.copy();
-		List<List<PositionedNode>> layersCopy = new ArrayList<List<PositionedNode>>();
-		layersCopy.addAll(layers);
+
+		List<List<PositionedNode>> layersCopy = new ArrayList<List<PositionedNode>>(layers);
+
 		LayeredPositionedGraphImpl copy = new LayeredPositionedGraphImpl(getId(), layersCopy);
+
 		copy.getNodes().addAll(positionedGraphCopy.getNodes());
 		copy.getLines().addAll(positionedGraphCopy.getLines());
+
 		copy.setRadius(getRadius());
 
 		return copy;

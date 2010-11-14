@@ -16,12 +16,16 @@ import java.util.Set;
  * @author denisk
  */
 public class DummyNodesStretcher implements PositionedGraphTransformer {
-	private static final int DELTA = 30;
+	public static final int DELTA = 30;
 
 	@Override
 	public LayeredPositionedGraph transform(LayeredPositionedGraph graph) {
 		LayeredPositionedGraphImpl copy = graph.copy();
+//		System.out.println("Nodes are equals before stretch: " + copy.getNodes().equals(graph.getNodes()));
 		stretchDummyLines(copy.getNodes(), copy.getLayers());
+//		stretchDummyLines(graph.getNodes(), graph.getLayers());
+
+//		System.out.println("Nodes are equals after stretch: " + copy.getNodes().equals(graph.getNodes()));
 		return copy;
 	}
 
@@ -104,7 +108,7 @@ public class DummyNodesStretcher implements PositionedGraphTransformer {
 						 int layer0,
 						 int layer1,
 						 GraphUtils gu) {
-//		x = makeComfortable(x, layer0, layer1, allNodes, delta, layers, gu);
+		x = makeComfortable(x, layer0, layer1, allNodes, delta, layers, gu);
 
 		for (PositionedNode node : dummyChain) {
 			node.setX(x);
